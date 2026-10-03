@@ -1,671 +1,178 @@
-<!DOCTYPE html>
-<html lang="en" class="dark">
+<!doctype html>
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Logic Circuit Viewer & Cyber Architecture Portal</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        cyberblack: '#000000',
-                        cybercard: '#080808',
-                        cyberborder: '#222222',
-                        cyberred: '#ff0033',
-                        cyberredhover: '#ff1a47',
-                        cybermuted: '#888888',
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        mono: ['JetBrains Mono', 'monospace'],
-                    }
-                }
-            }
-        }
-    </script>
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-    <!-- FontAwesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        body { font-family: 'Inter', sans-serif; background-color: #000000; color: #ffffff; overflow: hidden; }
-        .font-mono { font-family: 'JetBrains Mono', monospace; }
-        .glow-red { box-shadow: 0 0 20px rgba(255, 0, 51, 0.35); }
-        .glow-red-sm { box-shadow: 0 0 10px rgba(255, 0, 51, 0.25); }
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: #000000; }
-        ::-webkit-scrollbar-thumb { background: #222222; border-radius: 3px; }
-        ::-webkit-scrollbar-thumb:hover { background: #ff0033; }
-        .circuit-canvas-bg {
-            background-image: radial-gradient(circle, #1a1a1a 1px, transparent 1px);
-            background-size: 32px 32px;
-        }
-    </style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f3f2ed">
+  <title>Logic Lab — Circuits, made visible</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{color-scheme:dark;--paper:#080a08;--panel:#111410;--ink:#f5f6f2;--muted:#a4aa9e;--line:#30352e;--green:#b9ed52;--green-ink:#c7f279;--mono:"DM Mono","Courier New",monospace;--sans:"Space Grotesk","Trebuchet MS",sans-serif}
+    *{box-sizing:border-box}body{margin:0;background-color:var(--paper);background-image:radial-gradient(#d8d9d1 .7px,transparent .7px);background-size:17px 17px;color:var(--ink);font-family:var(--sans);min-width:320px}button{font:inherit}.shell{width:min(1440px,100%);margin:0 auto;padding:0 42px 52px}
+    .topbar{min-height:76px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line)}.brand{display:flex;align-items:center;gap:11px;font-weight:700}.brand-mark{width:25px;height:25px;display:grid;grid-template-columns:1fr 1fr;gap:3px;transform:rotate(-8deg)}.brand-mark i{display:block;background:var(--ink);border-radius:2px}.brand-mark i:nth-child(2),.brand-mark i:nth-child(3){background:var(--green-ink)}.brand span:last-child{font-size:14px}.top-meta{color:var(--muted);font:10px var(--mono);text-transform:uppercase}
+    .intro{display:flex;justify-content:space-between;gap:28px;align-items:end;padding:38px 0 27px}.eyebrow{color:var(--green-ink);font:11px var(--mono);text-transform:uppercase;margin-bottom:12px}h1{font-size:clamp(34px,4vw,54px);line-height:.98;margin:0;max-width:660px;font-weight:600}h1 em{color:var(--green-ink);font-style:normal}.intro-copy{max-width:330px;color:#5f645b;font-size:14px;line-height:1.55;margin:0 0 3px}
+    .lesson-nav{display:flex;gap:8px;padding:0 0 13px;overflow-x:auto;scrollbar-width:thin}.lesson-tab{flex:0 0 auto;border:1px solid var(--line);background:#fffefaad;color:#51564e;padding:10px 14px;border-radius:4px;cursor:pointer;font-size:12px;transition:background .18s,color .18s,border-color .18s,transform .18s}.lesson-tab:hover{border-color:#a9ac9f;transform:translateY(-1px)}.lesson-tab[aria-selected=true]{background:var(--ink);border-color:var(--ink);color:white}.lesson-tab span{color:#a3a79d;font:10px var(--mono);margin-right:8px}.lesson-tab[aria-selected=true] span{color:var(--green)}
+    .workbench{background:var(--panel);border:1px solid var(--line);border-radius:6px;box-shadow:0 12px 35px #24271f0e;overflow:hidden;animation:arrive .45s both}.workbench-head{min-height:71px;border-bottom:1px solid var(--line);padding:15px 20px;display:flex;justify-content:space-between;align-items:center;gap:20px}.workbench-title{display:flex;align-items:baseline;gap:12px}.workbench-title h2{font-size:17px;margin:0;font-weight:600}.workbench-title p{font-size:12px;color:var(--muted);margin:0}.live-tag{display:flex;align-items:center;gap:7px;color:var(--green-ink);font:10px var(--mono);text-transform:uppercase;white-space:nowrap}.live-dot{width:7px;height:7px;border-radius:50%;background:#85bb31;box-shadow:0 0 0 3px #ebf5d9}
+    .workspace{display:grid;grid-template-columns:178px minmax(0,1fr) 178px;min-height:492px}.side-panel{padding:20px 16px;background:#fafaf6}.input-panel{border-right:1px solid var(--line)}.output-panel{border-left:1px solid var(--line)}.panel-kicker{color:#8b8e86;font:10px var(--mono);text-transform:uppercase;margin:0 0 18px}.bit-row{display:flex;align-items:center;justify-content:space-between;margin:0 0 17px}.bit-name{font:12px var(--mono);color:#565a52}.bit-switch{position:relative;width:49px;height:28px;padding:0;border:1px solid #cdcec6;border-radius:20px;background:#e6e7e0;cursor:pointer;transition:background .18s,border-color .18s}.bit-switch:after{content:"";position:absolute;width:20px;height:20px;left:3px;top:3px;border-radius:50%;background:white;box-shadow:0 1px 3px #0002;transition:transform .18s}.bit-switch[aria-checked=true]{background:var(--green);border-color:#a5d440}.bit-switch[aria-checked=true]:after{transform:translateX(21px);background:var(--ink)}.bit-state{font:11px var(--mono);color:#969a91;margin-left:6px}.bit-state.on{color:var(--green-ink)}.input-hint{font:10px/1.6 var(--mono);color:#9a9d95;margin:29px 0 0}
+    .diagram-wrap{min-width:0;padding:14px 7px 5px;display:flex;flex-direction:column}.diagram-topline{display:flex;justify-content:space-between;padding:0 12px 4px;color:#a0a39b;font:9px var(--mono);text-transform:uppercase}#circuit-diagram{display:block;width:100%;flex:1;min-height:400px;overflow:visible}.wire{fill:none;stroke:#d5d8cf;stroke-width:2.1;stroke-linecap:round;transition:stroke .2s,opacity .2s}.wire.active{stroke:#7cae30;stroke-width:2.7}.port{fill:var(--panel);stroke:#aeb2a7;stroke-width:1.5}.gate-body{fill:#f4f5ef;stroke:#5e6458;stroke-width:1.8;stroke-linejoin:round}.gate-body.on{fill:#edf7d9;stroke:#719c34}.gate-mark{fill:none;stroke:#5e6458;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.gate-label{fill:#777d72;font:9px var(--mono);text-anchor:middle}.diagram-label{fill:#444a40;font:12px var(--mono)}.diagram-value{fill:#9a9e95;font:10px var(--mono)}.diagram-value.active{fill:var(--green-ink)}.output-terminal{fill:#f4f5ef;stroke:#aeb2a7;stroke-width:1.5}.output-terminal.active{fill:var(--green);stroke:#86ad36}
+    .output-readout{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}.output-name{font:12px var(--mono)}.output-bit{width:38px;height:38px;display:grid;place-items:center;background:#efefe9;border:1px solid #dedfd7;border-radius:4px;color:#999d94;font:16px var(--mono);transition:all .2s}.output-bit.on{background:var(--green);border-color:#a5d440;color:#304614}.output-equation{border-top:1px solid var(--line);padding-top:15px;margin-top:20px}.output-equation span{display:block;color:#979b92;font:9px var(--mono);text-transform:uppercase;margin-bottom:9px}.output-equation strong{font:11px/1.7 var(--mono);color:#51564d}.output-note{color:#8c9087;font-size:11px;line-height:1.5;margin:18px 0 0}
+    .below-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:14px;margin-top:14px}.info-panel{min-width:0;background:var(--panel);border:1px solid var(--line);border-radius:5px;padding:18px 20px}.section-heading{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:14px}.section-heading h3{font-size:13px;margin:0;font-weight:600}.section-heading span{color:#999d94;font:9px var(--mono);text-transform:uppercase}.lesson-text{font-size:12px;line-height:1.65;color:#656a61;max-width:660px;margin:0}.recipe{display:flex;gap:8px;flex-wrap:wrap;padding-top:14px}.recipe-step{display:flex;align-items:center;gap:7px;background:#f4f5ef;padding:7px 9px;border-radius:3px;color:#53594f;font:10px var(--mono)}.recipe-step b{display:grid;place-items:center;width:17px;height:17px;border-radius:2px;background:var(--green);color:#3d571c;font:9px var(--mono)}.gate-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}.gate-chip{min-width:0;border:1px solid var(--line);border-radius:3px;background:#fffefa;padding:9px 8px;text-align:left;cursor:pointer;transition:border-color .16s,background .16s}.gate-chip:hover,.gate-chip.selected{border-color:#9fc64d;background:#f7fbef}.gate-chip b{display:block;font:10px var(--mono);margin-bottom:5px}.gate-chip small{color:#898d84;font:9px var(--mono)}.truth-table{border-collapse:collapse;margin-top:12px;width:100%;font:9px var(--mono);color:#71766c}.truth-table th{text-align:left;font-weight:400;padding:4px 8px 5px 0;color:#9a9e95}.truth-table td{border-top:1px solid #efefe9;padding:5px 8px 4px 0}.truth-table td:last-child{color:var(--green-ink);font-weight:500}.truth-table tr.current td{color:var(--ink);background:#f3f8e9}.truth-table tr.current td:last-child{color:var(--green-ink)}.footer{display:flex;justify-content:space-between;margin-top:15px;color:#93978e;font:9px var(--mono);text-transform:uppercase}
+    body{background-image:radial-gradient(#ffffff12 .7px,transparent .7px)}
+    .intro-copy{color:#c1c6bc}
+    .lesson-tab{background:#111410;color:#e2e6dc}
+    .lesson-tab:hover{border-color:#70786b}
+    .lesson-tab[aria-selected=true]{background:var(--green);border-color:var(--green);color:#161a12}
+    .lesson-tab[aria-selected=true] span{color:#455c20}
+    .workbench{box-shadow:0 12px 35px #0008}
+    .live-dot{box-shadow:0 0 0 3px #27331b}
+    .side-panel{background:#0d100d}
+    .panel-kicker,.diagram-topline{color:#a1a89b}
+    .bit-switch{border-color:#474d43;background:#292e27}
+    .bit-switch:after{background:#f5f6f2}
+    .input-hint,.output-note{color:#a6ada1}
+    .wire{stroke:#555d51}
+    .wire.active{stroke:#b9ed52}
+    .port{fill:#111410;stroke:#aeb7a6}
+    .gate-body{fill:#1c211a;stroke:#c5ccbd}
+    .gate-body.on{fill:#29391a;stroke:#b9ed52}
+    .gate-mark{stroke:#e0e5da}
+    .gate-label,.diagram-value{fill:#c0c7ba}
+    .diagram-label{fill:#f1f3ed}
+    .diagram-value.active{fill:#c7f279}
+    .output-terminal{fill:#1c211a;stroke:#aeb7a6}
+    .output-terminal.active{fill:#b9ed52;stroke:#d3ff8b}
+    .output-bit{background:#242922;border-color:#41473e;color:#e0e5da}
+    .output-equation span,.section-heading span{color:#a1a89b}
+    .output-equation strong{color:#e0e5da}
+    .lesson-text{color:#c0c6bb}
+    .lesson-use{margin:12px 0 0;padding-left:10px;border-left:2px solid var(--green);color:#e1e7d8;font-size:11px;line-height:1.6}
+    .lesson-use strong{font:9px var(--mono);text-transform:uppercase;color:var(--green);margin-right:7px}
+    .lesson-nav{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:9px;overflow:visible}
+    .lesson-level{min-width:0;padding:10px;background:#0d100d;border:1px solid var(--line);border-radius:4px}
+    .lesson-level h3{margin:0 0 4px;color:var(--green);font:10px var(--mono);text-transform:uppercase}
+    .lesson-level p{min-height:28px;margin:0 0 9px;color:#aab1a5;font-size:10px;line-height:1.4}
+    .lesson-level-tabs{display:grid;gap:5px}
+    .lesson-level .lesson-tab{width:100%;min-width:0;padding:7px 6px;text-align:left;white-space:normal;line-height:1.25}
+    .lesson-level .lesson-tab span{display:inline-block;min-width:20px}
+    #circuit-diagram{min-height:400px}
+    @media(max-width:1050px){.lesson-nav{grid-template-columns:repeat(3,minmax(0,1fr))}}
+    @media(max-width:640px){.lesson-nav{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.lesson-level{padding:8px}.lesson-level p{min-height:42px}#circuit-diagram{min-height:365px}}
+    .recipe-step{background:#20251e;color:#e3e8dd}
+    .gate-chip{background:#151814;color:#f0f2ec}
+    .gate-chip:hover,.gate-chip.selected{border-color:#8eb74c;background:#222d19}
+    .gate-chip small{color:#b4bbae}
+    .truth-table{color:#c0c6bb}
+    .truth-table th{color:#a2aa9c}
+    .truth-table td{border-color:#2b3028}
+    .truth-table tr.current td{color:#f5f6f2;background:#26351a}
+    .footer{color:#a1a89b}
+    @keyframes arrive{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+    @media(max-width:900px){.shell{padding:0 24px 35px}.workspace{grid-template-columns:145px minmax(0,1fr) 145px}.side-panel{padding:18px 12px}.below-grid{grid-template-columns:1fr}#circuit-diagram{min-height:350px}}
+    @media(max-width:640px){.shell{padding:0 14px 28px}.topbar{min-height:62px}.intro{display:block;padding:28px 0 21px}.intro-copy{margin-top:14px;font-size:13px}h1{font-size:39px}.workbench-head{min-height:62px;padding:12px 13px}.workbench-title{display:block}.workbench-title p{margin-top:4px}.workspace{grid-template-columns:1fr 1fr}.input-panel{border-right:0;border-bottom:1px solid var(--line)}.output-panel{border-left:1px solid var(--line);border-bottom:1px solid var(--line)}.side-panel{padding:15px 13px}.panel-kicker{margin-bottom:12px}.bit-row{justify-content:flex-start;gap:7px;margin-bottom:11px}.bit-switch{margin-left:auto}.bit-state{width:8px;margin-left:0}.input-hint{margin-top:14px}.output-readout{margin-bottom:10px}.output-bit{width:31px;height:31px}.output-equation{margin-top:12px;padding-top:10px}.output-note{display:none}.diagram-wrap{grid-column:1/-1;grid-row:2;min-height:335px;padding:12px 3px 4px}#circuit-diagram{min-height:315px}.diagram-topline{padding:0 8px 2px}.info-panel{padding:15px}.gate-list{gap:5px}.gate-chip{padding:8px 6px}.footer{gap:16px;line-height:1.5}}
+    @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+  </style>
 </head>
-<body class="h-screen w-screen flex flex-col selection:bg-cyberred selection:text-white">
-
-    <!-- Requirement 1: Top navigation bar with spaced-out buttons, NO title text, NO banner text -->
-    <header class="h-16 shrink-0 bg-cyberblack border-b border-cyberborder px-6 flex items-center justify-between z-30">
-        <div class="flex items-center space-x-3">
-            <div class="w-9 h-9 rounded bg-cyberred flex items-center justify-center glow-red-sm cursor-pointer" onclick="switchBlueprint('alu')">
-                <i class="fa-solid fa-microchip text-white text-base font-bold"></i>
-            </div>
-            <span class="font-mono text-xs text-cybermuted tracking-widest hidden sm:inline">[PORTAL v6.2]</span>
-        </div>
-
-        <nav class="flex items-center space-x-2 sm:space-x-6 overflow-x-auto py-2">
-            <button onclick="switchBlueprint('alu')" id="nav-alu" class="nav-btn font-mono text-xs uppercase tracking-wider px-3 py-1.5 rounded transition-all bg-cyberred text-white font-bold glow-red-sm">
-                4-Bit ALU
-            </button>
-            <button onclick="switchBlueprint('lock')" id="nav-lock" class="nav-btn font-mono text-xs uppercase tracking-wider px-3 py-1.5 rounded transition-all text-cybermuted hover:text-white bg-cybercard border border-cyberborder">
-                State-Machine Lock
-            </button>
-            <button onclick="switchBlueprint('elevator')" id="nav-elevator" class="nav-btn font-mono text-xs uppercase tracking-wider px-3 py-1.5 rounded transition-all text-cybermuted hover:text-white bg-cybercard border border-cyberborder">
-                Elevator Controller
-            </button>
-            <button onclick="switchBlueprint('srlatch')" id="nav-srlatch" class="nav-btn font-mono text-xs uppercase tracking-wider px-3 py-1.5 rounded transition-all text-cybermuted hover:text-white bg-cybercard border border-cyberborder">
-                SR Latch
-            </button>
-            <button onclick="switchBlueprint('dff')" id="nav-dff" class="nav-btn font-mono text-xs uppercase tracking-wider px-3 py-1.5 rounded transition-all text-cybermuted hover:text-white bg-cybercard border border-cyberborder">
-                D-FlipFlop
-            </button>
-            <button onclick="switchBlueprint('adder')" id="nav-adder" class="nav-btn font-mono text-xs uppercase tracking-wider px-3 py-1.5 rounded transition-all text-cybermuted hover:text-white bg-cybercard border border-cyberborder">
-                Full Adder
-            </button>
-        </nav>
-
-        <div class="hidden lg:flex items-center space-x-2 font-mono text-xs text-cybermuted">
-            <span class="w-2 h-2 rounded-full bg-cyberred animate-pulse"></span>
-            <span>SYSTEM ONLINE</span>
-        </div>
-    </header>
-
-    <!-- Main Workspace Container -->
-    <div class="flex-grow flex relative overflow-hidden">
-        
-        <!-- Center Interactive Diagram Canvas Area -->
-        <main class="flex-grow relative overflow-hidden circuit-canvas-bg flex flex-col" id="canvas-container">
-            
-            <!-- Floating Layer Selector & Zoom Controls -->
-            <div class="absolute top-4 left-4 z-20 flex flex-col space-y-3">
-                <!-- Requirement 8: Multi-layer selector -->
-                <div class="bg-cybercard/90 backdrop-blur border border-cyberborder rounded p-1.5 flex flex-wrap gap-1 shadow-2xl">
-                    <button onclick="setLayer('all')" id="layer-btn-all" class="px-3 py-1.5 rounded font-mono text-[11px] uppercase tracking-wider bg-cyberred text-white font-bold transition-all">All Layers</button>
-                    <button onclick="setLayer(1)" id="layer-btn-1" class="px-3 py-1.5 rounded font-mono text-[11px] uppercase tracking-wider bg-cyberblack text-cybermuted hover:text-white transition-all border border-cyberborder">L1: Subfloor</button>
-                    <button onclick="setLayer(2)" id="layer-btn-2" class="px-3 py-1.5 rounded font-mono text-[11px] uppercase tracking-wider bg-cyberblack text-cybermuted hover:text-white transition-all border border-cyberborder">L2: Data Bus</button>
-                    <button onclick="setLayer(3)" id="layer-btn-3" class="px-3 py-1.5 rounded font-mono text-[11px] uppercase tracking-wider bg-cyberblack text-cybermuted hover:text-white transition-all border border-cyberborder">L3: Control</button>
-                    <button onclick="setLayer(4)" id="layer-btn-4" class="px-3 py-1.5 rounded font-mono text-[11px] uppercase tracking-wider bg-cyberblack text-cybermuted hover:text-white transition-all border border-cyberborder">L4: Actuators</button>
-                </div>
-            </div>
-
-            <!-- Requirement 6: Canvas zoom controls -->
-            <div class="absolute top-4 right-4 z-20 flex items-center space-x-2 bg-cybercard/90 backdrop-blur border border-cyberborder rounded p-1 shadow-2xl font-mono text-xs">
-                <button onclick="zoomCanvas(0.1)" class="w-8 h-8 rounded bg-cyberblack hover:bg-cyberred text-white flex items-center justify-center border border-cyberborder transition-all"><i class="fa-solid fa-plus"></i></button>
-                <button onclick="zoomCanvas(-0.1)" class="w-8 h-8 rounded bg-cyberblack hover:bg-cyberred text-white flex items-center justify-center border border-cyberborder transition-all"><i class="fa-solid fa-minus"></i></button>
-                <button onclick="resetZoom()" class="px-3 h-8 rounded bg-cyberblack hover:bg-cyberred text-white flex items-center justify-center border border-cyberborder transition-all">RESET</button>
-            </div>
-
-            <!-- Interactive SVG Canvas Container -->
-            <div id="viewport" class="w-full h-full cursor-grab active:cursor-grabbing relative flex items-center justify-center">
-                <svg id="circuit-svg" class="w-full h-full select-none" xmlns="http://www.w3.org/2000/svg">
-                    <defs>
-                        <!-- Glowing Red Filter -->
-                        <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
-                            <feGaussianBlur stdDeviation="3" result="blur" />
-                            <feComposite in="SourceGraphic" in2="blur" operator="over" />
-                        </filter>
-                    </defs>
-                    <g id="zoom-pan-group">
-                        <!-- Wires Rendered Here -->
-                        <g id="wires-layer"></g>
-                        <!-- Nodes & Gates Rendered Here -->
-                        <g id="nodes-layer"></g>
-                    </g>
-                </svg>
-            </div>
-
-            <!-- Bottom Floating Legend & Status Bar -->
-            <div class="absolute bottom-4 left-4 right-4 z-20 flex flex-col sm:flex-row items-center justify-between bg-cybercard/90 backdrop-blur border border-cyberborder px-4 py-2 rounded text-xs font-mono text-cybermuted shadow-2xl gap-2">
-                <div class="flex items-center space-x-4">
-                    <span class="text-white font-bold" id="status-blueprint-title">4-BIT ALU ARCHITECTURE</span>
-                    <span class="hidden md:inline text-cyberborder">|</span>
-                    <span class="hidden md:inline" id="status-blueprint-desc">Combinatorial 4-bit parallel arithmetic unit built with NAND/NOR primitive primitives.</span>
-                </div>
-                <div class="flex items-center space-x-4">
-                    <div class="flex items-center space-x-1.5"><span class="w-2.5 h-2.5 rounded-full bg-cyberred glow-red-sm"></span><span class="text-white">Active Signal (HIGH)</span></div>
-                    <div class="flex items-center space-x-1.5"><span class="w-2.5 h-2.5 rounded-full bg-cyberborder"></span><span class="text-cybermuted">Inactive (LOW)</span></div>
-                </div>
-            </div>
-        </main>
-
-        <!-- Requirement 7: Inspector Panel right sidebar -->
-        <aside class="w-96 shrink-0 bg-cybercard border-l border-cyberborder flex flex-col z-30 overflow-y-auto">
-            <div class="p-5 border-b border-cyberborder flex items-center justify-between">
-                <div class="flex items-center space-x-2">
-                    <i class="fa-solid fa-terminal text-cyberred"></i>
-                    <h2 class="font-mono text-xs uppercase tracking-widest text-white font-bold">Component Inspector</h2>
-                </div>
-                <span class="px-2 py-0.5 rounded font-mono text-[10px] bg-cyberred/20 text-cyberred border border-cyberred/40 font-bold" id="inspector-status">READY</span>
-            </div>
-
-            <div class="p-6 space-y-6 flex-grow" id="inspector-content">
-                <!-- Dynamically populated when clicking nodes or gates -->
-                <div class="space-y-4">
-                    <div class="p-4 rounded bg-cyberblack border border-cyberborder space-y-2">
-                        <span class="text-[10px] font-mono text-cyberred uppercase font-bold tracking-wider">[SELECTED NODE]</span>
-                        <h3 class="text-lg font-bold text-white font-mono" id="inspector-title">System Overview</h3>
-                        <p class="text-xs text-cybermuted leading-relaxed" id="inspector-desc">Click any input node, primitive gate (NAND, NOR, OR, XOR, NXOR), or output terminal on the canvas to inspect real-time signal states and truth tables.</p>
-                    </div>
-
-                    <div class="p-4 rounded bg-cyberblack border border-cyberborder space-y-3">
-                        <div class="flex items-center justify-between font-mono text-xs text-white font-bold border-b border-cyberborder pb-2">
-                            <span>PRIMITIVE TRUTH TABLE</span>
-                            <span class="text-cyberred" id="inspector-gate-type">NAND</span>
-                        </div>
-                        <div class="space-y-1.5 font-mono text-xs" id="inspector-truthtable">
-                            <div class="flex justify-between text-cybermuted bg-cybercard p-2 rounded"><span>0 | 0</span><span class="text-white font-bold">OUT: 1</span></div>
-                            <div class="flex justify-between text-cybermuted bg-cybercard p-2 rounded"><span>0 | 1</span><span class="text-white font-bold">OUT: 1</span></div>
-                            <div class="flex justify-between text-cybermuted bg-cybercard p-2 rounded"><span>1 | 0</span><span class="text-white font-bold">OUT: 1</span></div>
-                            <div class="flex justify-between text-cybermuted bg-cybercard p-2 rounded"><span>1 | 1</span><span class="text-white font-bold">OUT: 0</span></div>
-                        </div>
-                    </div>
-
-                    <div class="p-4 rounded bg-cyberblack border border-cyberborder space-y-2">
-                        <span class="text-[10px] font-mono text-cyberred uppercase font-bold tracking-wider">// ASSEMBLY SEQUENCE</span>
-                        <div class="space-y-2 text-xs font-mono text-cybermuted" id="inspector-assembly">
-                            <div>1. Route Layer 1 power and ground rails.</div>
-                            <div>2. Place primary NAND/NOR logic columns.</div>
-                            <div>3. Connect orthogonal data bus lines.</div>
-                            <div>4. Verify actuation on Layer 4 terminals.</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Footer Action in Sidebar -->
-            <div class="p-4 border-t border-cyberborder bg-cyberblack">
-                <button onclick="toggleAllInputs()" class="w-full py-2.5 bg-cyberred hover:bg-cyberredhover text-white font-mono text-xs uppercase font-bold rounded transition-all glow-red-sm flex items-center justify-center space-x-2">
-                    <i class="fa-solid fa-bolt"></i><span>TOGGLE ALL INPUT SIGNALS</span>
-                </button>
-            </div>
-        </aside>
-
-    </div>
-
-    <script>
-        // Blueprint Data Definitions adhering strictly to primitive gates: NAND, NOR, OR, XOR, NXOR
-        const blueprints = {
-            alu: {
-                title: "4-BIT ALU ARCHITECTURE",
-                desc: "Combinatorial 4-bit parallel arithmetic unit built with NAND/NOR primitive primitives.",
-                inputs: [
-                    { id: 'in_a0', label: 'A0', state: 1, x: 60, y: 120, layer: 2 },
-                    { id: 'in_a1', label: 'A1', state: 0, x: 60, y: 220, layer: 2 },
-                    { id: 'in_b0', label: 'B0', state: 1, x: 60, y: 340, layer: 2 },
-                    { id: 'in_b1', label: 'B1', state: 1, x: 60, y: 440, layer: 2 }
-                ],
-                gates: [
-                    { id: 'g1', type: 'NAND', label: 'NAND [A0,B0]', x: 300, y: 140, layer: 3, inputs: ['in_a0', 'in_b0'], state: 0, tt: ['0|0 -> 1', '0|1 -> 1', '1|0 -> 1', '1|1 -> 0'] },
-                    { id: 'g2', type: 'NOR', label: 'NOR [A0,B0]', x: 300, y: 280, layer: 3, inputs: ['in_a0', 'in_b0'], state: 1, tt: ['0|0 -> 1', '0|1 -> 0', '1|0 -> 0', '1|1 -> 0'] },
-                    { id: 'g3', type: 'XOR', label: 'XOR [A1,B1]', x: 300, y: 420, layer: 3, inputs: ['in_a1', 'in_b1'], state: 1, tt: ['0|0 -> 0', '0|1 -> 1', '1|0 -> 1', '1|1 -> 0'] },
-                    { id: 'g4', type: 'NXOR', label: 'NXOR [Sum]', x: 540, y: 280, layer: 3, inputs: ['g1', 'g2'], state: 1, tt: ['0|0 -> 1', '0|1 -> 0', '1|0 -> 0', '1|1 -> 1'] }
-                ],
-                outputs: [
-                    { id: 'out_res0', label: 'RES Q0', state: 1, x: 780, y: 200, layer: 4, from: 'g1' },
-                    { id: 'out_res1', label: 'RES Q1', state: 0, x: 780, y: 360, layer: 4, from: 'g4' }
-                ],
-                wires: [
-                    { from: 'in_a0', to: 'g1', layer: 2, points: [[60,120],[180,120],[180,140],[300,140]] },
-                    { from: 'in_b0', to: 'g1', layer: 2, points: [[60,340],[180,340],[180,160],[300,160]] },
-                    { from: 'in_a0', to: 'g2', layer: 2, points: [[60,120],[200,120],[200,260],[300,260]] },
-                    { from: 'in_b0', to: 'g2', layer: 2, points: [[60,340],[200,340],[200,300],[300,300]] },
-                    { from: 'in_a1', to: 'g3', layer: 2, points: [[60,220],[220,220],[220,400],[300,400]] },
-                    { from: 'in_b1', to: 'g3', layer: 2, points: [[60,440],[220,440],[220,440],[300,440]] },
-                    { from: 'g1', to: 'g4', layer: 3, points: [[380,140],[460,140],[460,260],[540,260]] },
-                    { from: 'g2', to: 'g4', layer: 3, points: [[380,280],[460,280],[460,300],[540,300]] },
-                    { from: 'g1', to: 'out_res0', layer: 4, points: [[380,140],[580,140],[580,200],[780,200]] },
-                    { from: 'g4', to: 'out_res1', layer: 4, points: [[620,280],[700,280],[700,360],[780,360]] }
-                ]
-            },
-            lock: {
-                title: "STATE-MACHINE COMBINATION LOCK",
-                desc: "Secure 4-state sequential combination lock using primitive NAND/NOR logic and cross-coupled memory cells.",
-                inputs: [
-                    { id: 'btn_1', label: 'BTN 1', state: 1, x: 60, y: 150, layer: 2 },
-                    { id: 'btn_2', label: 'BTN 2', state: 0, x: 60, y: 300, layer: 2 },
-                    { id: 'btn_3', label: 'BTN 3', state: 1, x: 60, y: 450, layer: 2 }
-                ],
-                gates: [
-                    { id: 'l_nand1', type: 'NAND', label: 'NAND [S0]', x: 300, y: 180, layer: 3, inputs: ['btn_1', 'btn_2'], state: 1, tt: ['0|0 -> 1', '0|1 -> 1', '1|0 -> 1', '1|1 -> 0'] },
-                    { id: 'l_nor1', type: 'NOR', label: 'NOR [S1]', x: 300, y: 380, layer: 3, inputs: ['btn_2', 'btn_3'], state: 0, tt: ['0|0 -> 1', '0|1 -> 0', '1|0 -> 0', '1|1 -> 0'] },
-                    { id: 'l_xor1', type: 'XOR', label: 'XOR [Trap]', x: 540, y: 280, layer: 3, inputs: ['l_nand1', 'l_nor1'], state: 1, tt: ['0|0 -> 0', '0|1 -> 1', '1|0 -> 1', '1|1 -> 0'] }
-                ],
-                outputs: [
-                    { id: 'out_servo', label: 'SERVO UNLOCK', state: 1, x: 780, y: 280, layer: 4, from: 'l_xor1' }
-                ],
-                wires: [
-                    { from: 'btn_1', to: 'l_nand1', layer: 2, points: [[60,150],[180,150],[180,160],[300,160]] },
-                    { from: 'btn_2', to: 'l_nand1', layer: 2, points: [[60,300],[180,300],[180,200],[300,200]] },
-                    { from: 'btn_2', to: 'l_nor1', layer: 2, points: [[60,300],[200,300],[200,360],[300,360]] },
-                    { from: 'btn_3', to: 'l_nor1', layer: 2, points: [[60,450],[200,450],[200,400],[300,400]] },
-                    { from: 'l_nand1', to: 'l_xor1', layer: 3, points: [[380,180],[460,180],[460,260],[540,260]] },
-                    { from: 'l_nor1', to: 'l_xor1', layer: 3, points: [[380,380],[460,380],[460,300],[540,300]] },
-                    { from: 'l_xor1', to: 'out_servo', layer: 4, points: [[620,280],[700,280],[700,280],[780,280]] }
-                ]
-            },
-            elevator: {
-                title: "ELEVATOR FLOOR CONTROLLER",
-                desc: "Automated multi-floor elevator controller with priority queuing and floor limit interlocks.",
-                inputs: [
-                    { id: 'flr_1', label: 'CALL F1', state: 0, x: 60, y: 140, layer: 2 },
-                    { id: 'flr_2', label: 'CALL F2', state: 1, x: 60, y: 280, layer: 2 },
-                    { id: 'limit_sw', label: 'LIMIT SW', state: 1, x: 60, y: 420, layer: 2 }
-                ],
-                gates: [
-                    { id: 'e_or', type: 'OR', label: 'OR [Queue]', x: 300, y: 200, layer: 3, inputs: ['flr_1', 'flr_2'], state: 1, tt: ['0|0 -> 0', '0|1 -> 1', '1|0 -> 1', '1|1 -> 1'] },
-                    { id: 'e_nand', type: 'NAND', label: 'NAND [Interlock]', x: 540, y: 280, layer: 3, inputs: ['e_or', 'limit_sw'], state: 0, tt: ['0|0 -> 1', '0|1 -> 1', '1|0 -> 1', '1|1 -> 0'] }
-                ],
-                outputs: [
-                    { id: 'out_winch', label: 'WINCH MOTOR', state: 0, x: 780, y: 280, layer: 4, from: 'e_nand' }
-                ],
-                wires: [
-                    { from: 'flr_1', to: 'e_or', layer: 2, points: [[60,140],[180,140],[180,180],[300,180]] },
-                    { from: 'flr_2', to: 'e_or', layer: 2, points: [[60,280],[180,280],[180,220],[300,220]] },
-                    { from: 'e_or', to: 'e_nand', layer: 3, points: [[380,200],[460,200],[460,260],[540,260]] },
-                    { from: 'limit_sw', to: 'e_nand', layer: 2, points: [[60,420],[460,420],[460,300],[540,300]] },
-                    { from: 'e_nand', to: 'out_winch', layer: 4, points: [[620,280],[700,280],[700,280],[780,280]] }
-                ]
-            },
-            srlatch: {
-                title: "SR LATCH MEMORY CELL",
-                desc: "Set-Reset bistable multivibrator constructed using cross-coupled NOR primitive gates.",
-                inputs: [
-                    { id: 'sr_s', label: 'SET (S)', state: 1, x: 60, y: 180, layer: 2 },
-                    { id: 'sr_r', label: 'RESET (R)', state: 0, x: 60, y: 380, layer: 2 }
-                ],
-                gates: [
-                    { id: 'nor_s', type: 'NOR', label: 'NOR [Q-Bar]', x: 360, y: 180, layer: 3, inputs: ['sr_s', 'nor_r'], state: 0, tt: ['0|0 -> 1', '0|1 -> 0', '1|0 -> 0', '1|1 -> 0'] },
-                    { id: 'nor_r', type: 'NOR', label: 'NOR [Q]', x: 360, y: 380, layer: 3, inputs: ['sr_r', 'nor_s'], state: 1, tt: ['0|0 -> 1', '0|1 -> 0', '1|0 -> 0', '1|1 -> 0'] }
-                ],
-                outputs: [
-                    { id: 'out_q', label: 'Q OUTPUT', state: 1, x: 720, y: 380, layer: 4, from: 'nor_r' }
-                ],
-                wires: [
-                    { from: 'sr_s', to: 'nor_s', layer: 2, points: [[60,180],[200,180],[200,160],[360,160]] },
-                    { from: 'sr_r', to: 'nor_r', layer: 2, points: [[60,380],[200,380],[200,400],[360,400]] },
-                    { from: 'nor_s', to: 'nor_r', layer: 3, points: [[440,180],[500,180],[500,300],[280,300],[280,360],[360,360]] },
-                    { from: 'nor_r', to: 'nor_s', layer: 3, points: [[440,380],[520,380],[520,240],[260,240],[260,200],[360,200]] },
-                    { from: 'nor_r', to: 'out_q', layer: 4, points: [[440,380],[580,380],[580,380],[720,380]] }
-                ]
-            },
-            dff: {
-                title: "D FLIP-FLOP SYNCHRONIZER",
-                desc: "Data edge-triggered flip-flop built entirely from synchronized NAND primitive arrays.",
-                inputs: [
-                    { id: 'd_data', label: 'DATA (D)', state: 1, x: 60, y: 200, layer: 2 },
-                    { id: 'd_clk', label: 'CLOCK', state: 1, x: 60, y: 360, layer: 2 }
-                ],
-                gates: [
-                    { id: 'd_nand1', type: 'NAND', label: 'NAND [Stage 1]', x: 300, y: 200, layer: 3, inputs: ['d_data', 'd_clk'], state: 0, tt: ['0|0 -> 1', '0|1 -> 1', '1|0 -> 1', '1|1 -> 0'] },
-                    { id: 'd_nand2', type: 'NAND', label: 'NAND [Stage 2]', x: 540, y: 280, layer: 3, inputs: ['d_nand1', 'd_clk'], state: 1, tt: ['0|0 -> 1', '0|1 -> 1', '1|0 -> 1', '1|1 -> 0'] }
-                ],
-                outputs: [
-                    { id: 'out_q', label: 'Q OUT', state: 1, x: 780, y: 280, layer: 4, from: 'd_nand2' }
-                ],
-                wires: [
-                    { from: 'd_data', to: 'd_nand1', layer: 2, points: [[60,200],[180,200],[180,180],[300,180]] },
-                    { from: 'd_clk', to: 'd_nand1', layer: 2, points: [[60,360],[180,360],[180,220],[300,220]] },
-                    { from: 'd_nand1', to: 'd_nand2', layer: 3, points: [[380,200],[460,200],[460,260],[540,260]] },
-                    { from: 'd_clk', to: 'd_nand2', layer: 2, points: [[60,360],[480,360],[480,300],[540,300]] },
-                    { from: 'd_nand2', to: 'out_q', layer: 4, points: [[620,280],[700,280],[700,280],[780,280]] }
-                ]
-            },
-            adder: {
-                title: "FULL ADDER ASSEMBLY",
-                desc: "Full adder circuit combining XOR and NAND primitives to compute Sum and Carry-Out bits.",
-                inputs: [
-                    { id: 'fa_a', label: 'IN A', state: 1, x: 60, y: 140, layer: 2 },
-                    { id: 'fa_b', label: 'IN B', state: 1, x: 60, y: 280, layer: 2 },
-                    { id: 'fa_cin', label: 'CARRY IN', state: 0, x: 60, y: 420, layer: 2 }
-                ],
-                gates: [
-                    { id: 'fa_xor1', type: 'XOR', label: 'XOR [A^B]', x: 300, y: 200, layer: 3, inputs: ['fa_a', 'fa_b'], state: 0, tt: ['0|0 -> 0', '0|1 -> 1', '1|0 -> 1', '1|1 -> 0'] },
-                    { id: 'fa_xor2', type: 'XOR', label: 'XOR [Sum]', x: 540, y: 280, layer: 3, inputs: ['fa_xor1', 'fa_cin'], state: 1, tt: ['0|0 -> 0', '0|1 -> 1', '1|0 -> 1', '1|1 -> 0'] },
-                    { id: 'fa_nand', type: 'NAND', label: 'NAND [Carry]', x: 540, y: 120, layer: 3, inputs: ['fa_a', 'fa_b'], state: 0, tt: ['0|0 -> 1', '0|1 -> 1', '1|0 -> 1', '1|1 -> 0'] }
-                ],
-                outputs: [
-                    { id: 'out_sum', label: 'SUM (Q)', state: 1, x: 780, y: 280, layer: 4, from: 'fa_xor2' },
-                    { id: 'out_cout', label: 'CARRY OUT', state: 0, x: 780, y: 120, layer: 4, from: 'fa_nand' }
-                ],
-                wires: [
-                    { from: 'fa_a', to: 'fa_xor1', layer: 2, points: [[60,140],[180,140],[180,180],[300,180]] },
-                    { from: 'fa_b', to: 'fa_xor1', layer: 2, points: [[60,280],[180,280],[180,220],[300,220]] },
-                    { from: 'fa_xor1', to: 'fa_xor2', layer: 3, points: [[380,200],[460,200],[460,260],[540,260]] },
-                    { from: 'fa_cin', to: 'fa_xor2', layer: 2, points: [[60,420],[460,420],[460,300],[540,300]] },
-                    { from: 'fa_a', to: 'fa_nand', layer: 2, points: [[60,140],[300,140],[300,100],[540,100]] },
-                    { from: 'fa_b', to: 'fa_nand', layer: 2, points: [[60,280],[300,280],[300,140],[540,140]] },
-                    { from: 'fa_xor2', to: 'out_sum', layer: 4, points: [[620,280],[700,280],[700,280],[780,280]] },
-                    { from: 'fa_nand', to: 'out_cout', layer: 4, points: [[620,120],[700,120],[700,120],[780,120]] }
-                ]
-            }
-        };
-
-        let currentKey = 'alu';
-        let currentLayer = 'all';
-        let zoomScale = 1;
-        let panX = 0;
-        let panY = 0;
-        let isDragging = false;
-        let startX = 0;
-        let startY = 0;
-
-        // Render Circuit Diagram on SVG
-        function renderCircuit() {
-            const bp = blueprints[currentKey];
-            document.getElementById('status-blueprint-title').innerText = bp.title;
-            document.getElementById('status-blueprint-desc').innerText = bp.desc;
-
-            const wiresLayer = document.getElementById('wires-layer');
-            const nodesLayer = document.getElementById('nodes-layer');
-            wiresLayer.innerHTML = '';
-            nodesLayer.innerHTML = '';
-
-            // Render Wires with Orthogonal Routing Lines & Junction Nodes
-            bp.wires.forEach(w => {
-                if (currentLayer !== 'all' && w.layer !== parseInt(currentLayer)) return;
-                
-                let active = false;
-                // Check if wire is connected to active source
-                const srcInput = bp.inputs.find(i => i.id === w.from);
-                const srcGate = bp.gates.find(g => g.id === w.from);
-                if (srcInput && srcInput.state === 1) active = true;
-                if (srcGate && srcGate.state === 1) active = true;
-
-                const color = active ? '#ff0033' : '#333333';
-                const glow = active ? 'filter: url(#glow);' : '';
-
-                // Build SVG path string from orthogonal points
-                let pathStr = `M ${w.points[0][0]} ${w.points[0][1]}`;
-                for (let i = 1; i < w.points.length; i++) {
-                    pathStr += ` L ${w.points[i][0]} ${w.points[i][1]}`;
-                }
-
-                const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-                path.setAttribute('d', pathStr);
-                path.setAttribute('fill', 'none');
-                path.setAttribute('stroke', color);
-                path.setAttribute('stroke-width', active ? '3' : '2');
-                path.setAttribute('style', glow);
-                wiresLayer.appendChild(path);
-
-                // Add distinct junction node circle at bends
-                w.points.forEach((pt, idx) => {
-                    if (idx > 0 && idx < w.points.length - 1) {
-                        const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-                        circle.setAttribute('cx', pt[0]);
-                        circle.setAttribute('cy', pt[1]);
-                        circle.setAttribute('r', '3');
-                        circle.setAttribute('fill', active ? '#ff0033' : '#555555');
-                        wiresLayer.appendChild(circle);
-                    }
-                });
-            });
-
-            // Render Inputs (Far Left)
-            bp.inputs.forEach(inp => {
-                if (currentLayer !== 'all' && inp.layer !== parseInt(currentLayer)) return;
-                const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-                g.setAttribute('transform', `translate(${inp.x - 30}, ${inp.y - 20})`);
-                g.setAttribute('cursor', 'pointer');
-                g.onclick = () => { inp.state = inp.state === 1 ? 0 : 1; evaluateCircuit(); renderCircuit(); inspectNode('input', inp); };
-
-                const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-                rect.setAttribute('width', '60');
-                rect.setAttribute('height', '40');
-                rect.setAttribute('rx', '6');
-                rect.setAttribute('fill', inp.state === 1 ? '#ff0033' : '#080808');
-                rect.setAttribute('stroke', inp.state === 1 ? '#ffffff' : '#333333');
-                rect.setAttribute('stroke-width', '2');
-                if (inp.state === 1) rect.setAttribute('class', 'glow-red-sm');
-
-                const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-                text.setAttribute('x', '30');
-                text.setAttribute('y', '25');
-                text.setAttribute('fill', '#ffffff');
-                text.setAttribute('font-family', 'JetBrains Mono');
-                text.setAttribute('font-size', '12');
-                text.setAttribute('font-weight', 'bold');
-                text.setAttribute('text-anchor', 'middle');
-                text.textContent = `${inp.label}:${inp.state}`;
-
-                g.appendChild(rect);
-                g.appendChild(text);
-                nodesLayer.appendChild(g);
-            });
-
-            // Render Gates (Middle Columns - NAND, NOR, OR, XOR, NXOR)
-            bp.gates.forEach(gate => {
-                if (currentLayer !== 'all' && gate.layer !== parseInt(currentLayer)) return;
-                const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-                g.setAttribute('transform', `translate(${gate.x - 45}, ${gate.y - 25})`);
-                g.setAttribute('cursor', 'pointer');
-                g.onclick = () => inspectNode('gate', gate);
-
-                const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-                rect.setAttribute('width', '90');
-                rect.setAttribute('height', '50');
-                rect.setAttribute('rx', '6');
-                rect.setAttribute('fill', gate.state === 1 ? '#150005' : '#080808');
-                rect.setAttribute('stroke', gate.state === 1 ? '#ff0033' : '#333333');
-                rect.setAttribute('stroke-width', gate.state === 1 ? '2' : '1');
-                if (gate.state === 1) rect.setAttribute('class', 'glow-red-sm');
-
-                const title = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-                title.setAttribute('x', '45');
-                title.setAttribute('y', '20');
-                title.setAttribute('fill', gate.state === 1 ? '#ff0033' : '#ffffff');
-                title.setAttribute('font-family', 'JetBrains Mono');
-                title.setAttribute('font-size', '11');
-                title.setAttribute('font-weight', 'bold');
-                title.setAttribute('text-anchor', 'middle');
-                title.textContent = gate.type;
-
-                const sub = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-                sub.setAttribute('x', '45');
-                sub.setAttribute('y', '36');
-                sub.setAttribute('fill', '#888888');
-                sub.setAttribute('font-family', 'JetBrains Mono');
-                sub.setAttribute('font-size', '9');
-                sub.setAttribute('text-anchor', 'middle');
-                sub.textContent = `OUT: ${gate.state}`;
-
-                g.appendChild(rect);
-                g.appendChild(title);
-                g.appendChild(sub);
-                nodesLayer.appendChild(g);
-            });
-
-            // Render Outputs (Far Right)
-            bp.outputs.forEach(out => {
-                if (currentLayer !== 'all' && out.layer !== parseInt(currentLayer)) return;
-                const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-                g.setAttribute('transform', `translate(${out.x - 35}, ${out.y - 20})`);
-                g.setAttribute('cursor', 'pointer');
-                g.onclick = () => inspectNode('output', out);
-
-                const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-                rect.setAttribute('width', '70');
-                rect.setAttribute('height', '40');
-                rect.setAttribute('rx', '20');
-                rect.setAttribute('fill', out.state === 1 ? '#ff0033' : '#080808');
-                rect.setAttribute('stroke', out.state === 1 ? '#ffffff' : '#333333');
-                rect.setAttribute('stroke-width', '2');
-                if (out.state === 1) rect.setAttribute('class', 'glow-red');
-
-                const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-                text.setAttribute('x', '35');
-                text.setAttribute('y', '25');
-                text.setAttribute('fill', '#ffffff');
-                text.setAttribute('font-family', 'JetBrains Mono');
-                text.setAttribute('font-size', '11');
-                text.setAttribute('font-weight', 'bold');
-                text.setAttribute('text-anchor', 'middle');
-                text.textContent = out.state === 1 ? 'HIGH' : 'LOW';
-
-                g.appendChild(rect);
-                g.appendChild(text);
-                nodesLayer.appendChild(g);
-            });
-        }
-
-        // Evaluate boolean logic for primitive gates (NAND, NOR, OR, XOR, NXOR)
-        function evaluateCircuit() {
-            const bp = blueprints[currentKey];
-            bp.gates.forEach(gate => {
-                let val1 = 0, val2 = 0;
-                const inp1 = gate.inputs[0];
-                const inp2 = gate.inputs[1];
-
-                const findVal = (id) => {
-                    const i = bp.inputs.find(x => x.id === id);
-                    if (i) return i.state;
-                    const g = bp.gates.find(x => x.id === id);
-                    if (g) return g.state;
-                    return 0;
-                };
-
-                val1 = findVal(inp1);
-                val2 = findVal(inp2);
-
-                if (gate.type === 'NAND') {
-                    gate.state = (val1 === 1 && val2 === 1) ? 0 : 1;
-                } else if (gate.type === 'NOR') {
-                    gate.state = (val1 === 0 && val2 === 0) ? 1 : 0;
-                } else if (gate.type === 'OR') {
-                    gate.state = (val1 === 1 || val2 === 1) ? 1 : 0;
-                } else if (gate.type === 'XOR') {
-                    gate.state = (val1 !== val2) ? 1 : 0;
-                } else if (gate.type === 'NXOR') {
-                    gate.state = (val1 === val2) ? 1 : 0;
-                }
-            });
-
-            bp.outputs.forEach(out => {
-                const srcGate = bp.gates.find(g => g.id === out.from);
-                if (srcGate) out.state = srcGate.state;
-            });
-        }
-
-        // Switch Blueprints
-        function switchBlueprint(key) {
-            currentKey = key;
-            ['alu', 'lock', 'elevator', 'srlatch', 'dff', 'adder'].forEach(k => {
-                const btn = document.getElementById(`nav-${k}`);
-                if (k === key) {
-                    btn.className = "nav-btn font-mono text-xs uppercase tracking-wider px-3 py-1.5 rounded transition-all bg-cyberred text-white font-bold glow-red-sm";
-                } else {
-                    btn.className = "nav-btn font-mono text-xs uppercase tracking-wider px-3 py-1.5 rounded transition-all text-cybermuted hover:text-white bg-cybercard border border-cyberborder";
-                }
-            });
-            evaluateCircuit();
-            renderCircuit();
-        }
-
-        // Multi-Layer Selector
-        function setLayer(layer) {
-            currentLayer = layer;
-            ['all', 1, 2, 3, 4].forEach(l => {
-                const btn = document.getElementById(`layer-btn-${l}`);
-                if (btn) {
-                    if (l === layer) {
-                        btn.className = "px-3 py-1.5 rounded font-mono text-[11px] uppercase tracking-wider bg-cyberred text-white font-bold transition-all";
-                    } else {
-                        btn.className = "px-3 py-1.5 rounded font-mono text-[11px] uppercase tracking-wider bg-cyberblack text-cybermuted hover:text-white transition-all border border-cyberborder";
-                    }
-                }
-            });
-            renderCircuit();
-        }
-
-        // Inspector Sidebar Updates
-        function inspectNode(type, item) {
-            document.getElementById('inspector-status').innerText = type.toUpperCase();
-            document.getElementById('inspector-title').innerText = item.label || item.type;
-            
-            if (type === 'gate') {
-                document.getElementById('inspector-desc').innerText = `Primitive ${item.type} gate evaluating signals from inputs [${item.inputs.join(', ')}]. Current output state is ${item.state}.`;
-                document.getElementById('inspector-gate-type').innerText = item.type;
-                const ttContainer = document.getElementById('inspector-truthtable');
-                ttContainer.innerHTML = item.tt.map(row => `<div class="flex justify-between text-cybermuted bg-cybercard p-2 rounded"><span>${row.split('->')[0]}</span><span class="text-white font-bold">OUT: ${row.split('->')[1]}</span></div>`).join('');
-            } else if (type === 'input') {
-                document.getElementById('inspector-desc').innerText = `Primary signal input line. Click the node on canvas or toggle below to invert signal state. Current state: ${item.state}.`;
-                document.getElementById('inspector-gate-type').innerText = 'INPUT BUS';
-                document.getElementById('inspector-truthtable').innerHTML = `<div class="text-cybermuted p-2">Active Signal Level: ${item.state === 1 ? 'HIGH (5V)' : 'LOW (0V)'}</div>`;
-            } else if (type === 'output') {
-                document.getElementById('inspector-desc').innerText = `Terminal output node driven by gate [${item.from}]. Active signal state: ${item.state}.`;
-                document.getElementById('inspector-gate-type').innerText = 'ACTUATOR';
-                document.getElementById('inspector-truthtable').innerHTML = `<div class="text-cybermuted p-2">Terminal State: ${item.state === 1 ? 'TRIGGERED' : 'STANDBY'}</div>`;
-            }
-        }
-
-        // Toggle all inputs
-        function toggleAllInputs() {
-            const bp = blueprints[currentKey];
-            bp.inputs.forEach(i => i.state = i.state === 1 ? 0 : 1);
-            evaluateCircuit();
-            renderCircuit();
-        }
-
-        // Pan & Zoom Canvas Controls
-        const container = document.getElementById('canvas-container');
-        const zoomGroup = document.getElementById('zoom-pan-group');
-
-        container.addEventListener('mousedown', (e) => {
-            isDragging = true;
-            startX = e.clientX - panX;
-            startY = e.clientY - panY;
-        });
-
-        window.addEventListener('mousemove', (e) => {
-            if (!isDragging) return;
-            panX = e.clientX - startX;
-            panY = e.clientY - startY;
-            updateTransform();
-        });
-
-        window.addEventListener('mouseup', () => { isDragging = false; });
-
-        container.addEventListener('wheel', (e) => {
-            e.preventDefault();
-            const delta = e.deltaY < 0 ? 0.1 : -0.1;
-            zoomCanvas(delta);
-        }, { passive: false });
-
-        function zoomCanvas(delta) {
-            zoomScale = Math.max(0.5, Math.min(2.5, zoomScale + delta));
-            updateTransform();
-        }
-
-        function resetZoom() {
-            zoomScale = 1;
-            panX = 0;
-            panY = 0;
-            updateTransform();
-        }
-
-        function updateTransform() {
-            zoomGroup.setAttribute('transform', `translate(${panX}, ${panY}) scale(${zoomScale})`);
-        }
-
-        // Initial load
-        window.onload = function() {
-            evaluateCircuit();
-            renderCircuit();
-        };
-    </script>
+<body>
+  <main class="shell">
+    <header class="topbar"><div class="brand"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span>LOGIC / LAB</span></div><div class="top-meta">A hands-on field guide <span aria-hidden="true">&nbsp; / &nbsp;</span> Digital systems 001</div></header>
+    <section class="intro" aria-labelledby="page-title"><div><div class="eyebrow">A little electricity, a lot of logic</div><h1 id="page-title">Circuits, made <em>visible.</em></h1></div><p class="intro-copy">Start with a few bits. Follow the wires. See how simple gates add up to useful machines.</p></section>
+    <nav class="lesson-nav" aria-label="Circuit lessons" id="lesson-tabs"></nav>
+    <section class="workbench" aria-label="Interactive circuit workbench">
+      <header class="workbench-head"><div class="workbench-title"><h2 id="circuit-title"></h2><p id="circuit-subtitle"></p></div><div class="live-tag"><i class="live-dot" aria-hidden="true"></i> Live circuit</div></header>
+      <div class="workspace"><aside class="side-panel input-panel" aria-label="Circuit inputs"><h3 class="panel-kicker">01 / Inputs</h3><div id="input-controls"></div><p class="input-hint">FLIP A SWITCH<br>TO SEND A 1</p></aside><div class="diagram-wrap"><div class="diagram-topline"><span>Signal path</span><span>0 = low &nbsp; / &nbsp; 1 = high</span></div><svg id="circuit-diagram" viewBox="0 0 1000 600" role="img" aria-label="Interactive logic circuit diagram" preserveAspectRatio="xMidYMid meet"></svg></div><aside class="side-panel output-panel" aria-label="Circuit outputs"><h3 class="panel-kicker">03 / Outputs</h3><div id="output-readouts"></div><div class="output-equation"><span>Boolean recipe</span><strong id="equation"></strong></div><p class="output-note" id="output-note"></p></aside></div>
+    </section>
+    <div class="below-grid"><section class="info-panel" aria-labelledby="lesson-heading"><div class="section-heading"><h3 id="lesson-heading">How it comes together</h3><span id="lesson-index"></span></div><p class="lesson-text" id="lesson-description"></p><p class="lesson-use"><strong>In practice</strong><span id="lesson-use"></span></p><div class="recipe" id="recipe-steps"></div></section><section class="info-panel" aria-labelledby="reference-heading"><div class="section-heading"><h3 id="reference-heading">Gate reference</h3><span>Tap a gate to inspect</span></div><div class="gate-list" id="gate-list"></div><div id="gate-truth"></div></section></div>
+    <footer class="footer"><span>Boolean logic / made tangible</span><span>Bits in. Behavior out.</span></footer>
+  </main>
+  <script>
+    const lessons=[
+      {title:"Half adder",subtitle:"Add two bits. Keep the overflow.",inputs:["A","B"],outputs:["Sum","Carry"],equation:"Sum = A XOR B<br>Carry = A AND B",note:"The carry is the overflow bit: it turns on only when both inputs are 1.",description:"A half adder adds two single bits. XOR gives the sum without overflow; AND catches the case where both bits are high and sends a carry to the next column.",recipe:["A XOR B → Sum","A AND B → Carry"],gates:[{id:"sum",type:"XOR",inputs:["A","B"],x:370,y:220},{id:"carry",type:"AND",inputs:["A","B"],x:370,y:400}],outputsFrom:{Sum:"sum",Carry:"carry"}},
+      {title:"Full adder",subtitle:"Add two bits and a carry-in.",inputs:["A","B","Cin"],outputs:["Sum","Carry"],equation:"Sum = (A XOR B) XOR Cin<br>Carry = (A AND B) OR (Cin AND (A XOR B))",note:"Two half-adders plus one OR gate make a full adder.",description:"A full adder includes a carry from the previous column. First XOR A and B, then XOR in Cin. Two AND gates find the carry cases; OR combines them.",recipe:["A XOR B → partial sum","partial XOR Cin → Sum","(A AND B) OR (partial AND Cin) → Carry"],gates:[{id:"partial",type:"XOR",inputs:["A","B"],x:225,y:180},{id:"sum",type:"XOR",inputs:["partial","Cin"],x:510,y:180},{id:"both",type:"AND",inputs:["A","B"],x:225,y:390},{id:"carry-in",type:"AND",inputs:["partial","Cin"],x:510,y:390},{id:"carry",type:"OR",inputs:["both","carry-in"],x:760,y:390}],outputsFrom:{Sum:"sum",Carry:"carry"}},
+      {title:"2:1 multiplexer",subtitle:"One switch chooses which bit gets through.",inputs:["A","B","S"],outputs:["Out"],equation:"Out = (A AND NOT S) OR (B AND S)<br>Built here with NAND gates only",note:"A NAND gate with both inputs tied together acts as an inverter.",description:"A multiplexer routes one of two data bits to the output. The select bit S chooses the path. This version uses NAND gates only, with one NAND acting as a NOT gate.",recipe:["NAND S,S → NOT S","NAND A,NOT S → path A","NAND B,S → path B","NAND paths → Out"],gates:[{id:"not-s",type:"NAND",inputs:["S","S"],x:210,y:180},{id:"path-a",type:"NAND",inputs:["A","not-s"],x:465,y:285},{id:"path-b",type:"NAND",inputs:["B","S"],x:465,y:440},{id:"out",type:"NAND",inputs:["path-a","path-b"],x:735,y:360}],outputsFrom:{Out:"out"}},
+      {title:"Bit equality",subtitle:"Are these two bits the same?",inputs:["A","B"],outputs:["Equal"],equation:"Equal = A XNOR B<br>XNOR = NOT (A XOR B)",note:"XNOR lights up when both inputs match: 00 or 11.",description:"An XNOR gate is an equality checker for two bits. It outputs 1 when both inputs match, and 0 when they differ. It is the XOR gate with its result inverted.",recipe:["A XOR B → different?","invert result → Equal"],gates:[{id:"equal",type:"XNOR",inputs:["A","B"],x:420,y:300}],outputsFrom:{Equal:"equal"}},
+      {title:"NAND logic",subtitle:"A tiny gate with a surprisingly big job.",inputs:["A","B"],outputs:["Out"],equation:"Out = NOT (A AND B)<br>NAND = universal gate",note:"With enough NAND gates, you can build any digital circuit.",description:"NAND is an AND gate with an inverted output. It is called universal because combinations of NAND gates can reproduce every other Boolean gate and build any digital circuit.",recipe:["A AND B → invert result","Only 1,1 gives output 0"],gates:[{id:"nand",type:"NAND",inputs:["A","B"],x:420,y:300}],outputsFrom:{Out:"nand"}},
+      {title:"NOR logic",subtitle:"The inverse of OR: quiet unless both inputs are low.",inputs:["A","B"],outputs:["Out"],equation:"Out = NOT (A OR B)<br>Only 0,0 gives output 1",note:"NOR is also universal: NOR gates alone can build any Boolean circuit.",description:"A NOR gate combines OR with an inverted output. It stays low if either input is high, so its output is 1 only when both inputs are 0.",recipe:["A OR B → combine inputs","Invert result → Out"],gates:[{id:"nor",type:"NOR",inputs:["A","B"],x:420,y:300}],outputsFrom:{Out:"nor"}},
+      {title:"3-bit parity",subtitle:"Spot whether an odd number of bits are on.",inputs:["A","B","C"],outputs:["Odd"],equation:"Odd = A XOR B XOR C<br>1 means an odd count of 1s",note:"XOR gates can be chained to check parity across any number of bits.",description:"A parity checker reports whether the input contains an odd number of 1s. Chain two XOR gates: the first compares A and B, then the second folds in C.",recipe:["A XOR B → partial parity","partial XOR C → Odd"],gates:[{id:"partial",type:"XOR",inputs:["A","B"],x:280,y:240},{id:"odd",type:"XOR",inputs:["partial","C"],x:580,y:330}],outputsFrom:{Odd:"odd"}},
+      {title:"Majority vote",subtitle:"Output 1 when at least two inputs agree on 1.",inputs:["A","B","C"],outputs:["Majority"],equation:"Majority = (A AND B) OR<br>(A AND C) OR (B AND C)",note:"This is the logic behind a three-input majority voter.",description:"Three pairwise AND gates detect each way two inputs can be high. Two OR gates combine those cases, so the output turns on when at least two inputs are 1.",recipe:["A AND B, A AND C, B AND C","OR the pair results → Majority"],gates:[{id:"ab",type:"AND",inputs:["A","B"],x:220,y:160},{id:"ac",type:"AND",inputs:["A","C"],x:220,y:310},{id:"bc",type:"AND",inputs:["B","C"],x:220,y:460},{id:"first-or",type:"OR",inputs:["ab","ac"],x:510,y:235},{id:"majority",type:"OR",inputs:["first-or","bc"],x:770,y:365}],outputsFrom:{Majority:"majority"}},
+      {title:"OR from NANDs",subtitle:"Build a familiar gate from universal parts.",inputs:["A","B"],outputs:["Out"],equation:"Out = NAND(NAND(A,A), NAND(B,B))<br>By De Morgan's law, this equals A OR B",note:"Tying a NAND gate's inputs together makes an inverter.",description:"A and B are inverted separately using two NAND gates with tied inputs. A final NAND combines those inverted bits, producing the same truth table as OR.",recipe:["NAND A,A → NOT A","NAND B,B → NOT B","NAND NOT A,NOT B → Out"],gates:[{id:"not-a",type:"NAND",inputs:["A","A"],x:220,y:210},{id:"not-b",type:"NAND",inputs:["B","B"],x:220,y:390},{id:"or",type:"NAND",inputs:["not-a","not-b"],x:540,y:300}],outputsFrom:{Out:"or"}},
+      {title:"1-bit comparator",subtitle:"Tell whether A is greater than B.",inputs:["A","B"],outputs:["A > B"],equation:"A > B = A AND NOT B<br>Built using NAND gates only",note:"For one-bit numbers, A is greater only in the 1,0 case.",description:"A is greater than B only when A is 1 and B is 0. NAND gates first invert B, then build the AND condition using a NAND followed by a tied-input NAND inverter.",recipe:["NAND B,B → NOT B","NAND A,NOT B → inverted result","NAND result,result → A > B"],gates:[{id:"not-b",type:"NAND",inputs:["B","B"],x:220,y:370},{id:"not-greater",type:"NAND",inputs:["A","not-b"],x:500,y:270},{id:"greater",type:"NAND",inputs:["not-greater","not-greater"],x:770,y:310}],outputsFrom:{"A > B":"greater"}},
+      {title:"Half subtractor",subtitle:"Subtract one bit without a borrow-in.",inputs:["A","B"],outputs:["Difference","Borrow"],equation:"Difference = A XOR B<br>Borrow = NOT A AND B",note:"Borrow turns on only when subtracting 1 from 0.",description:"A half subtractor calculates A minus B. XOR gives the difference bit, while an inverted A combined with B detects when the subtraction needs to borrow.",recipe:["A XOR B → Difference","NAND A,A → NOT A","NOT A AND B → Borrow"],gates:[{id:"difference",type:"XOR",inputs:["A","B"],x:500,y:190},{id:"not-a",type:"NAND",inputs:["A","A"],x:220,y:390},{id:"borrow",type:"AND",inputs:["not-a","B"],x:500,y:390}],outputsFrom:{Difference:"difference",Borrow:"borrow"}},
+      {title:"2-to-4 decoder",subtitle:"Turn a two-bit address into one active line.",inputs:["A","B"],outputs:["Y0","Y1","Y2","Y3"],equation:"Y0 = NOT A AND NOT B<br>Y1 = NOT A AND B<br>Y2 = A AND NOT B<br>Y3 = A AND B",note:"Exactly one output is high for each input address.",description:"A decoder translates a compact binary input into a one-hot output. Each AND gate recognizes one address combination, while two NAND gates tied to themselves provide the inverted input bits.",recipe:["NAND A,A → NOT A","NAND B,B → NOT B","Four AND gates → decode 00, 01, 10, 11"],gates:[{id:"not-a",type:"NAND",inputs:["A","A"],x:210,y:190},{id:"not-b",type:"NAND",inputs:["B","B"],x:210,y:410},{id:"y0",type:"AND",inputs:["not-a","not-b"],x:610,y:150},{id:"y1",type:"AND",inputs:["not-a","B"],x:610,y:250},{id:"y2",type:"AND",inputs:["A","not-b"],x:610,y:350},{id:"y3",type:"AND",inputs:["A","B"],x:610,y:450}],outputsFrom:{Y0:"y0",Y1:"y1",Y2:"y2",Y3:"y3"}},
+      {title:"Security alarm",subtitle:"Sound the alarm only when armed and a sensor trips.",inputs:["Armed","Door","Window"],outputs:["Alarm"],equation:"Alarm = Armed AND (Door OR Window)",note:"The armed input acts as a master enable for both sensors.",description:"An OR gate combines two sensor signals. An AND gate then checks the system is armed before sending the alarm output.",recipe:["Door OR Window → sensor activity","Armed AND activity → Alarm"],gates:[{id:"activity",type:"OR",inputs:["Door","Window"],x:300,y:390},{id:"alarm",type:"AND",inputs:["Armed","activity"],x:620,y:300}],outputsFrom:{Alarm:"alarm"}},
+      {title:"XOR from NANDs",subtitle:"Build a difference detector from universal gates.",inputs:["A","B"],outputs:["Out"],equation:"Out = A XOR B<br>Made from four NAND gates",note:"This pattern is useful when a design is restricted to NAND cells.",description:"XOR is high when its inputs differ. Four NAND gates can make it by combining an inverted shared term with the two input paths.",recipe:["NAND A,B → shared term","NAND A,shared; NAND B,shared","NAND both paths → XOR"],gates:[{id:"shared",type:"NAND",inputs:["A","B"],x:220,y:300},{id:"left",type:"NAND",inputs:["A","shared"],x:470,y:180},{id:"right",type:"NAND",inputs:["B","shared"],x:470,y:420},{id:"xor",type:"NAND",inputs:["left","right"],x:760,y:300}],outputsFrom:{Out:"xor"}}
+    ];
+    function makeRippleAdder(bits){
+      const gates=[];
+      for(let bit=0;bit<bits;bit++){
+        const x=130+bit*300,y=100+bit*165,carryIn=bit===0?"Cin":`carry${bit}`;
+        gates.push({id:`partial${bit}`,type:"XOR",inputs:[`A${bit}`,`B${bit}`],x,y});
+        gates.push({id:`sum${bit}`,type:"XOR",inputs:[`partial${bit}`,carryIn],x:x+125,y});
+        gates.push({id:`generate${bit}`,type:"AND",inputs:[`A${bit}`,`B${bit}`],x,y:y+85});
+        gates.push({id:`propagate${bit}`,type:"AND",inputs:[`partial${bit}`,carryIn],x:x+125,y:y+85});
+        gates.push({id:`carry${bit+1}`,type:"OR",inputs:[`generate${bit}`,`propagate${bit}`],x:x+250,y:y+85});
+      }
+      const outputs=Array.from({length:bits},(_,bit)=>`Sum${bit}`);
+      return{title:`${bits}-bit ripple adder`,subtitle:`Add two ${bits}-bit numbers and carry between columns.`,inputs:[...Array.from({length:bits},(_,bit)=>`A${bit}`),...Array.from({length:bits},(_,bit)=>`B${bit}`),"Cin"],outputs:[...outputs,`Cout`],equation:`Sumi = Ai XOR Bi XOR carry-in<br>Cout = final carry from the highest bit`,note:"Each column waits for the carry from the column before it, like hand addition in binary.",description:`${bits} full-adder stages connect in a chain. Every stage calculates one sum bit and passes its carry to the next stage.`,recipe:["XOR each A/B pair → partial sums","Add each carry-in with a second XOR","Combine AND carry cases → next stage"],gates,outputsFrom:Object.fromEntries([...outputs.map((name,bit)=>[name,`sum${bit}`]),["Cout",`carry${bits}`]]),diagramWidth:bits===3?1250:1000};
+    }
+    function makeComparator(bits){
+      const gates=[];
+      for(let bit=0;bit<bits;bit++){
+        const y=110+bit*(390/(bits-1));
+        gates.push({id:`notB${bit}`,type:"NAND",inputs:[`B${bit}`,`B${bit}`],x:170,y});
+        gates.push({id:`greater${bit}`,type:"AND",inputs:[`A${bit}`,`notB${bit}`],x:390,y:y-25});
+        gates.push({id:`equal${bit}`,type:"XNOR",inputs:[`A${bit}`,`B${bit}`],x:390,y:y+35});
+      }
+      let greater="greater0",equal="equal0";
+      for(let bit=1;bit<bits;bit++){
+        const y=110+bit*(390/(bits-1));
+        gates.push({id:`lowerWhenEqual${bit}`,type:"AND",inputs:[`equal${bit}`,greater],x:630,y:y-40});
+        gates.push({id:`equalPrefix${bit}`,type:"AND",inputs:[`equal${bit}`,equal],x:630,y:y+55});
+        gates.push({id:`greaterPrefix${bit}`,type:"OR",inputs:[`greater${bit}`,`lowerWhenEqual${bit}`],x:810,y:y+8});
+        greater=`greaterPrefix${bit}`;equal=`equalPrefix${bit}`;
+      }
+      return{title:`${bits}-bit comparator`,subtitle:`Compare two ${bits}-bit numbers, from the highest bit down.`,inputs:[...Array.from({length:bits},(_,bit)=>`A${bits-bit-1}`),...Array.from({length:bits},(_,bit)=>`B${bits-bit-1}`)],outputs:["A > B"],equation:"A > B = first differing bit has A=1<br>Equal higher bits let the comparison continue",note:"The most significant differing bit decides which number is larger.",description:`Each bit pair produces a greater-than and equality signal. Equality passes the decision to the next lower bit; a higher differing bit takes priority.`,recipe:["Compare each pair for greater-than and equality","Pass lower result only while this pair is equal","Use the highest differing bit as the answer"],gates,outputsFrom:{"A > B":greater},diagramWidth:bits===3?1080:1120};
+    }
+    const advancedLessons=[
+      {title:"Full subtractor",subtitle:"Subtract two bits and an incoming borrow.",inputs:["A","B","Bin"],outputs:["Difference","Borrow"],equation:"Difference = A XOR B XOR Bin<br>Borrow = (!A AND B) OR (!(A XOR B) AND Bin)",note:"Borrow-in lets this subtractor connect to the next binary column.",description:"A full subtractor handles A minus B minus a borrow from the previous column. XOR gates calculate the difference; two borrow cases are combined with OR.",recipe:["A XOR B → partial difference","XOR partial with Bin → Difference","Combine both borrow cases → Borrow"],gates:[{id:"partial",type:"XOR",inputs:["A","B"],x:220,y:170},{id:"difference",type:"XOR",inputs:["partial","Bin"],x:500,y:170},{id:"not-a",type:"NAND",inputs:["A","A"],x:220,y:410},{id:"borrow-a",type:"AND",inputs:["not-a","B"],x:500,y:350},{id:"same",type:"XNOR",inputs:["A","B"],x:220,y:270},{id:"borrow-bin",type:"AND",inputs:["same","Bin"],x:500,y:470},{id:"borrow",type:"OR",inputs:["borrow-a","borrow-bin"],x:770,y:410}],outputsFrom:{Difference:"difference",Borrow:"borrow"}},
+      makeRippleAdder(2),
+      {title:"Gated D register",subtitle:"Choose new data or keep the previous bit.",inputs:["Enable","D","Qprev"],outputs:["Qnext"],equation:"Qnext = (Enable AND D)<br>OR (NOT Enable AND Qprev)",note:"This models one update step of a level-sensitive storage element.",description:"When Enable is 1, the next state follows D. When Enable is 0, the circuit feeds the previous state back as the next state, modeling a gated latch update.",recipe:["NAND Enable,D → inverted load","NAND Enable,Enable → NOT Enable","NAND NOT Enable,Qprev → inverted hold","NAND load,hold → Qnext"],gates:[{id:"load",type:"NAND",inputs:["Enable","D"],x:230,y:190},{id:"not-enable",type:"NAND",inputs:["Enable","Enable"],x:230,y:410},{id:"hold",type:"NAND",inputs:["not-enable","Qprev"],x:500,y:410},{id:"next",type:"NAND",inputs:["load","hold"],x:770,y:300}],outputsFrom:{Qnext:"next"}},
+      {title:"2-bit up-counter",subtitle:"Advance a two-bit count when enabled.",inputs:["Q1","Q0","Enable"],outputs:["Next1","Next0"],equation:"Next0 = Q0 XOR Enable<br>Next1 = Q1 XOR (Q0 AND Enable)",note:"The low bit toggles every enabled step; the high bit toggles when the low bit rolls over.",description:"This is the next-state logic for a two-bit binary counter. The enable advances the low bit, and only an enabled low-bit rollover advances the high bit.",recipe:["Q0 XOR Enable → Next0","Q0 AND Enable → rollover","Q1 XOR rollover → Next1"],gates:[{id:"next0",type:"XOR",inputs:["Q0","Enable"],x:520,y:180},{id:"rollover",type:"AND",inputs:["Q0","Enable"],x:250,y:400},{id:"next1",type:"XOR",inputs:["Q1","rollover"],x:690,y:400}],outputsFrom:{Next1:"next1",Next0:"next0"}},
+      {title:"1-bit ALU",subtitle:"Select between addition and a bitwise AND.",inputs:["A","B","Mode"],outputs:["Result","Carry"],equation:"Mode=0: Result = A AND B<br>Mode=1: Result = A XOR B",note:"A mode bit lets one circuit perform more than one operation.",description:"An arithmetic logic unit selects an operation. Here Mode chooses between AND and half-adder sum; Carry is only reported for the addition mode.",recipe:["Calculate A AND B and A XOR B","Use NAND gates to select by Mode","Gate the carry with Mode"],gates:[{id:"and",type:"AND",inputs:["A","B"],x:210,y:420},{id:"xor",type:"XOR",inputs:["A","B"],x:210,y:180},{id:"not-mode",type:"NAND",inputs:["Mode","Mode"],x:210,y:520},{id:"and-path",type:"NAND",inputs:["and","not-mode"],x:470,y:420},{id:"xor-path",type:"NAND",inputs:["xor","Mode"],x:470,y:180},{id:"result",type:"NAND",inputs:["and-path","xor-path"],x:750,y:300},{id:"carry",type:"AND",inputs:["and","Mode"],x:470,y:520}],outputsFrom:{Result:"result",Carry:"carry"}},
+      {title:"4-bit parity",subtitle:"Check the odd/even count across a wider word.",inputs:["A","B","C","D"],outputs:["Odd"],equation:"Odd = A XOR B XOR C XOR D",note:"Parity bits are used in simple memory and communication error checks.",description:"Three XOR stages extend a parity check to four bits. The output is 1 when the data word contains an odd number of 1s.",recipe:["A XOR B → partial","partial XOR C → next parity","next parity XOR D → Odd"],gates:[{id:"p1",type:"XOR",inputs:["A","B"],x:220,y:170},{id:"p2",type:"XOR",inputs:["p1","C"],x:480,y:300},{id:"odd",type:"XOR",inputs:["p2","D"],x:740,y:430}],outputsFrom:{Odd:"odd"}},
+      {title:"3-to-8 decoder",subtitle:"Activate one of eight outputs from a three-bit address.",inputs:["A","B","C"],outputs:Array.from({length:8},(_,i)=>`Y${i}`),equation:"Each output matches one address:<br>000 → Y0 ... 111 → Y7",note:"Decoder outputs can select one of eight registers or memory locations.",description:"Three input bits describe eight possible addresses. Inverters and AND gates build each address match; exactly one output is active at a time.",recipe:["Invert A, B, and C","Decode all four A/B combinations","Combine each pair with C or NOT C"],gates:[{id:"not-a",type:"NAND",inputs:["A","A"],x:170,y:120},{id:"not-b",type:"NAND",inputs:["B","B"],x:170,y:300},{id:"not-c",type:"NAND",inputs:["C","C"],x:170,y:480},{id:"ab0",type:"AND",inputs:["not-a","not-b"],x:390,y:150},{id:"ab1",type:"AND",inputs:["not-a","B"],x:390,y:260},{id:"ab2",type:"AND",inputs:["A","not-b"],x:390,y:370},{id:"ab3",type:"AND",inputs:["A","B"],x:390,y:480},{id:"y0",type:"AND",inputs:["ab0","not-c"],x:670,y:90},{id:"y1",type:"AND",inputs:["ab0","C"],x:670,y:150},{id:"y2",type:"AND",inputs:["ab1","not-c"],x:670,y:210},{id:"y3",type:"AND",inputs:["ab1","C"],x:670,y:270},{id:"y4",type:"AND",inputs:["ab2","not-c"],x:670,y:330},{id:"y5",type:"AND",inputs:["ab2","C"],x:670,y:390},{id:"y6",type:"AND",inputs:["ab3","not-c"],x:670,y:450},{id:"y7",type:"AND",inputs:["ab3","C"],x:670,y:510}],outputsFrom:Object.fromEntries(Array.from({length:8},(_,i)=>[`Y${i}`,`y${i}`]))},
+      makeComparator(3),
+      {title:"2-bit logic unit",subtitle:"Choose AND or XOR across two-bit values.",inputs:["A0","A1","B0","B1","Mode"],outputs:["R0","R1"],equation:"Mode=0: R = A AND B<br>Mode=1: R = A XOR B",note:"The same mode signal controls the operation on both bits of the word.",description:"Two copies of a one-bit logic slice share a mode input. This is a small datapath: it applies the selected operation to both positions in parallel.",recipe:["Calculate AND and XOR for each bit","Invert Mode once","Select each bit's result with a NAND network"],gates:[{id:"not-mode",type:"NAND",inputs:["Mode","Mode"],x:170,y:520},{id:"and0",type:"AND",inputs:["A0","B0"],x:280,y:360},{id:"xor0",type:"XOR",inputs:["A0","B0"],x:280,y:160},{id:"and0-path",type:"NAND",inputs:["and0","not-mode"],x:540,y:360},{id:"xor0-path",type:"NAND",inputs:["xor0","Mode"],x:540,y:160},{id:"r0",type:"NAND",inputs:["and0-path","xor0-path"],x:790,y:260},{id:"and1",type:"AND",inputs:["A1","B1"],x:280,y:500},{id:"xor1",type:"XOR",inputs:["A1","B1"],x:280,y:60},{id:"and1-path",type:"NAND",inputs:["and1","not-mode"],x:540,y:500},{id:"xor1-path",type:"NAND",inputs:["xor1","Mode"],x:540,y:60},{id:"r1",type:"NAND",inputs:["and1-path","xor1-path"],x:790,y:400}],outputsFrom:{R0:"r0",R1:"r1"}},
+      makeRippleAdder(3),
+      makeComparator(4)
+    ];
+    lessons.push(...advancedLessons);
+    const curriculumLevels=[
+      {name:"01 / Foundations",hint:"Single gates and first combinations",titles:["Half adder","Bit equality","NAND logic","NOR logic"]},
+      {name:"02 / Gate craft",hint:"Build useful behavior from gates",titles:["2:1 multiplexer","3-bit parity","OR from NANDs","Security alarm","XOR from NANDs"]},
+      {name:"03 / Combinational",hint:"Arithmetic, decisions, and decoding",titles:["Full adder","Majority vote","1-bit comparator","Half subtractor","2-to-4 decoder","Full subtractor"]},
+      {name:"04 / State & data",hint:"Next-state logic and small datapaths",titles:["2-bit ripple adder","Gated D register","2-bit up-counter","1-bit ALU","4-bit parity"]},
+      {name:"05 / Systems",hint:"Wider words and multi-stage logic",titles:["3-to-8 decoder","3-bit comparator","2-bit logic unit","3-bit ripple adder","4-bit comparator"]}
+    ];
+    const levelByTitle=new Map(curriculumLevels.flatMap((level,index)=>level.titles.map(title=>[title,index])));
+    lessons.sort((a,b)=>levelByTitle.get(a.title)-levelByTitle.get(b.title));
+    const useCases={"Half adder":"Adds the lowest-order bits in a simple binary adder; it is not enough on its own when a previous column can send a carry.","Full adder":"The building block inside multi-bit adders used by calculators, processors, and arithmetic logic units.","2:1 multiplexer":"Selects one data source for a shared wire, such as choosing a register, sensor, or communication channel.","Bit equality":"Checks whether two bits match, a basic operation in address checks, instruction decoding, and digital control.","NAND logic":"Used as a compact universal building block in digital chips; NAND-only designs can implement any Boolean function.","NOR logic":"Useful in control and reset logic; like NAND, NOR alone can be combined to build any Boolean circuit.","3-bit parity":"Adds an odd/even parity check to transmitted or stored data to help detect single-bit errors.","Majority vote":"Combines three redundant sensor or controller decisions so one disagreeing input does not decide the result.","OR from NANDs":"Shows how a design can implement an OR function when only NAND gates are available.","1-bit comparator":"Compares two one-bit values in a processor or control circuit; the output is high only for A=1 and B=0.","Half subtractor":"Subtracts one binary column when there is no incoming borrow, as a starting point for a multi-bit subtractor.","2-to-4 decoder":"Selects one of four memory locations, registers, or device outputs from a two-bit address.","Security alarm":"Models a basic security system where either sensor can trigger an alarm, but only while the system is armed.","XOR from NANDs":"Builds the difference/parity function from NAND-only components, useful for constrained logic designs and teaching chip construction.","Full subtractor":"A building block for multi-bit subtraction in processors and calculators, including a borrow from the previous column.","2-bit ripple adder":"Adds two short binary values; the carry chain demonstrates how larger adders are assembled from repeated stages.","Gated D register":"Models how a register accepts new data when enabled and otherwise retains its previous bit.","2-bit up-counter":"A tiny clocked counter's next-state logic, useful in timers, sequencers, and digital control.","1-bit ALU":"A basic processor datapath slice that selects between arithmetic and logic operations.","4-bit parity":"Checks a wider data nibble for odd parity in a simple storage or communication error-detection scheme.","3-to-8 decoder":"Selects one of eight memory locations, registers, or device outputs using a three-bit address.","3-bit comparator":"Compares wider binary values by letting the highest differing bit decide the result.","2-bit logic unit":"Applies the same selected Boolean operation to every bit in a small datapath.","3-bit ripple adder":"Demonstrates carry propagation across several binary columns, the core structure of a hardware adder.","4-bit comparator":"Compares two four-bit values for ordering in a processor, controller, or digital sorting circuit."};
+    const gateInfo=[{name:"AND",rule:"both 1",fn:([a,b])=>a&b},{name:"NAND",rule:"not both",fn:([a,b])=>Number(!(a&b))},{name:"XOR",rule:"different",fn:([a,b])=>a^b},{name:"XNOR",rule:"same / NXOR",fn:([a,b])=>Number(a===b)},{name:"OR",rule:"either 1",fn:([a,b])=>a|b},{name:"NOR",rule:"neither 1",fn:([a,b])=>Number(!(a|b))}];
+    let lessonIndex=0,inputValues={},selectedGate="XOR";const gateByName=Object.fromEntries(gateInfo.map(g=>[g.name,g])),svgNS="http://www.w3.org/2000/svg";
+    function evaluate(type,inputs){return gateByName[type].fn(inputs)}
+    function svgElement(tag,attributes={},text=""){const node=document.createElementNS(svgNS,tag);for(const[key,value]of Object.entries(attributes))node.setAttribute(key,value);if(text)node.textContent=text;return node}
+    function sourcePoint(source,values,gatePositions,inputPositions){if(Object.hasOwn(inputPositions,source))return{x:100,y:inputPositions[source],value:values[source]};const gate=gatePositions[source];return{x:gate.x+110,y:gate.y,value:values[source]}}
+    function gateShape(type,x,y,active){const group=svgElement("g",{transform:`translate(${x} ${y-41})`});let shape;if(["AND","NAND"].includes(type))shape=svgElement("path",{d:"M5 5 H49 A36 36 0 0 1 49 77 H5 Z",class:`gate-body${active?" on":""}`});else{const extra=["XOR","XNOR"].includes(type)?"M7 5 Q35 41 7 77 ":"";shape=svgElement("path",{d:`${extra}M12 5 Q49 5 83 41 Q49 77 12 77 Q30 41 12 5 Z`,class:`gate-body${active?" on":""}`})}group.append(shape);if(["NAND","NOR","XNOR"].includes(type))group.append(svgElement("circle",{cx:98,cy:41,r:5.5,class:"gate-body"}));if(["AND","NAND"].includes(type))group.append(svgElement("path",{d:"M14 23 H27 M14 59 H27",class:"gate-mark"}));else group.append(svgElement("path",{d:"M28 23 H41 M28 59 H41",class:"gate-mark"}));group.append(svgElement("text",{x:54,y:96,class:"gate-label"},type));return group}
+    function renderDiagram(lesson,values,gateValues){const svg=document.getElementById("circuit-diagram"),diagramWidth=lesson.diagramWidth||1000;svg.setAttribute("viewBox",`0 0 ${diagramWidth} 600`);svg.replaceChildren();const inputPositions={},spacing=360/Math.max(1,lesson.inputs.length-1),outputX=diagramWidth-80,outputSpacing=Math.min(90,440/Math.max(1,lesson.outputs.length-1));lesson.inputs.forEach((name,i)=>inputPositions[name]=lesson.inputs.length===1?300:120+spacing*i);const gatePositions=Object.fromEntries(lesson.gates.map(g=>[g.id,g]));for(const name of lesson.inputs){const y=inputPositions[name];svg.append(svgElement("text",{x:38,y:y+4,class:"diagram-label"},name),svgElement("text",{x:77,y:y+4,class:`diagram-value${values[name]?" active":""}`},String(values[name])),svgElement("circle",{cx:100,cy:y,r:4,class:"port"}))}for(const gate of lesson.gates){[gate.y-18,gate.y+18].forEach((endY,i)=>{const start=sourcePoint(gate.inputs[i],gateValues,gatePositions,inputPositions),endX=gate.x,mid=(start.x+endX)/2;svg.append(svgElement("path",{d:`M${start.x} ${start.y} C${mid} ${start.y}, ${mid} ${endY}, ${endX} ${endY}`,class:`wire${start.value?" active":""}`}),svgElement("circle",{cx:endX,cy:endY,r:3,class:"port"}))})}lesson.outputs.forEach((name,i)=>{const start=sourcePoint(lesson.outputsFrom[name],gateValues,gatePositions,inputPositions),y=300+(i-(lesson.outputs.length-1)/2)*outputSpacing,mid=(start.x+outputX)/2;svg.append(svgElement("path",{d:`M${start.x} ${start.y} C${mid} ${start.y}, ${mid} ${y}, ${outputX} ${y}`,class:`wire${start.value?" active":""}`}),svgElement("circle",{cx:outputX,cy:y,r:8,class:`output-terminal${start.value?" active":""}`}),svgElement("text",{x:outputX+20,y:y+4,class:"diagram-label"},name),svgElement("text",{x:outputX-25,y:y+25,class:`diagram-value${start.value?" active":""}`},String(start.value)))});lesson.gates.forEach(g=>svg.append(gateShape(g.type,g.x,g.y,gateValues[g.id])))}
+    function computeGateValues(lesson){const values={...inputValues};for(const gate of lesson.gates)values[gate.id]=evaluate(gate.type,gate.inputs.map(input=>values[input]));return values}
+    function renderInputs(lesson){const container=document.getElementById("input-controls");container.replaceChildren();for(const name of lesson.inputs){const row=document.createElement("div"),label=document.createElement("span"),state=document.createElement("span"),button=document.createElement("button");row.className="bit-row";label.className="bit-name";label.textContent=name;state.className=`bit-state${inputValues[name]?" on":""}`;state.textContent=String(inputValues[name]);button.className="bit-switch";button.type="button";button.setAttribute("role","switch");button.setAttribute("aria-checked",String(Boolean(inputValues[name])));button.setAttribute("aria-label",`${name} input, currently ${inputValues[name]}`);button.addEventListener("click",()=>{inputValues[name]=Number(!inputValues[name]);renderWorkbench()});row.append(label,state,button);container.append(row)}}
+    function renderOutputs(lesson,gateValues){const container=document.getElementById("output-readouts");container.replaceChildren();for(const name of lesson.outputs){const value=gateValues[lesson.outputsFrom[name]],row=document.createElement("div"),label=document.createElement("span"),bit=document.createElement("strong");row.className="output-readout";label.className="output-name";label.textContent=name;bit.className=`output-bit${value?" on":""}`;bit.textContent=value;bit.setAttribute("aria-label",`${name} output is ${value}`);row.append(label,bit);container.append(row)}}
+    function renderTabs(){const nav=document.getElementById("lesson-tabs");nav.replaceChildren();curriculumLevels.forEach(level=>{const group=document.createElement("section"),heading=document.createElement("h3"),hint=document.createElement("p"),tabs=document.createElement("div");group.className="lesson-level";heading.textContent=level.name;hint.textContent=level.hint;tabs.className="lesson-level-tabs";group.append(heading,hint,tabs);for(const title of level.titles){const index=lessons.findIndex(lesson=>lesson.title===title),lesson=lessons[index],tab=document.createElement("button");tab.type="button";tab.className="lesson-tab";tab.setAttribute("aria-selected",String(index===lessonIndex));tab.innerHTML=`<span>${String(index+1).padStart(2,"0")}</span>${lesson.title}`;tab.addEventListener("click",()=>{lessonIndex=index;inputValues=Object.fromEntries(lesson.inputs.map(name=>[name,0]));renderApp()});tabs.append(tab)}nav.append(group)})}
+    function renderGateReference(){const list=document.getElementById("gate-list");list.replaceChildren();for(const gate of gateInfo){const button=document.createElement("button");button.type="button";button.className=`gate-chip${selectedGate===gate.name?" selected":""}`;button.innerHTML=`<b>${gate.name}</b><small>${gate.rule}</small>`;button.setAttribute("aria-pressed",String(selectedGate===gate.name));button.addEventListener("click",()=>{selectedGate=gate.name;renderGateReference()});list.append(button)}const gate=gateByName[selectedGate],table=document.createElement("table");table.className="truth-table";table.innerHTML=`<thead><tr><th>A</th><th>B</th><th>${gate.name}</th></tr></thead><tbody></tbody>`;const tbody=table.querySelector("tbody");for(const[a,b]of[[0,0],[0,1],[1,0],[1,1]]){const row=document.createElement("tr");if(inputValues.A===a&&inputValues.B===b)row.className="current";row.innerHTML=`<td>${a}</td><td>${b}</td><td>${gate.fn([a,b])}</td>`;tbody.append(row)}const truth=document.getElementById("gate-truth");truth.replaceChildren(table)}
+    function renderWorkbench(){const lesson=lessons[lessonIndex],gateValues=computeGateValues(lesson);renderInputs(lesson);renderOutputs(lesson,gateValues);renderDiagram(lesson,inputValues,gateValues);document.getElementById("equation").innerHTML=lesson.equation;document.getElementById("output-note").textContent=lesson.note;renderGateReference()}
+    function renderApp(){const lesson=lessons[lessonIndex];renderTabs();document.getElementById("circuit-title").textContent=lesson.title;document.getElementById("circuit-subtitle").textContent=lesson.subtitle;document.getElementById("lesson-index").textContent=`LESSON ${String(lessonIndex+1).padStart(2,"0")} / ${String(lessons.length).padStart(2,"0")}`;document.getElementById("lesson-description").textContent=lesson.description;document.getElementById("lesson-use").textContent=useCases[lesson.title];const recipe=document.getElementById("recipe-steps");recipe.replaceChildren();lesson.recipe.forEach((text,index)=>{const step=document.createElement("span");step.className="recipe-step";step.innerHTML=`<b>${index+1}</b>${text}`;recipe.append(step)});renderWorkbench()}
+    inputValues=Object.fromEntries(lessons[0].inputs.map(name=>[name,0]));renderApp();
+  </script>
 </body>
 </html>
