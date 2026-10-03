@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Circuit Architecture & Logic Portal</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        darkbg: '#050505',
+                        cardbg: '#0f0f0f',
+                        bordercolor: '#262626',
+                        accentred: '#dc2626',
+                        accentredhover: '#ef4444',
+                        mutedgray: '#a3a3a3',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #050505; color: #f5f5f5; }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+        .glow-red { box-shadow: 0 0 25px rgba(220, 38, 38, 0.2); }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #050505; }
+        ::-webkit-scrollbar-thumb { background: #262626; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #dc2626; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col selection:bg-accentred selection:text-white">
+
+    <!-- Top Navigation Bar with spaced out buttons and no title/system architecture text -->
+    <header class="sticky top-0 z-50 bg-[#050505]/95 backdrop-blur-md border-b border-bordercolor">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <!-- Left brand icon link back to projects -->
+            <div class="flex items-center space-x-3 cursor-pointer group" onclick="switchTab('projects')">
+                <div class="w-10 h-10 rounded bg-accentred flex items-center justify-center glow-red group-hover:scale-105 transition-transform">
+                    <i class="fa-solid fa-microchip text-white text-lg font-bold"></i>
+                </div>
+            </div>
+
+            <!-- Desktop Nav Tabs - Spaced Out -->
+            <nav class="hidden md:flex items-center space-x-8">
+                <button onclick="switchTab('projects')" id="nav-projects" class="nav-btn text-sm font-mono tracking-wider uppercase transition-all text-accentred font-bold pb-1 border-b-2 border-accentred">
+                    Project Ideas
+                </button>
+                <button onclick="switchTab('vault')" id="nav-vault" class="nav-btn text-sm font-mono tracking-wider uppercase transition-all text-mutedgray hover:text-white pb-1 border-b-2 border-transparent">
+                    Circuit Vault
+                </button>
+                <button onclick="switchTab('masterclass')" id="nav-masterclass" class="nav-btn text-sm font-mono tracking-wider uppercase transition-all text-mutedgray hover:text-white pb-1 border-b-2 border-transparent">
+                    Masterclass Guides
+                </button>
+                <button onclick="switchTab('diagram')" id="nav-diagram" class="nav-btn text-sm font-mono tracking-wider uppercase transition-all text-mutedgray hover:text-white pb-1 border-b-2 border-transparent relative">
+                    <span class="absolute -top-1 -right-2 flex h-2 w-2">
+                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-accentred opacity-75"></span>
+                      <span class="relative inline-flex rounded-full h-2 w-2 bg-accentred"></span>
+                    </span>
+                    Diagram
+                </button>
+            </nav>
+
+            <!-- Mobile Menu Toggle -->
+            <div class="flex md:hidden">
+                <button onclick="toggleMobileMenu()" class="p-2 rounded text-mutedgray hover:text-white bg-cardbg border border-bordercolor">
+                    <i class="fa-solid fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Nav Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-cardbg border-b border-bordercolor px-4 py-4 space-y-3 font-mono text-xs uppercase tracking-wider">
+            <button onclick="switchTab('projects'); toggleMobileMenu();" class="block w-full text-left px-3 py-2 rounded text-accentred font-bold bg-bordercolor/50">
+                Project Ideas
+            </button>
+            <button onclick="switchTab('vault'); toggleMobileMenu();" class="block w-full text-left px-3 py-2 rounded text-mutedgray hover:text-white">
+                Circuit Vault
+            </button>
+            <button onclick="switchTab('masterclass'); toggleMobileMenu();" class="block w-full text-left px-3 py-2 rounded text-mutedgray hover:text-white">
+                Masterclass Guides
+            </button>
+            <button onclick="switchTab('diagram'); toggleMobileMenu();" class="block w-full text-left px-3 py-2 rounded text-mutedgray hover:text-white">
+                Diagram
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content Body -->
+    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full">
+
+        <!-- ================= SECTION 1: PROJECT IDEAS ================= -->
+        <section id="section-projects" class="space-y-8">
+            <div class="border-l-4 border-accentred pl-4 py-1">
+                <h1 class="text-3xl font-extrabold text-white tracking-tight sm:text-4xl font-mono uppercase">Advanced Project Blueprints</h1>
+                <p class="mt-1 text-sm text-mutedgray font-mono">Hard-core sequential logic specifications with individual interactive diagrams.</p>
+            </div>
+
+            <!-- Project Selector Tabs -->
+            <div class="flex flex-wrap gap-3 pb-2 border-b border-bordercolor">
+                <button onclick="switchProject('alu')" id="btn-proj-alu" class="proj-tab px-5 py-2.5 rounded font-mono text-xs uppercase tracking-wider bg-accentred text-white font-bold transition-all">
+                    [01] 4-Bit ALU
+                </button>
+                <button onclick="switchProject('lock')" id="btn-proj-lock" class="proj-tab px-5 py-2.5 rounded font-mono text-xs uppercase tracking-wider bg-cardbg text-mutedgray border border-bordercolor hover:border-gray-500 transition-all">
+                    [02] State Combination Lock
+                </button>
+                <button onclick="switchProject('elevator')" id="btn-proj-elevator" class="proj-tab px-5 py-2.5 rounded font-mono text-xs uppercase tracking-wider bg-cardbg text-mutedgray border border-bordercolor hover:border-gray-500 transition-all">
+                    [03] Multi-Floor Elevator
+                </button>
+                <button onclick="switchProject('decoder')" id="btn-proj-decoder" class="proj-tab px-5 py-2.5 rounded font-mono text-xs uppercase tracking-wider bg-cardbg text-mutedgray border border-bordercolor hover:border-gray-500 transition-all">
+                    [04] Binary-Decimal Decoder
+                </button>
+            </div>
+
+            <!-- Project Dynamic Content Container -->
+            <div id="project-content-container" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Injected via JavaScript -->
+            </div>
+        </section>
+
+        <!-- ================= SECTION 2: CIRCUIT VAULT ================= -->
+        <section id="section-vault" class="hidden space-y-8">
+            <div class="border-l-4 border-accentred pl-4 py-1">
+                <h1 class="text-3xl font-extrabold text-white tracking-tight sm:text-4xl font-mono uppercase">Circuit Vault & Sub-Assemblies</h1>
+                <p class="mt-1 text-sm text-mutedgray font-mono">Reusable modular components equipped with individual interactive circuit diagrams.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Vault Item 1 -->
+                <div class="bg-cardbg border border-bordercolor rounded p-5 hover:border-accentred transition-all flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-mono px-2 py-0.5 rounded bg-accentred/20 text-accentred border border-accentred/40 font-bold">MEMORY</span>
+                            <i class="fa-solid fa-database text-accentred"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-white mb-1">SR Latch</h3>
+                        <p class="text-xs text-mutedgray mb-4">Set-Reset bistable multivibrator for persistent 1-bit memory storage.</p>
+                        <div class="bg-[#020202] p-3 rounded font-mono text-xs text-gray-300 border border-bordercolor mb-4 text-center">
+                            <div class="text-accentred font-bold mb-1">[SCHEMATIC: SR LATCH]</div>
+                            <div class="text-[11px] text-mutedgray">S=1 &rarr; Q=1 | R=1 &rarr; Q=0</div>
+                        </div>
+                    </div>
+                    <button onclick="loadVaultInDiagram('sr')" class="w-full py-2 bg-bordercolor hover:bg-accentred hover:text-white text-gray-200 text-xs font-mono uppercase rounded transition-all flex items-center justify-center space-x-2">
+                        <span>OPEN IN DIAGRAM</span> <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+
+                <!-- Vault Item 2 -->
+                <div class="bg-cardbg border border-bordercolor rounded p-5 hover:border-accentred transition-all flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-mono px-2 py-0.5 rounded bg-accentred/20 text-accentred border border-accentred/40 font-bold">SEQUENTIAL</span>
+                            <i class="fa-solid fa-clock text-accentred"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-white mb-1">D Flip-Flop</h3>
+                        <p class="text-xs text-mutedgray mb-4">Samples data input on the rising edge of the clock pulse cycle.</p>
+                        <div class="bg-[#020202] p-3 rounded font-mono text-xs text-gray-300 border border-bordercolor mb-4 text-center">
+                            <div class="text-accentred font-bold mb-1">[SCHEMATIC: D-FF]</div>
+                            <div class="text-[11px] text-mutedgray">CLK Tick &rarr; Q = D</div>
+                        </div>
+                    </div>
+                    <button onclick="loadVaultInDiagram('dff')" class="w-full py-2 bg-bordercolor hover:bg-accentred hover:text-white text-gray-200 text-xs font-mono uppercase rounded transition-all flex items-center justify-center space-x-2">
+                        <span>OPEN IN DIAGRAM</span> <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+
+                <!-- Vault Item 3 -->
+                <div class="bg-cardbg border border-bordercolor rounded p-5 hover:border-accentred transition-all flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-mono px-2 py-0.5 rounded bg-accentred/20 text-accentred border border-accentred/40 font-bold">PULSE</span>
+                            <i class="fa-solid fa-bolt text-accentred"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-white mb-1">Edge Detector</h3>
+                        <p class="text-xs text-mutedgray mb-4">Converts sustained button presses into single-tick micro pulses.</p>
+                        <div class="bg-[#020202] p-3 rounded font-mono text-xs text-gray-300 border border-bordercolor mb-4 text-center">
+                            <div class="text-accentred font-bold mb-1">[SCHEMATIC: EDGE]</div>
+                            <div class="text-[11px] text-mutedgray">Input &rarr; NOT &rarr; AND</div>
+                        </div>
+                    </div>
+                    <button onclick="loadVaultInDiagram('edge')" class="w-full py-2 bg-bordercolor hover:bg-accentred hover:text-white text-gray-200 text-xs font-mono uppercase rounded transition-all flex items-center justify-center space-x-2">
+                        <span>OPEN IN DIAGRAM</span> <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+
+                <!-- Vault Item 4 -->
+                <div class="bg-cardbg border border-bordercolor rounded p-5 hover:border-accentred transition-all flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-mono px-2 py-0.5 rounded bg-accentred/20 text-accentred border border-accentred/40 font-bold">ARITHMETIC</span>
+                            <i class="fa-solid fa-calculator text-accentred"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-white mb-1">Full Adder</h3>
+                        <p class="text-xs text-mutedgray mb-4">Combines XOR and AND gates to calculate sum and carry bits.</p>
+                        <div class="bg-[#020202] p-3 rounded font-mono text-xs text-gray-300 border border-bordercolor mb-4 text-center">
+                            <div class="text-accentred font-bold mb-1">[SCHEMATIC: ADDER]</div>
+                            <div class="text-[11px] text-mutedgray">Sum = A ^ B ^ Cin</div>
+                        </div>
+                    </div>
+                    <button onclick="loadVaultInDiagram('adder')" class="w-full py-2 bg-bordercolor hover:bg-accentred hover:text-white text-gray-200 text-xs font-mono uppercase rounded transition-all flex items-center justify-center space-x-2">
+                        <span>OPEN IN DIAGRAM</span> <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= SECTION 3: MASTERCLASS GUIDES ================= -->
+        <section id="section-masterclass" class="hidden space-y-8">
+            <div class="border-l-4 border-accentred pl-4 py-1">
+                <h1 class="text-3xl font-extrabold text-white tracking-tight sm:text-4xl font-mono uppercase">Masterclass Architecture Guides</h1>
+                <p class="mt-1 text-sm text-mutedgray font-mono">Advanced theoretical breakdowns featuring interactive timing waveforms and signal flow.</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Guide 1 -->
+                <div class="bg-cardbg border border-bordercolor rounded p-6 hover:border-accentred transition-all space-y-4 flex flex-col justify-between">
+                    <div class="space-y-4">
+                        <div class="flex items-center space-x-3 text-accentred">
+                            <i class="fa-solid fa-wave-square text-2xl"></i>
+                            <span class="font-mono text-xs uppercase tracking-wider font-bold">GUIDE 01 // TIMING</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-white">Propagation Delays & Race Conditions</h3>
+                        <p class="text-sm text-mutedgray leading-relaxed">
+                            Game engines introduce 1-tick gate latencies. Parallel signal paths can cause race conditions if arrival times differ.
+                        </p>
+                        <div class="bg-[#020202] p-4 rounded border border-bordercolor space-y-2 font-mono text-xs">
+                            <div class="text-accentred font-bold">// TIMING WAVEFORM DIAGRAM</div>
+                            <div class="flex justify-between text-mutedgray text-[11px]"><span>CLK:</span><span>_|-|_|-|</span></div>
+                            <div class="flex justify-between text-mutedgray text-[11px]"><span>DATA:</span><span>___|---|</span></div>
+                            <div class="flex justify-between text-white text-[11px]"><span>OUT:</span><span>____|--|</span></div>
+                        </div>
+                    </div>
+                    <button onclick="switchTab('diagram')" class="w-full py-2 bg-bordercolor hover:bg-accentred hover:text-white text-gray-200 text-xs font-mono uppercase rounded transition-all">
+                        SIMULATE IN DIAGRAM
+                    </button>
+                </div>
+
+                <!-- Guide 2 -->
+                <div class="bg-cardbg border border-bordercolor rounded p-6 hover:border-accentred transition-all space-y-4 flex flex-col justify-between">
+                    <div class="space-y-4">
+                        <div class="flex items-center space-x-3 text-accentred">
+                            <i class="fa-solid fa-layer-group text-2xl"></i>
+                            <span class="font-mono text-xs uppercase tracking-wider font-bold">GUIDE 02 // ROUTING</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-white">Z-Axis Wiring Stacking</h3>
+                        <p class="text-sm text-mutedgray leading-relaxed">
+                            Prevent cross-talk and bridge clipping in dense multi-floor automation by stacking signals across three vertical planes.
+                        </p>
+                        <div class="bg-[#020202] p-4 rounded border border-bordercolor space-y-1 font-mono text-xs text-gray-300">
+                            <div class="text-accentred font-bold mb-1">// LAYER STACK DIAGRAM</div>
+                            <div>L3: [ Actuator Bridge ]</div>
+                            <div>L2: [ Data Pathways Bus ]</div>
+                            <div>L1: [ Subfloor Power / Ground ]</div>
+                        </div>
+                    </div>
+                    <button onclick="switchTab('diagram')" class="w-full py-2 bg-bordercolor hover:bg-accentred hover:text-white text-gray-200 text-xs font-mono uppercase rounded transition-all">
+                        INSPECT IN DIAGRAM
+                    </button>
+                </div>
+
+                <!-- Guide 3 -->
+                <div class="bg-cardbg border border-bordercolor rounded p-6 hover:border-accentred transition-all space-y-4 flex flex-col justify-between">
+                    <div class="space-y-4">
+                        <div class="flex items-center space-x-3 text-accentred">
+                            <i class="fa-solid fa-gauge-high text-2xl"></i>
+                            <span class="font-mono text-xs uppercase tracking-wider font-bold">GUIDE 03 // PERFORMANCE</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-white">Tick-Rate Lag Reduction</h3>
+                        <p class="text-sm text-mutedgray leading-relaxed">
+                            Collapse redundant combinatorial chains and replace constant clock loops with event-driven rising-edge triggers.
+                        </p>
+                        <div class="bg-[#020202] p-4 rounded border border-bordercolor space-y-1 font-mono text-xs text-gray-300">
+                            <div class="text-accentred font-bold mb-1">// EFFICIENCY METRIC</div>
+                            <div>Active Loops: [ Optimized ]</div>
+                            <div>Tick Overhead: [ -42% Latency ]</div>
+                        </div>
+                    </div>
+                    <button onclick="switchTab('diagram')" class="w-full py-2 bg-bordercolor hover:bg-accentred hover:text-white text-gray-200 text-xs font-mono uppercase rounded transition-all">
+                        OPEN IN DIAGRAM
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= SECTION 4: DIAGRAM SANDBOX ================= -->
+        <section id="section-diagram" class="hidden space-y-8">
+            <div class="border-l-4 border-accentred pl-4 py-1">
+                <h1 class="text-3xl font-extrabold text-white tracking-tight sm:text-4xl font-mono uppercase">Interactive Diagram & Schematic Sandbox</h1>
+                <p class="mt-1 text-sm text-mutedgray font-mono">Test logic gates, wire inputs A & B, pulse the clock, and observe real-time signal propagation.</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Controls -->
+                <div class="bg-cardbg border border-bordercolor rounded p-6 space-y-6">
+                    <div>
+                        <h3 class="text-xs font-mono text-mutedgray uppercase tracking-wider mb-3">Select Gate Schematic</h3>
+                        <div class="grid grid-cols-2 gap-2">
+                            <button onclick="setDiagramMode('and')" id="diag-mode-and" class="p-3 rounded border border-accentred bg-accentred/20 text-white font-mono text-xs text-left transition-all font-bold">
+                                <div>AND GATE</div>
+                                <div class="text-[10px] text-mutedgray">A & B</div>
+                            </button>
+                            <button onclick="setDiagramMode('or')" id="diag-mode-or" class="p-3 rounded border border-bordercolor hover:border-gray-500 bg-[#020202] text-gray-300 font-mono text-xs text-left transition-all">
+                                <div>OR GATE</div>
+                                <div class="text-[10px] text-mutedgray">A | B</div>
+                            </button>
+                            <button onclick="setDiagramMode('xor')" id="diag-mode-xor" class="p-3 rounded border border-bordercolor hover:border-gray-500 bg-[#020202] text-gray-300 font-mono text-xs text-left transition-all">
+                                <div>XOR GATE</div>
+                                <div class="text-[10px] text-mutedgray">A ^ B</div>
+                            </button>
+                            <button onclick="setDiagramMode('sr')" id="diag-mode-sr" class="p-3 rounded border border-bordercolor hover:border-gray-500 bg-[#020202] text-gray-300 font-mono text-xs text-left transition-all">
+                                <div>SR LATCH</div>
+                                <div class="text-[10px] text-mutedgray">S & R Memory</div>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Input Toggles -->
+                    <div class="space-y-4 border-t border-bordercolor pt-4">
+                        <h3 class="text-xs font-mono text-mutedgray uppercase tracking-wider">Signal Inputs</h3>
+                        
+                        <div class="flex items-center justify-between bg-[#020202] p-3 rounded border border-bordercolor">
+                            <div>
+                                <span class="font-mono text-sm font-bold text-white">INPUT A (SET)</span>
+                                <p class="text-[11px] text-mutedgray">Primary signal</p>
+                            </div>
+                            <button onclick="toggleInput('A')" id="toggle-btn-a" class="w-14 h-8 rounded-full bg-gray-800 relative transition-colors duration-200 focus:outline-none">
+                                <div id="toggle-thumb-a" class="w-6 h-6 rounded-full bg-white absolute top-1 left-1 transition-transform duration-200"></div>
+                            </button>
+                        </div>
+
+                        <div class="flex items-center justify-between bg-[#020202] p-3 rounded border border-bordercolor">
+                            <div>
+                                <span class="font-mono text-sm font-bold text-white">INPUT B (RESET)</span>
+                                <p class="text-[11px] text-mutedgray">Secondary signal</p>
+                            </div>
+                            <button onclick="toggleInput('B')" id="toggle-btn-b" class="w-14 h-8 rounded-full bg-gray-800 relative transition-colors duration-200 focus:outline-none">
+                                <div id="toggle-thumb-b" class="w-6 h-6 rounded-full bg-white absolute top-1 left-1 transition-transform duration-200"></div>
+                            </button>
+                        </div>
+
+                        <div class="flex items-center justify-between bg-[#020202] p-3 rounded border border-bordercolor">
+                            <div>
+                                <span class="font-mono text-sm font-bold text-white">CLOCK TICK</span>
+                                <p class="text-[11px] text-mutedgray">Pulse clock</p>
+                            </div>
+                            <button onclick="triggerClockPulse()" class="px-4 py-1.5 bg-accentred/20 border border-accentred text-white font-mono text-xs uppercase rounded hover:bg-accentred transition-all font-bold">
+                                PULSE
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Canvas / Diagram Output -->
+                <div class="lg:col-span-2 bg-cardbg border border-bordercolor rounded p-6 flex flex-col justify-between space-y-6">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <span id="diagram-title-display" class="font-mono text-sm text-accentred font-bold uppercase">// SCHEMATIC: AND GATE</span>
+                            <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-accentred/20 text-accentred border border-accentred/40 font-bold">ONLINE</span>
+                        </div>
+
+                        <!-- Circuit Diagram Box -->
+                        <div class="bg-[#020202] border border-bordercolor rounded p-8 flex flex-col items-center justify-center min-h-[240px] relative overflow-hidden">
+                            <div class="absolute inset-0 opacity-5 bg-[radial-gradient(#dc2626_1px,transparent_1px)] [background-size:16px_16px]"></div>
+                            
+                            <div class="flex items-center space-x-12 z-10 w-full justify-around">
+                                <div class="space-y-4">
+                                    <div class="flex items-center space-x-2">
+                                        <div id="vis-in-a" class="w-4 h-4 rounded-full bg-gray-800 border border-gray-600"></div>
+                                        <span class="font-mono text-xs text-gray-300">A: <span id="val-in-a" class="text-white font-bold">0</span></span>
+                                    </div>
+                                    <div class="flex items-center space-x-2">
+                                        <div id="vis-in-b" class="w-4 h-4 rounded-full bg-gray-800 border border-gray-600"></div>
+                                        <span class="font-mono text-xs text-gray-300">B: <span id="val-in-b" class="text-white font-bold">0</span></span>
+                                    </div>
+                                </div>
+
+                                <div id="vis-gate-box" class="px-8 py-5 rounded bg-cardbg border border-accentred text-white font-mono font-bold text-center glow-red shadow-lg text-lg">
+                                    AND
+                                </div>
+
+                                <div class="flex items-center space-x-3 bg-cardbg px-5 py-3 rounded border border-bordercolor">
+                                    <div id="vis-led-output" class="w-6 h-6 rounded-full bg-gray-900 border-2 border-gray-700 transition-all duration-300"></div>
+                                    <div class="font-mono text-xs">
+                                        <div class="text-mutedgray">OUTPUT (Q)</div>
+                                        <div id="val-out-q" class="text-white font-bold text-sm">0 (LOW)</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-[#020202] border border-bordercolor rounded p-4">
+                        <h4 class="font-mono text-xs text-mutedgray uppercase tracking-wider mb-2">Schematic Analysis</h4>
+                        <p id="diagram-desc" class="text-xs text-gray-300 leading-relaxed">
+                            The AND gate outputs HIGH (1) only when both Input A and Input B are active simultaneously.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="mt-auto border-t border-bordercolor bg-[#020202] py-6 text-center text-xs text-mutedgray font-mono">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div>CIRCUIT ARCHITECTURE PORTAL // SECURE BUILD SYSTEM</div>
+            <div class="flex items-center space-x-4">
+                <span class="text-accentred font-bold"><i class="fa-solid fa-circle text-[8px] mr-1"></i> SYSTEM ACTIVE</span>
+                <span>PROTOCOL v5.0</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript Controller -->
+    <script>
+        let currentTab = 'projects';
+        let currentProjectKey = 'alu';
+        let diagramMode = 'and';
+        let inputA = 0;
+        let inputB = 0;
+        let srStateQ = 0;
+
+        const projectsData = {
+            alu: {
+                title: "4-Bit Arithmetic Logic Unit (ALU)",
+                tag: "COMPUTATIONAL LOGIC",
+                objective: "Construct a fully combinatorial 4-bit ALU capable of parallel addition, subtraction, bitwise AND, and bitwise OR operations with zero-flag detection.",
+                components: {
+                    gates: "32x XOR Gates, 24x AND Gates, 16x OR Gates, 8x NOT Buffers.",
+                    memory: "4-Bit Register Bank for accumulator storage.",
+                    io: "4-Bit Input Bus A, 4-Bit Input Bus B, 2-Bit Opcode Selector, 4-Bit LED Display.",
+                    power: "Stabilized high-amp power bus with dedicated ground rail."
+                },
+                wiring: [
+                    "Layer 1 (Subfloor): Main power rails and global reset line.",
+                    "Layer 2 (Data Pathways): 4-bit parallel bus lines color-coded.",
+                    "Layer 3 (Control & Feedback): Opcode multiplexer select lines.",
+                    "Layer 4 (Actuator Bridge): Terminal output routing to display."
+                ],
+                debugging: [
+                    "Step 1: Check voltage drops across extended bus lines.",
+                    "Step 2: Inspect propagation delay race conditions on carry-out bits.",
+                    "Step 3: Manually step opcode selector to verify truth table."
+                ],
+                diagramSnippet: `
+                    <div class="bg-[#020202] p-4 rounded border border-bordercolor font-mono text-xs space-y-2">
+                        <div class="text-accentred font-bold">// 4-BIT ALU SCHEMATIC DIAGRAM</div>
+                        <div class="text-gray-300">BUS_A [4-Bit] ---> [ MUX / ALU CORE ] ---> RESULT</div>
+                        <div class="text-gray-300">BUS_B [4-Bit] ---> [ Add / Sub / AND ] ---> ZERO FLAG</div>
+                    </div>
+                `
+            },
+            lock: {
+                title: "State-Machine Combination Lock",
+                tag: "SECURITY & SEQUENTIAL",
+                objective: "Construct a 4-state sequential combination lock (Code: 1 -> 3 -> 2 -> 4) with instant error-trap reset and servo vault door actuation.",
+                components: {
+                    gates: "12x AND Gates, 4x OR Gates for error resets, 4x Monostable pulse shapers.",
+                    memory: "4x D-Type Flip-Flops for sequential state progression.",
+                    io: "4x Momentary Push Buttons, 1x Master Reset Switch, 1x Servo Actuator.",
+                    power: "Isolated logic rail with emergency battery backup."
+                },
+                wiring: [
+                    "Layer 1 (Subfloor): Global reset bus connected to error-trap OR gates.",
+                    "Layer 2 (Data Pathways): Rising-edge detector lines from input buttons.",
+                    "Layer 3 (Control & Feedback): State transition gating connecting FF[N].",
+                    "Layer 4 (Actuator Bridge): Final state Q3 output wired to vault servo."
+                ],
+                debugging: [
+                    "Step 1: Verify button presses use rising-edge detectors.",
+                    "Step 2: Test error trap by entering out-of-order sequences.",
+                    "Step 3: Inspect servo power supply for unlocking torque."
+                ],
+                diagramSnippet: `
+                    <div class="bg-[#020202] p-4 rounded border border-bordercolor font-mono text-xs space-y-2">
+                        <div class="text-accentred font-bold">// STATE MACHINE SCHEMATIC</div>
+                        <div class="text-gray-300">STATE 0 ---> (Btn 1) ---> STATE 1</div>
+                        <div class="text-gray-300">STATE 1 ---> (Btn 3) ---> STATE 2 ---> [UNLOCKED]</div>
+                    </div>
+                `
+            },
+            elevator: {
+                title: "Automated Multi-Floor Elevator",
+                tag: "ELECTROMECHANICAL LOGIC",
+                objective: "Build a 3-floor automated elevator system with priority floor queue memory, automatic door interlocks, and position limit switches.",
+                components: {
+                    gates: "16x SR Latches for floor call memory, 8x AND interlock gates, limit sensors.",
+                    memory: "3-Bit Floor Request Register Bank.",
+                    io: "Floor call buttons (1-3), winch motor, magnetic limit sensors.",
+                    power: "High-voltage winch motor rail separated from logic."
+                },
+                wiring: [
+                    "Layer 1 (Subfloor): Motor power trunk lines and safety cuts.",
+                    "Layer 2 (Data Pathways): Floor call latch signals routed to encoder.",
+                    "Layer 3 (Control & Feedback): Limit switch feedback lines.",
+                    "Layer 4 (Actuator Bridge): Winch controller and door pneumatics."
+                ],
+                debugging: [
+                    "Step 1: Check limit switch alignment to prevent over-travel.",
+                    "Step 2: Ensure door interlocks prevent winch movement while open.",
+                    "Step 3: Test simultaneous multi-floor priority queuing."
+                ],
+                diagramSnippet: `
+                    <div class="bg-[#020202] p-4 rounded border border-bordercolor font-mono text-xs space-y-2">
+                        <div class="text-accentred font-bold">// ELEVATOR SCHEMATIC DIAGRAM</div>
+                        <div class="text-gray-300">CALL_FLR ---> [ SR LATCH ] ---> PRIORITY QUEUE ---> MOTOR</div>
+                        <div class="text-gray-300">LIMIT_SW ---> [ CLEAR LATCH ]</div>
+                    </div>
+                `
+            },
+            decoder: {
+                title: "Binary-to-Decimal LED Decoder",
+                tag: "DISPLAY LOGIC",
+                objective: "Design a 4-bit binary input decoder that translates 16 binary states into individual decimal output channels and 7-segment displays.",
+                components: {
+                    gates: "16x 4-Input AND Gates (Minterms), 7x OR Gates for segment drivers.",
+                    memory: "Stateless combinational logic network.",
+                    io: "4x Binary toggle switches (B0-B3), 10x Decimal indicator lamps.",
+                    power: "Standard 5V logic power distribution."
+                },
+                wiring: [
+                    "Layer 1 (Subfloor): Common ground and power distribution grid.",
+                    "Layer 2 (Data Pathways): Inverted and non-inverted binary input bus.",
+                    "Layer 3 (Control & Feedback): Minterm decoding grid.",
+                    "Layer 4 (Actuator Bridge): Segment driver lines to LEDs."
+                ],
+                debugging: [
+                    "Step 1: Verify inverter gate functionality; check NOT buffers.",
+                    "Step 2: Cycle binary 0 to 15 to ensure one decimal illuminates.",
+                    "Step 3: Check for ghosting or voltage bleed between wires."
+                ],
+                diagramSnippet: `
+                    <div class="bg-[#020202] p-4 rounded border border-bordercolor font-mono text-xs space-y-2">
+                        <div class="text-accentred font-bold">// DECODER SCHEMATIC DIAGRAM</div>
+                        <div class="text-gray-300">BIN_IN [4-Bit] ---> [ 16x MINTERM AND GATES ] ---> LEDS</div>
+                    </div>
+                `
+            }
+        };
+
+        function switchTab(tabId) {
+            currentTab = tabId;
+            ['projects', 'vault', 'masterclass', 'diagram'].forEach(s => {
+                const el = document.getElementById(`section-${s}`);
+                if (s === tabId) el.classList.remove('hidden');
+                else el.classList.add('hidden');
+            });
+
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.className = "nav-btn text-sm font-mono tracking-wider uppercase transition-all text-mutedgray hover:text-white pb-1 border-b-2 border-transparent";
+            });
+
+            const activeBtn = document.getElementById(`nav-${tabId}`);
+            if (activeBtn) {
+                activeBtn.className = "nav-btn text-sm font-mono tracking-wider uppercase transition-all text-accentred font-bold pb-1 border-b-2 border-accentred";
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function toggleMobileMenu() {
+            document.getElementById('mobile-menu').classList.toggle('hidden');
+        }
+
+        function switchProject(key) {
+            currentProjectKey = key;
+            document.querySelectorAll('.proj-tab').forEach(btn => {
+                btn.className = "proj-tab px-5 py-2.5 rounded font-mono text-xs uppercase tracking-wider bg-cardbg text-mutedgray border border-bordercolor hover:border-gray-500 transition-all";
+            });
+            const activeProjBtn = document.getElementById(`btn-proj-${key}`);
+            if (activeProjBtn) {
+                activeProjBtn.className = "proj-tab px-5 py-2.5 rounded font-mono text-xs uppercase tracking-wider bg-accentred text-white font-bold transition-all";
+            }
+
+            const p = projectsData[key];
+            document.getElementById('project-content-container').innerHTML = `
+                <div class="lg:col-span-2 space-y-6">
+                    <div class="bg-cardbg border border-bordercolor rounded p-6 space-y-4">
+                        <div class="flex items-center justify-between">
+                            <span class="font-mono text-xs px-2.5 py-1 rounded bg-accentred/20 text-accentred border border-accentred/40 font-bold">${p.tag}</span>
+                            <button onclick="copyBlueprint()" class="text-xs font-mono text-mutedgray hover:text-white bg-bordercolor px-3 py-1.5 rounded transition-all flex items-center space-x-1.5">
+                                <i class="fa-solid fa-copy"></i> <span>COPY SPEC</span>
+                            </button>
+                        </div>
+                        <h2 class="text-2xl font-bold text-white">${p.title}</h2>
+                        <p class="text-sm text-gray-300 leading-relaxed"><strong class="text-white">Engineering Objective:</strong> ${p.objective}</p>
+                    </div>
+
+                    <div class="bg-cardbg border border-bordercolor rounded p-6 space-y-3">
+                        <h3 class="text-lg font-bold text-white flex items-center space-x-2 font-mono">
+                            <i class="fa-solid fa-network-wired text-accentred"></i>
+                            <span>Project Schematic Diagram</span>
+                        </h3>
+                        ${p.diagramSnippet}
+                        <button onclick="switchTab('diagram')" class="w-full mt-2 py-2.5 bg-bordercolor hover:bg-accentred hover:text-white text-gray-200 text-xs font-mono uppercase rounded transition-all">
+                            LAUNCH INTERACTIVE SIMULATOR
+                        </button>
+                    </div>
+
+                    <div class="bg-cardbg border border-bordercolor rounded p-6 space-y-4">
+                        <h3 class="text-lg font-bold text-white flex items-center space-x-2 font-mono">
+                            <i class="fa-solid fa-cubes text-accentred"></i>
+                            <span>Component Requirements</span>
+                        </h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs font-mono">
+                            <div class="bg-[#020202] p-3.5 rounded border border-bordercolor">
+                                <div class="text-accentred font-bold mb-1">GATES</div>
+                                <div class="text-gray-300">${p.components.gates}</div>
+                            </div>
+                            <div class="bg-[#020202] p-3.5 rounded border border-bordercolor">
+                                <div class="text-accentred font-bold mb-1">MEMORY</div>
+                                <div class="text-gray-300">${p.components.memory}</div>
+                            </div>
+                            <div class="bg-[#020202] p-3.5 rounded border border-bordercolor">
+                                <div class="text-accentred font-bold mb-1">I/O</div>
+                                <div class="text-gray-300">${p.components.io}</div>
+                            </div>
+                            <div class="bg-[#020202] p-3.5 rounded border border-bordercolor">
+                                <div class="text-accentred font-bold mb-1">POWER & CLOCK</div>
+                                <div class="text-gray-300">${p.components.power}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-cardbg border border-bordercolor rounded p-6 space-y-4">
+                        <h3 class="text-lg font-bold text-white flex items-center space-x-2 font-mono">
+                            <i class="fa-solid fa-project-diagram text-accentred"></i>
+                            <span>Multi-Layer Wiring Order</span>
+                        </h3>
+                        <div class="space-y-2">
+                            ${p.wiring.map((w, idx) => `
+                                <div class="flex items-start space-x-3 bg-[#020202] p-3 rounded border border-bordercolor text-xs">
+                                    <span class="font-mono font-bold text-accentred">0${idx+1}</span>
+                                    <span class="text-gray-300">${w}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    <div class="bg-cardbg border border-bordercolor rounded p-6 space-y-4">
+                        <h3 class="text-lg font-bold text-white flex items-center space-x-2 font-mono">
+                            <i class="fa-solid fa-triangle-exclamation text-accentred"></i>
+                            <span>Debugging Steps</span>
+                        </h3>
+                        <div class="space-y-3">
+                            ${p.debugging.map((d, idx) => `
+                                <div class="bg-[#020202] p-3.5 rounded border border-bordercolor text-xs space-y-1">
+                                    <div class="font-mono text-accentred font-bold">CHECK 0${idx+1}</div>
+                                    <div class="text-gray-300">${d}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <div class="bg-cardbg border border-accentred/60 rounded p-6 space-y-4 glow-red">
+                        <h3 class="text-base font-bold text-white font-mono">Test in Sandbox</h3>
+                        <p class="text-xs text-mutedgray">Simulate signal propagation right now.</p>
+                        <button onclick="switchTab('diagram')" class="w-full py-3 bg-accentred text-white font-mono text-xs uppercase font-bold rounded hover:bg-accentredhover transition-all">
+                            OPEN DIAGRAM SANDBOX
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function copyBlueprint() {
+            const p = projectsData[currentProjectKey];
+            const text = `PROJECT: ${p.title}\nOBJECTIVE: ${p.objective}`;
+            const ta = document.createElement('textarea');
+            ta.value = text;
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand('copy');
+            document.body.removeChild(ta);
+            alertBox("Blueprint copied to clipboard.");
+        }
+
+        function setDiagramMode(mode) {
+            diagramMode = mode;
+            inputA = 0;
+            inputB = 0;
+            srStateQ = 0;
+            updateToggleUI();
+            updateDiagramSimulation();
+
+            ['and', 'or', 'xor', 'sr'].forEach(m => {
+                const btn = document.getElementById(`diag-mode-${m}`);
+                if (m === mode) btn.className = "p-3 rounded border border-accentred bg-accentred/20 text-white font-mono text-xs text-left transition-all font-bold";
+                else btn.className = "p-3 rounded border border-bordercolor hover:border-gray-500 bg-[#020202] text-gray-300 font-mono text-xs text-left transition-all";
+            });
+        }
+
+        function toggleInput(which) {
+            if (which === 'A') inputA = inputA === 0 ? 1 : 0;
+            else if (which === 'B') inputB = inputB === 0 ? 1 : 0;
+            updateToggleUI();
+            updateDiagramSimulation();
+        }
+
+        function triggerClockPulse() {
+            if (diagramMode === 'sr') {
+                if (inputA === 1 && inputB === 0) srStateQ = 1;
+                else if (inputA === 0 && inputB === 1) srStateQ = 0;
+            }
+            updateDiagramSimulation();
+            const box = document.getElementById('vis-gate-box');
+            box.classList.add('scale-105', 'border-white');
+            setTimeout(() => box.classList.remove('scale-105', 'border-white'), 200);
+        }
+
+        function updateToggleUI() {
+            const thumbA = document.getElementById('toggle-thumb-a');
+            const btnA = document.getElementById('toggle-btn-a');
+            const valA = document.getElementById('val-in-a');
+            const visA = document.getElementById('vis-in-a');
+            if (inputA === 1) {
+                thumbA.style.transform = 'translateX(24px)';
+                btnA.className = "w-14 h-8 rounded-full bg-accentred relative transition-colors duration-200 focus:outline-none";
+                valA.innerText = "1 (HIGH)";
+                visA.className = "w-4 h-4 rounded-full bg-accentred border border-white glow-red";
+            } else {
+                thumbA.style.transform = 'translateX(0px)';
+                btnA.className = "w-14 h-8 rounded-full bg-gray-800 relative transition-colors duration-200 focus:outline-none";
+                valA.innerText = "0 (LOW)";
+                visA.className = "w-4 h-4 rounded-full bg-gray-800 border border-gray-600";
+            }
+
+            const thumbB = document.getElementById('toggle-thumb-b');
+            const btnB = document.getElementById('toggle-btn-b');
+            const valB = document.getElementById('val-in-b');
+            const visB = document.getElementById('vis-in-b');
+            if (inputB === 1) {
+                thumbB.style.transform = 'translateX(24px)';
+                btnB.className = "w-14 h-8 rounded-full bg-accentred relative transition-colors duration-200 focus:outline-none";
+                valB.innerText = "1 (HIGH)";
+                visB.className = "w-4 h-4 rounded-full bg-accentred border border-white glow-red";
+            } else {
+                thumbB.style.transform = 'translateX(0px)';
+                btnB.className = "w-14 h-8 rounded-full bg-gray-800 relative transition-colors duration-200 focus:outline-none";
+                valB.innerText = "0 (LOW)";
+                visB.className = "w-4 h-4 rounded-full bg-gray-800 border border-gray-600";
+            }
+        }
+
+        function updateDiagramSimulation() {
+            let outputVal = 0;
+            const titleDisplay = document.getElementById('diagram-title-display');
+            const gateBox = document.getElementById('vis-gate-box');
+            const desc = document.getElementById('diagram-desc');
+            const led = document.getElementById('vis-led-output');
+            const valQ = document.getElementById('val-out-q');
+
+            if (diagramMode === 'and') {
+                outputVal = (inputA === 1 && inputB === 1) ? 1 : 0;
+                titleDisplay.innerText = "// SCHEMATIC: AND GATE";
+                gateBox.innerText = "AND";
+                desc.innerText = "The AND gate outputs HIGH (1) only when both Input A and Input B are HIGH (1).";
+            } else if (diagramMode === 'or') {
+                outputVal = (inputA === 1 || inputB === 1) ? 1 : 0;
+                titleDisplay.innerText = "// SCHEMATIC: OR GATE";
+                gateBox.innerText = "OR";
+                desc.innerText = "The OR gate outputs HIGH (1) if either Input A or Input B is HIGH (1).";
+            } else if (diagramMode === 'xor') {
+                outputVal = (inputA !== inputB) ? 1 : 0;
+                titleDisplay.innerText = "// SCHEMATIC: XOR GATE";
+                gateBox.innerText = "XOR";
+                desc.innerText = "The XOR gate outputs HIGH (1) when inputs differ.";
+            } else if (diagramMode === 'sr') {
+                outputVal = srStateQ;
+                titleDisplay.innerText = "// SCHEMATIC: SR LATCH";
+                gateBox.innerText = "SR LATCH";
+                desc.innerText = "Input A = SET, Input B = RESET. Click PULSE to clock memory state.";
+            }
+
+            if (outputVal === 1) {
+                led.className = "w-6 h-6 rounded-full bg-accentred border-2 border-white shadow-[0_0_15px_#dc2626] transition-all duration-300";
+                valQ.innerText = "1 (HIGH)";
+                valQ.className = "text-accentred font-bold text-sm";
+            } else {
+                led.className = "w-6 h-6 rounded-full bg-gray-900 border-2 border-gray-700 transition-all duration-300";
+                valQ.innerText = "0 (LOW)";
+                valQ.className = "text-white font-bold text-sm";
+            }
+        }
+
+        function loadVaultInDiagram(type) {
+            switchTab('diagram');
+            if (type === 'sr') setDiagramMode('sr');
+            else setDiagramMode('and');
+        }
+
+        function alertBox(msg) {
+            const b = document.createElement('div');
+            b.className = "fixed bottom-5 right-5 bg-cardbg border border-accentred text-white px-5 py-3 rounded shadow-2xl z-50 font-mono text-xs flex items-center space-x-3";
+            b.innerHTML = `<i class="fa-solid fa-circle-check text-accentred text-base"></i><span>${msg}</span>`;
+            document.body.appendChild(b);
+            setTimeout(() => b.remove(), 3000);
+        }
+
+        window.onload = function() {
+            switchProject('alu');
+            updateToggleUI();
+            updateDiagramSimulation();
+        };
+    </script>
+</body>
+</html>
