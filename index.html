@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advanced Circuit Architecture & Logic Portal</title>
+    <title>Logic Circuit Viewer & Cyber Architecture Portal</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -12,12 +12,12 @@
             theme: {
                 extend: {
                     colors: {
-                        darkbg: '#050505',
-                        cardbg: '#0f0f0f',
-                        bordercolor: '#262626',
-                        accentred: '#dc2626',
-                        accentredhover: '#ef4444',
-                        mutedgray: '#a3a3a3',
+                        cyberblack: '#000000',
+                        cybercard: '#080808',
+                        cyberborder: '#222222',
+                        cyberred: '#ff0033',
+                        cyberredhover: '#ff1a47',
+                        cybermuted: '#888888',
                     },
                     fontFamily: {
                         sans: ['Inter', 'sans-serif'],
@@ -32,789 +32,639 @@
     <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #050505; color: #f5f5f5; }
+        body { font-family: 'Inter', sans-serif; background-color: #000000; color: #ffffff; overflow: hidden; }
         .font-mono { font-family: 'JetBrains Mono', monospace; }
-        .glow-red { box-shadow: 0 0 25px rgba(220, 38, 38, 0.2); }
-        ::-webkit-scrollbar { width: 8px; height: 8px; }
-        ::-webkit-scrollbar-track { background: #050505; }
-        ::-webkit-scrollbar-thumb { background: #262626; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #dc2626; }
+        .glow-red { box-shadow: 0 0 20px rgba(255, 0, 51, 0.35); }
+        .glow-red-sm { box-shadow: 0 0 10px rgba(255, 0, 51, 0.25); }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #000000; }
+        ::-webkit-scrollbar-thumb { background: #222222; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #ff0033; }
+        .circuit-canvas-bg {
+            background-image: radial-gradient(circle, #1a1a1a 1px, transparent 1px);
+            background-size: 32px 32px;
+        }
     </style>
 </head>
-<body class="min-h-screen flex flex-col selection:bg-accentred selection:text-white">
+<body class="h-screen w-screen flex flex-col selection:bg-cyberred selection:text-white">
 
-    <!-- Top Navigation Bar with spaced out buttons and no title/system architecture text -->
-    <header class="sticky top-0 z-50 bg-[#050505]/95 backdrop-blur-md border-b border-bordercolor">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-            <!-- Left brand icon link back to projects -->
-            <div class="flex items-center space-x-3 cursor-pointer group" onclick="switchTab('projects')">
-                <div class="w-10 h-10 rounded bg-accentred flex items-center justify-center glow-red group-hover:scale-105 transition-transform">
-                    <i class="fa-solid fa-microchip text-white text-lg font-bold"></i>
-                </div>
+    <!-- Requirement 1: Top navigation bar with spaced-out buttons, NO title text, NO banner text -->
+    <header class="h-16 shrink-0 bg-cyberblack border-b border-cyberborder px-6 flex items-center justify-between z-30">
+        <div class="flex items-center space-x-3">
+            <div class="w-9 h-9 rounded bg-cyberred flex items-center justify-center glow-red-sm cursor-pointer" onclick="switchBlueprint('alu')">
+                <i class="fa-solid fa-microchip text-white text-base font-bold"></i>
             </div>
-
-            <!-- Desktop Nav Tabs - Spaced Out -->
-            <nav class="hidden md:flex items-center space-x-8">
-                <button onclick="switchTab('projects')" id="nav-projects" class="nav-btn text-sm font-mono tracking-wider uppercase transition-all text-accentred font-bold pb-1 border-b-2 border-accentred">
-                    Project Ideas
-                </button>
-                <button onclick="switchTab('vault')" id="nav-vault" class="nav-btn text-sm font-mono tracking-wider uppercase transition-all text-mutedgray hover:text-white pb-1 border-b-2 border-transparent">
-                    Circuit Vault
-                </button>
-                <button onclick="switchTab('masterclass')" id="nav-masterclass" class="nav-btn text-sm font-mono tracking-wider uppercase transition-all text-mutedgray hover:text-white pb-1 border-b-2 border-transparent">
-                    Masterclass Guides
-                </button>
-                <button onclick="switchTab('diagram')" id="nav-diagram" class="nav-btn text-sm font-mono tracking-wider uppercase transition-all text-mutedgray hover:text-white pb-1 border-b-2 border-transparent relative">
-                    <span class="absolute -top-1 -right-2 flex h-2 w-2">
-                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-accentred opacity-75"></span>
-                      <span class="relative inline-flex rounded-full h-2 w-2 bg-accentred"></span>
-                    </span>
-                    Diagram
-                </button>
-            </nav>
-
-            <!-- Mobile Menu Toggle -->
-            <div class="flex md:hidden">
-                <button onclick="toggleMobileMenu()" class="p-2 rounded text-mutedgray hover:text-white bg-cardbg border border-bordercolor">
-                    <i class="fa-solid fa-bars text-xl"></i>
-                </button>
-            </div>
+            <span class="font-mono text-xs text-cybermuted tracking-widest hidden sm:inline">[PORTAL v6.2]</span>
         </div>
 
-        <!-- Mobile Nav Menu -->
-        <div id="mobile-menu" class="hidden md:hidden bg-cardbg border-b border-bordercolor px-4 py-4 space-y-3 font-mono text-xs uppercase tracking-wider">
-            <button onclick="switchTab('projects'); toggleMobileMenu();" class="block w-full text-left px-3 py-2 rounded text-accentred font-bold bg-bordercolor/50">
-                Project Ideas
+        <nav class="flex items-center space-x-2 sm:space-x-6 overflow-x-auto py-2">
+            <button onclick="switchBlueprint('alu')" id="nav-alu" class="nav-btn font-mono text-xs uppercase tracking-wider px-3 py-1.5 rounded transition-all bg-cyberred text-white font-bold glow-red-sm">
+                4-Bit ALU
             </button>
-            <button onclick="switchTab('vault'); toggleMobileMenu();" class="block w-full text-left px-3 py-2 rounded text-mutedgray hover:text-white">
-                Circuit Vault
+            <button onclick="switchBlueprint('lock')" id="nav-lock" class="nav-btn font-mono text-xs uppercase tracking-wider px-3 py-1.5 rounded transition-all text-cybermuted hover:text-white bg-cybercard border border-cyberborder">
+                State-Machine Lock
             </button>
-            <button onclick="switchTab('masterclass'); toggleMobileMenu();" class="block w-full text-left px-3 py-2 rounded text-mutedgray hover:text-white">
-                Masterclass Guides
+            <button onclick="switchBlueprint('elevator')" id="nav-elevator" class="nav-btn font-mono text-xs uppercase tracking-wider px-3 py-1.5 rounded transition-all text-cybermuted hover:text-white bg-cybercard border border-cyberborder">
+                Elevator Controller
             </button>
-            <button onclick="switchTab('diagram'); toggleMobileMenu();" class="block w-full text-left px-3 py-2 rounded text-mutedgray hover:text-white">
-                Diagram
+            <button onclick="switchBlueprint('srlatch')" id="nav-srlatch" class="nav-btn font-mono text-xs uppercase tracking-wider px-3 py-1.5 rounded transition-all text-cybermuted hover:text-white bg-cybercard border border-cyberborder">
+                SR Latch
             </button>
+            <button onclick="switchBlueprint('dff')" id="nav-dff" class="nav-btn font-mono text-xs uppercase tracking-wider px-3 py-1.5 rounded transition-all text-cybermuted hover:text-white bg-cybercard border border-cyberborder">
+                D-FlipFlop
+            </button>
+            <button onclick="switchBlueprint('adder')" id="nav-adder" class="nav-btn font-mono text-xs uppercase tracking-wider px-3 py-1.5 rounded transition-all text-cybermuted hover:text-white bg-cybercard border border-cyberborder">
+                Full Adder
+            </button>
+        </nav>
+
+        <div class="hidden lg:flex items-center space-x-2 font-mono text-xs text-cybermuted">
+            <span class="w-2 h-2 rounded-full bg-cyberred animate-pulse"></span>
+            <span>SYSTEM ONLINE</span>
         </div>
     </header>
 
-    <!-- Main Content Body -->
-    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full">
-
-        <!-- ================= SECTION 1: PROJECT IDEAS ================= -->
-        <section id="section-projects" class="space-y-8">
-            <div class="border-l-4 border-accentred pl-4 py-1">
-                <h1 class="text-3xl font-extrabold text-white tracking-tight sm:text-4xl font-mono uppercase">Advanced Project Blueprints</h1>
-                <p class="mt-1 text-sm text-mutedgray font-mono">Hard-core sequential logic specifications with individual interactive diagrams.</p>
+    <!-- Main Workspace Container -->
+    <div class="flex-grow flex relative overflow-hidden">
+        
+        <!-- Center Interactive Diagram Canvas Area -->
+        <main class="flex-grow relative overflow-hidden circuit-canvas-bg flex flex-col" id="canvas-container">
+            
+            <!-- Floating Layer Selector & Zoom Controls -->
+            <div class="absolute top-4 left-4 z-20 flex flex-col space-y-3">
+                <!-- Requirement 8: Multi-layer selector -->
+                <div class="bg-cybercard/90 backdrop-blur border border-cyberborder rounded p-1.5 flex flex-wrap gap-1 shadow-2xl">
+                    <button onclick="setLayer('all')" id="layer-btn-all" class="px-3 py-1.5 rounded font-mono text-[11px] uppercase tracking-wider bg-cyberred text-white font-bold transition-all">All Layers</button>
+                    <button onclick="setLayer(1)" id="layer-btn-1" class="px-3 py-1.5 rounded font-mono text-[11px] uppercase tracking-wider bg-cyberblack text-cybermuted hover:text-white transition-all border border-cyberborder">L1: Subfloor</button>
+                    <button onclick="setLayer(2)" id="layer-btn-2" class="px-3 py-1.5 rounded font-mono text-[11px] uppercase tracking-wider bg-cyberblack text-cybermuted hover:text-white transition-all border border-cyberborder">L2: Data Bus</button>
+                    <button onclick="setLayer(3)" id="layer-btn-3" class="px-3 py-1.5 rounded font-mono text-[11px] uppercase tracking-wider bg-cyberblack text-cybermuted hover:text-white transition-all border border-cyberborder">L3: Control</button>
+                    <button onclick="setLayer(4)" id="layer-btn-4" class="px-3 py-1.5 rounded font-mono text-[11px] uppercase tracking-wider bg-cyberblack text-cybermuted hover:text-white transition-all border border-cyberborder">L4: Actuators</button>
+                </div>
             </div>
 
-            <!-- Project Selector Tabs -->
-            <div class="flex flex-wrap gap-3 pb-2 border-b border-bordercolor">
-                <button onclick="switchProject('alu')" id="btn-proj-alu" class="proj-tab px-5 py-2.5 rounded font-mono text-xs uppercase tracking-wider bg-accentred text-white font-bold transition-all">
-                    [01] 4-Bit ALU
+            <!-- Requirement 6: Canvas zoom controls -->
+            <div class="absolute top-4 right-4 z-20 flex items-center space-x-2 bg-cybercard/90 backdrop-blur border border-cyberborder rounded p-1 shadow-2xl font-mono text-xs">
+                <button onclick="zoomCanvas(0.1)" class="w-8 h-8 rounded bg-cyberblack hover:bg-cyberred text-white flex items-center justify-center border border-cyberborder transition-all"><i class="fa-solid fa-plus"></i></button>
+                <button onclick="zoomCanvas(-0.1)" class="w-8 h-8 rounded bg-cyberblack hover:bg-cyberred text-white flex items-center justify-center border border-cyberborder transition-all"><i class="fa-solid fa-minus"></i></button>
+                <button onclick="resetZoom()" class="px-3 h-8 rounded bg-cyberblack hover:bg-cyberred text-white flex items-center justify-center border border-cyberborder transition-all">RESET</button>
+            </div>
+
+            <!-- Interactive SVG Canvas Container -->
+            <div id="viewport" class="w-full h-full cursor-grab active:cursor-grabbing relative flex items-center justify-center">
+                <svg id="circuit-svg" class="w-full h-full select-none" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <!-- Glowing Red Filter -->
+                        <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+                            <feGaussianBlur stdDeviation="3" result="blur" />
+                            <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                        </filter>
+                    </defs>
+                    <g id="zoom-pan-group">
+                        <!-- Wires Rendered Here -->
+                        <g id="wires-layer"></g>
+                        <!-- Nodes & Gates Rendered Here -->
+                        <g id="nodes-layer"></g>
+                    </g>
+                </svg>
+            </div>
+
+            <!-- Bottom Floating Legend & Status Bar -->
+            <div class="absolute bottom-4 left-4 right-4 z-20 flex flex-col sm:flex-row items-center justify-between bg-cybercard/90 backdrop-blur border border-cyberborder px-4 py-2 rounded text-xs font-mono text-cybermuted shadow-2xl gap-2">
+                <div class="flex items-center space-x-4">
+                    <span class="text-white font-bold" id="status-blueprint-title">4-BIT ALU ARCHITECTURE</span>
+                    <span class="hidden md:inline text-cyberborder">|</span>
+                    <span class="hidden md:inline" id="status-blueprint-desc">Combinatorial 4-bit parallel arithmetic unit built with NAND/NOR primitive primitives.</span>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="flex items-center space-x-1.5"><span class="w-2.5 h-2.5 rounded-full bg-cyberred glow-red-sm"></span><span class="text-white">Active Signal (HIGH)</span></div>
+                    <div class="flex items-center space-x-1.5"><span class="w-2.5 h-2.5 rounded-full bg-cyberborder"></span><span class="text-cybermuted">Inactive (LOW)</span></div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Requirement 7: Inspector Panel right sidebar -->
+        <aside class="w-96 shrink-0 bg-cybercard border-l border-cyberborder flex flex-col z-30 overflow-y-auto">
+            <div class="p-5 border-b border-cyberborder flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                    <i class="fa-solid fa-terminal text-cyberred"></i>
+                    <h2 class="font-mono text-xs uppercase tracking-widest text-white font-bold">Component Inspector</h2>
+                </div>
+                <span class="px-2 py-0.5 rounded font-mono text-[10px] bg-cyberred/20 text-cyberred border border-cyberred/40 font-bold" id="inspector-status">READY</span>
+            </div>
+
+            <div class="p-6 space-y-6 flex-grow" id="inspector-content">
+                <!-- Dynamically populated when clicking nodes or gates -->
+                <div class="space-y-4">
+                    <div class="p-4 rounded bg-cyberblack border border-cyberborder space-y-2">
+                        <span class="text-[10px] font-mono text-cyberred uppercase font-bold tracking-wider">[SELECTED NODE]</span>
+                        <h3 class="text-lg font-bold text-white font-mono" id="inspector-title">System Overview</h3>
+                        <p class="text-xs text-cybermuted leading-relaxed" id="inspector-desc">Click any input node, primitive gate (NAND, NOR, OR, XOR, NXOR), or output terminal on the canvas to inspect real-time signal states and truth tables.</p>
+                    </div>
+
+                    <div class="p-4 rounded bg-cyberblack border border-cyberborder space-y-3">
+                        <div class="flex items-center justify-between font-mono text-xs text-white font-bold border-b border-cyberborder pb-2">
+                            <span>PRIMITIVE TRUTH TABLE</span>
+                            <span class="text-cyberred" id="inspector-gate-type">NAND</span>
+                        </div>
+                        <div class="space-y-1.5 font-mono text-xs" id="inspector-truthtable">
+                            <div class="flex justify-between text-cybermuted bg-cybercard p-2 rounded"><span>0 | 0</span><span class="text-white font-bold">OUT: 1</span></div>
+                            <div class="flex justify-between text-cybermuted bg-cybercard p-2 rounded"><span>0 | 1</span><span class="text-white font-bold">OUT: 1</span></div>
+                            <div class="flex justify-between text-cybermuted bg-cybercard p-2 rounded"><span>1 | 0</span><span class="text-white font-bold">OUT: 1</span></div>
+                            <div class="flex justify-between text-cybermuted bg-cybercard p-2 rounded"><span>1 | 1</span><span class="text-white font-bold">OUT: 0</span></div>
+                        </div>
+                    </div>
+
+                    <div class="p-4 rounded bg-cyberblack border border-cyberborder space-y-2">
+                        <span class="text-[10px] font-mono text-cyberred uppercase font-bold tracking-wider">// ASSEMBLY SEQUENCE</span>
+                        <div class="space-y-2 text-xs font-mono text-cybermuted" id="inspector-assembly">
+                            <div>1. Route Layer 1 power and ground rails.</div>
+                            <div>2. Place primary NAND/NOR logic columns.</div>
+                            <div>3. Connect orthogonal data bus lines.</div>
+                            <div>4. Verify actuation on Layer 4 terminals.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer Action in Sidebar -->
+            <div class="p-4 border-t border-cyberborder bg-cyberblack">
+                <button onclick="toggleAllInputs()" class="w-full py-2.5 bg-cyberred hover:bg-cyberredhover text-white font-mono text-xs uppercase font-bold rounded transition-all glow-red-sm flex items-center justify-center space-x-2">
+                    <i class="fa-solid fa-bolt"></i><span>TOGGLE ALL INPUT SIGNALS</span>
                 </button>
-                <button onclick="switchProject('lock')" id="btn-proj-lock" class="proj-tab px-5 py-2.5 rounded font-mono text-xs uppercase tracking-wider bg-cardbg text-mutedgray border border-bordercolor hover:border-gray-500 transition-all">
-                    [02] State Combination Lock
-                </button>
-                <button onclick="switchProject('elevator')" id="btn-proj-elevator" class="proj-tab px-5 py-2.5 rounded font-mono text-xs uppercase tracking-wider bg-cardbg text-mutedgray border border-bordercolor hover:border-gray-500 transition-all">
-                    [03] Multi-Floor Elevator
-                </button>
-                <button onclick="switchProject('decoder')" id="btn-proj-decoder" class="proj-tab px-5 py-2.5 rounded font-mono text-xs uppercase tracking-wider bg-cardbg text-mutedgray border border-bordercolor hover:border-gray-500 transition-all">
-                    [04] Binary-Decimal Decoder
-                </button>
             </div>
+        </aside>
 
-            <!-- Project Dynamic Content Container -->
-            <div id="project-content-container" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <!-- Injected via JavaScript -->
-            </div>
-        </section>
+    </div>
 
-        <!-- ================= SECTION 2: CIRCUIT VAULT ================= -->
-        <section id="section-vault" class="hidden space-y-8">
-            <div class="border-l-4 border-accentred pl-4 py-1">
-                <h1 class="text-3xl font-extrabold text-white tracking-tight sm:text-4xl font-mono uppercase">Circuit Vault & Sub-Assemblies</h1>
-                <p class="mt-1 text-sm text-mutedgray font-mono">Reusable modular components equipped with individual interactive circuit diagrams.</p>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <!-- Vault Item 1 -->
-                <div class="bg-cardbg border border-bordercolor rounded p-5 hover:border-accentred transition-all flex flex-col justify-between">
-                    <div>
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-xs font-mono px-2 py-0.5 rounded bg-accentred/20 text-accentred border border-accentred/40 font-bold">MEMORY</span>
-                            <i class="fa-solid fa-database text-accentred"></i>
-                        </div>
-                        <h3 class="text-lg font-bold text-white mb-1">SR Latch</h3>
-                        <p class="text-xs text-mutedgray mb-4">Set-Reset bistable multivibrator for persistent 1-bit memory storage.</p>
-                        <div class="bg-[#020202] p-3 rounded font-mono text-xs text-gray-300 border border-bordercolor mb-4 text-center">
-                            <div class="text-accentred font-bold mb-1">[SCHEMATIC: SR LATCH]</div>
-                            <div class="text-[11px] text-mutedgray">S=1 &rarr; Q=1 | R=1 &rarr; Q=0</div>
-                        </div>
-                    </div>
-                    <button onclick="loadVaultInDiagram('sr')" class="w-full py-2 bg-bordercolor hover:bg-accentred hover:text-white text-gray-200 text-xs font-mono uppercase rounded transition-all flex items-center justify-center space-x-2">
-                        <span>OPEN IN DIAGRAM</span> <i class="fa-solid fa-arrow-right"></i>
-                    </button>
-                </div>
-
-                <!-- Vault Item 2 -->
-                <div class="bg-cardbg border border-bordercolor rounded p-5 hover:border-accentred transition-all flex flex-col justify-between">
-                    <div>
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-xs font-mono px-2 py-0.5 rounded bg-accentred/20 text-accentred border border-accentred/40 font-bold">SEQUENTIAL</span>
-                            <i class="fa-solid fa-clock text-accentred"></i>
-                        </div>
-                        <h3 class="text-lg font-bold text-white mb-1">D Flip-Flop</h3>
-                        <p class="text-xs text-mutedgray mb-4">Samples data input on the rising edge of the clock pulse cycle.</p>
-                        <div class="bg-[#020202] p-3 rounded font-mono text-xs text-gray-300 border border-bordercolor mb-4 text-center">
-                            <div class="text-accentred font-bold mb-1">[SCHEMATIC: D-FF]</div>
-                            <div class="text-[11px] text-mutedgray">CLK Tick &rarr; Q = D</div>
-                        </div>
-                    </div>
-                    <button onclick="loadVaultInDiagram('dff')" class="w-full py-2 bg-bordercolor hover:bg-accentred hover:text-white text-gray-200 text-xs font-mono uppercase rounded transition-all flex items-center justify-center space-x-2">
-                        <span>OPEN IN DIAGRAM</span> <i class="fa-solid fa-arrow-right"></i>
-                    </button>
-                </div>
-
-                <!-- Vault Item 3 -->
-                <div class="bg-cardbg border border-bordercolor rounded p-5 hover:border-accentred transition-all flex flex-col justify-between">
-                    <div>
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-xs font-mono px-2 py-0.5 rounded bg-accentred/20 text-accentred border border-accentred/40 font-bold">PULSE</span>
-                            <i class="fa-solid fa-bolt text-accentred"></i>
-                        </div>
-                        <h3 class="text-lg font-bold text-white mb-1">Edge Detector</h3>
-                        <p class="text-xs text-mutedgray mb-4">Converts sustained button presses into single-tick micro pulses.</p>
-                        <div class="bg-[#020202] p-3 rounded font-mono text-xs text-gray-300 border border-bordercolor mb-4 text-center">
-                            <div class="text-accentred font-bold mb-1">[SCHEMATIC: EDGE]</div>
-                            <div class="text-[11px] text-mutedgray">Input &rarr; NOT &rarr; AND</div>
-                        </div>
-                    </div>
-                    <button onclick="loadVaultInDiagram('edge')" class="w-full py-2 bg-bordercolor hover:bg-accentred hover:text-white text-gray-200 text-xs font-mono uppercase rounded transition-all flex items-center justify-center space-x-2">
-                        <span>OPEN IN DIAGRAM</span> <i class="fa-solid fa-arrow-right"></i>
-                    </button>
-                </div>
-
-                <!-- Vault Item 4 -->
-                <div class="bg-cardbg border border-bordercolor rounded p-5 hover:border-accentred transition-all flex flex-col justify-between">
-                    <div>
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-xs font-mono px-2 py-0.5 rounded bg-accentred/20 text-accentred border border-accentred/40 font-bold">ARITHMETIC</span>
-                            <i class="fa-solid fa-calculator text-accentred"></i>
-                        </div>
-                        <h3 class="text-lg font-bold text-white mb-1">Full Adder</h3>
-                        <p class="text-xs text-mutedgray mb-4">Combines XOR and AND gates to calculate sum and carry bits.</p>
-                        <div class="bg-[#020202] p-3 rounded font-mono text-xs text-gray-300 border border-bordercolor mb-4 text-center">
-                            <div class="text-accentred font-bold mb-1">[SCHEMATIC: ADDER]</div>
-                            <div class="text-[11px] text-mutedgray">Sum = A ^ B ^ Cin</div>
-                        </div>
-                    </div>
-                    <button onclick="loadVaultInDiagram('adder')" class="w-full py-2 bg-bordercolor hover:bg-accentred hover:text-white text-gray-200 text-xs font-mono uppercase rounded transition-all flex items-center justify-center space-x-2">
-                        <span>OPEN IN DIAGRAM</span> <i class="fa-solid fa-arrow-right"></i>
-                    </button>
-                </div>
-            </div>
-        </section>
-
-        <!-- ================= SECTION 3: MASTERCLASS GUIDES ================= -->
-        <section id="section-masterclass" class="hidden space-y-8">
-            <div class="border-l-4 border-accentred pl-4 py-1">
-                <h1 class="text-3xl font-extrabold text-white tracking-tight sm:text-4xl font-mono uppercase">Masterclass Architecture Guides</h1>
-                <p class="mt-1 text-sm text-mutedgray font-mono">Advanced theoretical breakdowns featuring interactive timing waveforms and signal flow.</p>
-            </div>
-
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <!-- Guide 1 -->
-                <div class="bg-cardbg border border-bordercolor rounded p-6 hover:border-accentred transition-all space-y-4 flex flex-col justify-between">
-                    <div class="space-y-4">
-                        <div class="flex items-center space-x-3 text-accentred">
-                            <i class="fa-solid fa-wave-square text-2xl"></i>
-                            <span class="font-mono text-xs uppercase tracking-wider font-bold">GUIDE 01 // TIMING</span>
-                        </div>
-                        <h3 class="text-xl font-bold text-white">Propagation Delays & Race Conditions</h3>
-                        <p class="text-sm text-mutedgray leading-relaxed">
-                            Game engines introduce 1-tick gate latencies. Parallel signal paths can cause race conditions if arrival times differ.
-                        </p>
-                        <div class="bg-[#020202] p-4 rounded border border-bordercolor space-y-2 font-mono text-xs">
-                            <div class="text-accentred font-bold">// TIMING WAVEFORM DIAGRAM</div>
-                            <div class="flex justify-between text-mutedgray text-[11px]"><span>CLK:</span><span>_|-|_|-|</span></div>
-                            <div class="flex justify-between text-mutedgray text-[11px]"><span>DATA:</span><span>___|---|</span></div>
-                            <div class="flex justify-between text-white text-[11px]"><span>OUT:</span><span>____|--|</span></div>
-                        </div>
-                    </div>
-                    <button onclick="switchTab('diagram')" class="w-full py-2 bg-bordercolor hover:bg-accentred hover:text-white text-gray-200 text-xs font-mono uppercase rounded transition-all">
-                        SIMULATE IN DIAGRAM
-                    </button>
-                </div>
-
-                <!-- Guide 2 -->
-                <div class="bg-cardbg border border-bordercolor rounded p-6 hover:border-accentred transition-all space-y-4 flex flex-col justify-between">
-                    <div class="space-y-4">
-                        <div class="flex items-center space-x-3 text-accentred">
-                            <i class="fa-solid fa-layer-group text-2xl"></i>
-                            <span class="font-mono text-xs uppercase tracking-wider font-bold">GUIDE 02 // ROUTING</span>
-                        </div>
-                        <h3 class="text-xl font-bold text-white">Z-Axis Wiring Stacking</h3>
-                        <p class="text-sm text-mutedgray leading-relaxed">
-                            Prevent cross-talk and bridge clipping in dense multi-floor automation by stacking signals across three vertical planes.
-                        </p>
-                        <div class="bg-[#020202] p-4 rounded border border-bordercolor space-y-1 font-mono text-xs text-gray-300">
-                            <div class="text-accentred font-bold mb-1">// LAYER STACK DIAGRAM</div>
-                            <div>L3: [ Actuator Bridge ]</div>
-                            <div>L2: [ Data Pathways Bus ]</div>
-                            <div>L1: [ Subfloor Power / Ground ]</div>
-                        </div>
-                    </div>
-                    <button onclick="switchTab('diagram')" class="w-full py-2 bg-bordercolor hover:bg-accentred hover:text-white text-gray-200 text-xs font-mono uppercase rounded transition-all">
-                        INSPECT IN DIAGRAM
-                    </button>
-                </div>
-
-                <!-- Guide 3 -->
-                <div class="bg-cardbg border border-bordercolor rounded p-6 hover:border-accentred transition-all space-y-4 flex flex-col justify-between">
-                    <div class="space-y-4">
-                        <div class="flex items-center space-x-3 text-accentred">
-                            <i class="fa-solid fa-gauge-high text-2xl"></i>
-                            <span class="font-mono text-xs uppercase tracking-wider font-bold">GUIDE 03 // PERFORMANCE</span>
-                        </div>
-                        <h3 class="text-xl font-bold text-white">Tick-Rate Lag Reduction</h3>
-                        <p class="text-sm text-mutedgray leading-relaxed">
-                            Collapse redundant combinatorial chains and replace constant clock loops with event-driven rising-edge triggers.
-                        </p>
-                        <div class="bg-[#020202] p-4 rounded border border-bordercolor space-y-1 font-mono text-xs text-gray-300">
-                            <div class="text-accentred font-bold mb-1">// EFFICIENCY METRIC</div>
-                            <div>Active Loops: [ Optimized ]</div>
-                            <div>Tick Overhead: [ -42% Latency ]</div>
-                        </div>
-                    </div>
-                    <button onclick="switchTab('diagram')" class="w-full py-2 bg-bordercolor hover:bg-accentred hover:text-white text-gray-200 text-xs font-mono uppercase rounded transition-all">
-                        OPEN IN DIAGRAM
-                    </button>
-                </div>
-            </div>
-        </section>
-
-        <!-- ================= SECTION 4: DIAGRAM SANDBOX ================= -->
-        <section id="section-diagram" class="hidden space-y-8">
-            <div class="border-l-4 border-accentred pl-4 py-1">
-                <h1 class="text-3xl font-extrabold text-white tracking-tight sm:text-4xl font-mono uppercase">Interactive Diagram & Schematic Sandbox</h1>
-                <p class="mt-1 text-sm text-mutedgray font-mono">Test logic gates, wire inputs A & B, pulse the clock, and observe real-time signal propagation.</p>
-            </div>
-
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <!-- Controls -->
-                <div class="bg-cardbg border border-bordercolor rounded p-6 space-y-6">
-                    <div>
-                        <h3 class="text-xs font-mono text-mutedgray uppercase tracking-wider mb-3">Select Gate Schematic</h3>
-                        <div class="grid grid-cols-2 gap-2">
-                            <button onclick="setDiagramMode('and')" id="diag-mode-and" class="p-3 rounded border border-accentred bg-accentred/20 text-white font-mono text-xs text-left transition-all font-bold">
-                                <div>AND GATE</div>
-                                <div class="text-[10px] text-mutedgray">A & B</div>
-                            </button>
-                            <button onclick="setDiagramMode('or')" id="diag-mode-or" class="p-3 rounded border border-bordercolor hover:border-gray-500 bg-[#020202] text-gray-300 font-mono text-xs text-left transition-all">
-                                <div>OR GATE</div>
-                                <div class="text-[10px] text-mutedgray">A | B</div>
-                            </button>
-                            <button onclick="setDiagramMode('xor')" id="diag-mode-xor" class="p-3 rounded border border-bordercolor hover:border-gray-500 bg-[#020202] text-gray-300 font-mono text-xs text-left transition-all">
-                                <div>XOR GATE</div>
-                                <div class="text-[10px] text-mutedgray">A ^ B</div>
-                            </button>
-                            <button onclick="setDiagramMode('sr')" id="diag-mode-sr" class="p-3 rounded border border-bordercolor hover:border-gray-500 bg-[#020202] text-gray-300 font-mono text-xs text-left transition-all">
-                                <div>SR LATCH</div>
-                                <div class="text-[10px] text-mutedgray">S & R Memory</div>
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Input Toggles -->
-                    <div class="space-y-4 border-t border-bordercolor pt-4">
-                        <h3 class="text-xs font-mono text-mutedgray uppercase tracking-wider">Signal Inputs</h3>
-                        
-                        <div class="flex items-center justify-between bg-[#020202] p-3 rounded border border-bordercolor">
-                            <div>
-                                <span class="font-mono text-sm font-bold text-white">INPUT A (SET)</span>
-                                <p class="text-[11px] text-mutedgray">Primary signal</p>
-                            </div>
-                            <button onclick="toggleInput('A')" id="toggle-btn-a" class="w-14 h-8 rounded-full bg-gray-800 relative transition-colors duration-200 focus:outline-none">
-                                <div id="toggle-thumb-a" class="w-6 h-6 rounded-full bg-white absolute top-1 left-1 transition-transform duration-200"></div>
-                            </button>
-                        </div>
-
-                        <div class="flex items-center justify-between bg-[#020202] p-3 rounded border border-bordercolor">
-                            <div>
-                                <span class="font-mono text-sm font-bold text-white">INPUT B (RESET)</span>
-                                <p class="text-[11px] text-mutedgray">Secondary signal</p>
-                            </div>
-                            <button onclick="toggleInput('B')" id="toggle-btn-b" class="w-14 h-8 rounded-full bg-gray-800 relative transition-colors duration-200 focus:outline-none">
-                                <div id="toggle-thumb-b" class="w-6 h-6 rounded-full bg-white absolute top-1 left-1 transition-transform duration-200"></div>
-                            </button>
-                        </div>
-
-                        <div class="flex items-center justify-between bg-[#020202] p-3 rounded border border-bordercolor">
-                            <div>
-                                <span class="font-mono text-sm font-bold text-white">CLOCK TICK</span>
-                                <p class="text-[11px] text-mutedgray">Pulse clock</p>
-                            </div>
-                            <button onclick="triggerClockPulse()" class="px-4 py-1.5 bg-accentred/20 border border-accentred text-white font-mono text-xs uppercase rounded hover:bg-accentred transition-all font-bold">
-                                PULSE
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Canvas / Diagram Output -->
-                <div class="lg:col-span-2 bg-cardbg border border-bordercolor rounded p-6 flex flex-col justify-between space-y-6">
-                    <div>
-                        <div class="flex items-center justify-between mb-4">
-                            <span id="diagram-title-display" class="font-mono text-sm text-accentred font-bold uppercase">// SCHEMATIC: AND GATE</span>
-                            <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-accentred/20 text-accentred border border-accentred/40 font-bold">ONLINE</span>
-                        </div>
-
-                        <!-- Circuit Diagram Box -->
-                        <div class="bg-[#020202] border border-bordercolor rounded p-8 flex flex-col items-center justify-center min-h-[240px] relative overflow-hidden">
-                            <div class="absolute inset-0 opacity-5 bg-[radial-gradient(#dc2626_1px,transparent_1px)] [background-size:16px_16px]"></div>
-                            
-                            <div class="flex items-center space-x-12 z-10 w-full justify-around">
-                                <div class="space-y-4">
-                                    <div class="flex items-center space-x-2">
-                                        <div id="vis-in-a" class="w-4 h-4 rounded-full bg-gray-800 border border-gray-600"></div>
-                                        <span class="font-mono text-xs text-gray-300">A: <span id="val-in-a" class="text-white font-bold">0</span></span>
-                                    </div>
-                                    <div class="flex items-center space-x-2">
-                                        <div id="vis-in-b" class="w-4 h-4 rounded-full bg-gray-800 border border-gray-600"></div>
-                                        <span class="font-mono text-xs text-gray-300">B: <span id="val-in-b" class="text-white font-bold">0</span></span>
-                                    </div>
-                                </div>
-
-                                <div id="vis-gate-box" class="px-8 py-5 rounded bg-cardbg border border-accentred text-white font-mono font-bold text-center glow-red shadow-lg text-lg">
-                                    AND
-                                </div>
-
-                                <div class="flex items-center space-x-3 bg-cardbg px-5 py-3 rounded border border-bordercolor">
-                                    <div id="vis-led-output" class="w-6 h-6 rounded-full bg-gray-900 border-2 border-gray-700 transition-all duration-300"></div>
-                                    <div class="font-mono text-xs">
-                                        <div class="text-mutedgray">OUTPUT (Q)</div>
-                                        <div id="val-out-q" class="text-white font-bold text-sm">0 (LOW)</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="bg-[#020202] border border-bordercolor rounded p-4">
-                        <h4 class="font-mono text-xs text-mutedgray uppercase tracking-wider mb-2">Schematic Analysis</h4>
-                        <p id="diagram-desc" class="text-xs text-gray-300 leading-relaxed">
-                            The AND gate outputs HIGH (1) only when both Input A and Input B are active simultaneously.
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-    </main>
-
-    <!-- Footer -->
-    <footer class="mt-auto border-t border-bordercolor bg-[#020202] py-6 text-center text-xs text-mutedgray font-mono">
-        <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div>CIRCUIT ARCHITECTURE PORTAL // SECURE BUILD SYSTEM</div>
-            <div class="flex items-center space-x-4">
-                <span class="text-accentred font-bold"><i class="fa-solid fa-circle text-[8px] mr-1"></i> SYSTEM ACTIVE</span>
-                <span>PROTOCOL v5.0</span>
-            </div>
-        </div>
-    </footer>
-
-    <!-- JavaScript Controller -->
     <script>
-        let currentTab = 'projects';
-        let currentProjectKey = 'alu';
-        let diagramMode = 'and';
-        let inputA = 0;
-        let inputB = 0;
-        let srStateQ = 0;
-
-        const projectsData = {
+        // Blueprint Data Definitions adhering strictly to primitive gates: NAND, NOR, OR, XOR, NXOR
+        const blueprints = {
             alu: {
-                title: "4-Bit Arithmetic Logic Unit (ALU)",
-                tag: "COMPUTATIONAL LOGIC",
-                objective: "Construct a fully combinatorial 4-bit ALU capable of parallel addition, subtraction, bitwise AND, and bitwise OR operations with zero-flag detection.",
-                components: {
-                    gates: "32x XOR Gates, 24x AND Gates, 16x OR Gates, 8x NOT Buffers.",
-                    memory: "4-Bit Register Bank for accumulator storage.",
-                    io: "4-Bit Input Bus A, 4-Bit Input Bus B, 2-Bit Opcode Selector, 4-Bit LED Display.",
-                    power: "Stabilized high-amp power bus with dedicated ground rail."
-                },
-                wiring: [
-                    "Layer 1 (Subfloor): Main power rails and global reset line.",
-                    "Layer 2 (Data Pathways): 4-bit parallel bus lines color-coded.",
-                    "Layer 3 (Control & Feedback): Opcode multiplexer select lines.",
-                    "Layer 4 (Actuator Bridge): Terminal output routing to display."
+                title: "4-BIT ALU ARCHITECTURE",
+                desc: "Combinatorial 4-bit parallel arithmetic unit built with NAND/NOR primitive primitives.",
+                inputs: [
+                    { id: 'in_a0', label: 'A0', state: 1, x: 60, y: 120, layer: 2 },
+                    { id: 'in_a1', label: 'A1', state: 0, x: 60, y: 220, layer: 2 },
+                    { id: 'in_b0', label: 'B0', state: 1, x: 60, y: 340, layer: 2 },
+                    { id: 'in_b1', label: 'B1', state: 1, x: 60, y: 440, layer: 2 }
                 ],
-                debugging: [
-                    "Step 1: Check voltage drops across extended bus lines.",
-                    "Step 2: Inspect propagation delay race conditions on carry-out bits.",
-                    "Step 3: Manually step opcode selector to verify truth table."
+                gates: [
+                    { id: 'g1', type: 'NAND', label: 'NAND [A0,B0]', x: 300, y: 140, layer: 3, inputs: ['in_a0', 'in_b0'], state: 0, tt: ['0|0 -> 1', '0|1 -> 1', '1|0 -> 1', '1|1 -> 0'] },
+                    { id: 'g2', type: 'NOR', label: 'NOR [A0,B0]', x: 300, y: 280, layer: 3, inputs: ['in_a0', 'in_b0'], state: 1, tt: ['0|0 -> 1', '0|1 -> 0', '1|0 -> 0', '1|1 -> 0'] },
+                    { id: 'g3', type: 'XOR', label: 'XOR [A1,B1]', x: 300, y: 420, layer: 3, inputs: ['in_a1', 'in_b1'], state: 1, tt: ['0|0 -> 0', '0|1 -> 1', '1|0 -> 1', '1|1 -> 0'] },
+                    { id: 'g4', type: 'NXOR', label: 'NXOR [Sum]', x: 540, y: 280, layer: 3, inputs: ['g1', 'g2'], state: 1, tt: ['0|0 -> 1', '0|1 -> 0', '1|0 -> 0', '1|1 -> 1'] }
                 ],
-                diagramSnippet: `
-                    <div class="bg-[#020202] p-4 rounded border border-bordercolor font-mono text-xs space-y-2">
-                        <div class="text-accentred font-bold">// 4-BIT ALU SCHEMATIC DIAGRAM</div>
-                        <div class="text-gray-300">BUS_A [4-Bit] ---> [ MUX / ALU CORE ] ---> RESULT</div>
-                        <div class="text-gray-300">BUS_B [4-Bit] ---> [ Add / Sub / AND ] ---> ZERO FLAG</div>
-                    </div>
-                `
+                outputs: [
+                    { id: 'out_res0', label: 'RES Q0', state: 1, x: 780, y: 200, layer: 4, from: 'g1' },
+                    { id: 'out_res1', label: 'RES Q1', state: 0, x: 780, y: 360, layer: 4, from: 'g4' }
+                ],
+                wires: [
+                    { from: 'in_a0', to: 'g1', layer: 2, points: [[60,120],[180,120],[180,140],[300,140]] },
+                    { from: 'in_b0', to: 'g1', layer: 2, points: [[60,340],[180,340],[180,160],[300,160]] },
+                    { from: 'in_a0', to: 'g2', layer: 2, points: [[60,120],[200,120],[200,260],[300,260]] },
+                    { from: 'in_b0', to: 'g2', layer: 2, points: [[60,340],[200,340],[200,300],[300,300]] },
+                    { from: 'in_a1', to: 'g3', layer: 2, points: [[60,220],[220,220],[220,400],[300,400]] },
+                    { from: 'in_b1', to: 'g3', layer: 2, points: [[60,440],[220,440],[220,440],[300,440]] },
+                    { from: 'g1', to: 'g4', layer: 3, points: [[380,140],[460,140],[460,260],[540,260]] },
+                    { from: 'g2', to: 'g4', layer: 3, points: [[380,280],[460,280],[460,300],[540,300]] },
+                    { from: 'g1', to: 'out_res0', layer: 4, points: [[380,140],[580,140],[580,200],[780,200]] },
+                    { from: 'g4', to: 'out_res1', layer: 4, points: [[620,280],[700,280],[700,360],[780,360]] }
+                ]
             },
             lock: {
-                title: "State-Machine Combination Lock",
-                tag: "SECURITY & SEQUENTIAL",
-                objective: "Construct a 4-state sequential combination lock (Code: 1 -> 3 -> 2 -> 4) with instant error-trap reset and servo vault door actuation.",
-                components: {
-                    gates: "12x AND Gates, 4x OR Gates for error resets, 4x Monostable pulse shapers.",
-                    memory: "4x D-Type Flip-Flops for sequential state progression.",
-                    io: "4x Momentary Push Buttons, 1x Master Reset Switch, 1x Servo Actuator.",
-                    power: "Isolated logic rail with emergency battery backup."
-                },
-                wiring: [
-                    "Layer 1 (Subfloor): Global reset bus connected to error-trap OR gates.",
-                    "Layer 2 (Data Pathways): Rising-edge detector lines from input buttons.",
-                    "Layer 3 (Control & Feedback): State transition gating connecting FF[N].",
-                    "Layer 4 (Actuator Bridge): Final state Q3 output wired to vault servo."
+                title: "STATE-MACHINE COMBINATION LOCK",
+                desc: "Secure 4-state sequential combination lock using primitive NAND/NOR logic and cross-coupled memory cells.",
+                inputs: [
+                    { id: 'btn_1', label: 'BTN 1', state: 1, x: 60, y: 150, layer: 2 },
+                    { id: 'btn_2', label: 'BTN 2', state: 0, x: 60, y: 300, layer: 2 },
+                    { id: 'btn_3', label: 'BTN 3', state: 1, x: 60, y: 450, layer: 2 }
                 ],
-                debugging: [
-                    "Step 1: Verify button presses use rising-edge detectors.",
-                    "Step 2: Test error trap by entering out-of-order sequences.",
-                    "Step 3: Inspect servo power supply for unlocking torque."
+                gates: [
+                    { id: 'l_nand1', type: 'NAND', label: 'NAND [S0]', x: 300, y: 180, layer: 3, inputs: ['btn_1', 'btn_2'], state: 1, tt: ['0|0 -> 1', '0|1 -> 1', '1|0 -> 1', '1|1 -> 0'] },
+                    { id: 'l_nor1', type: 'NOR', label: 'NOR [S1]', x: 300, y: 380, layer: 3, inputs: ['btn_2', 'btn_3'], state: 0, tt: ['0|0 -> 1', '0|1 -> 0', '1|0 -> 0', '1|1 -> 0'] },
+                    { id: 'l_xor1', type: 'XOR', label: 'XOR [Trap]', x: 540, y: 280, layer: 3, inputs: ['l_nand1', 'l_nor1'], state: 1, tt: ['0|0 -> 0', '0|1 -> 1', '1|0 -> 1', '1|1 -> 0'] }
                 ],
-                diagramSnippet: `
-                    <div class="bg-[#020202] p-4 rounded border border-bordercolor font-mono text-xs space-y-2">
-                        <div class="text-accentred font-bold">// STATE MACHINE SCHEMATIC</div>
-                        <div class="text-gray-300">STATE 0 ---> (Btn 1) ---> STATE 1</div>
-                        <div class="text-gray-300">STATE 1 ---> (Btn 3) ---> STATE 2 ---> [UNLOCKED]</div>
-                    </div>
-                `
+                outputs: [
+                    { id: 'out_servo', label: 'SERVO UNLOCK', state: 1, x: 780, y: 280, layer: 4, from: 'l_xor1' }
+                ],
+                wires: [
+                    { from: 'btn_1', to: 'l_nand1', layer: 2, points: [[60,150],[180,150],[180,160],[300,160]] },
+                    { from: 'btn_2', to: 'l_nand1', layer: 2, points: [[60,300],[180,300],[180,200],[300,200]] },
+                    { from: 'btn_2', to: 'l_nor1', layer: 2, points: [[60,300],[200,300],[200,360],[300,360]] },
+                    { from: 'btn_3', to: 'l_nor1', layer: 2, points: [[60,450],[200,450],[200,400],[300,400]] },
+                    { from: 'l_nand1', to: 'l_xor1', layer: 3, points: [[380,180],[460,180],[460,260],[540,260]] },
+                    { from: 'l_nor1', to: 'l_xor1', layer: 3, points: [[380,380],[460,380],[460,300],[540,300]] },
+                    { from: 'l_xor1', to: 'out_servo', layer: 4, points: [[620,280],[700,280],[700,280],[780,280]] }
+                ]
             },
             elevator: {
-                title: "Automated Multi-Floor Elevator",
-                tag: "ELECTROMECHANICAL LOGIC",
-                objective: "Build a 3-floor automated elevator system with priority floor queue memory, automatic door interlocks, and position limit switches.",
-                components: {
-                    gates: "16x SR Latches for floor call memory, 8x AND interlock gates, limit sensors.",
-                    memory: "3-Bit Floor Request Register Bank.",
-                    io: "Floor call buttons (1-3), winch motor, magnetic limit sensors.",
-                    power: "High-voltage winch motor rail separated from logic."
-                },
-                wiring: [
-                    "Layer 1 (Subfloor): Motor power trunk lines and safety cuts.",
-                    "Layer 2 (Data Pathways): Floor call latch signals routed to encoder.",
-                    "Layer 3 (Control & Feedback): Limit switch feedback lines.",
-                    "Layer 4 (Actuator Bridge): Winch controller and door pneumatics."
+                title: "ELEVATOR FLOOR CONTROLLER",
+                desc: "Automated multi-floor elevator controller with priority queuing and floor limit interlocks.",
+                inputs: [
+                    { id: 'flr_1', label: 'CALL F1', state: 0, x: 60, y: 140, layer: 2 },
+                    { id: 'flr_2', label: 'CALL F2', state: 1, x: 60, y: 280, layer: 2 },
+                    { id: 'limit_sw', label: 'LIMIT SW', state: 1, x: 60, y: 420, layer: 2 }
                 ],
-                debugging: [
-                    "Step 1: Check limit switch alignment to prevent over-travel.",
-                    "Step 2: Ensure door interlocks prevent winch movement while open.",
-                    "Step 3: Test simultaneous multi-floor priority queuing."
+                gates: [
+                    { id: 'e_or', type: 'OR', label: 'OR [Queue]', x: 300, y: 200, layer: 3, inputs: ['flr_1', 'flr_2'], state: 1, tt: ['0|0 -> 0', '0|1 -> 1', '1|0 -> 1', '1|1 -> 1'] },
+                    { id: 'e_nand', type: 'NAND', label: 'NAND [Interlock]', x: 540, y: 280, layer: 3, inputs: ['e_or', 'limit_sw'], state: 0, tt: ['0|0 -> 1', '0|1 -> 1', '1|0 -> 1', '1|1 -> 0'] }
                 ],
-                diagramSnippet: `
-                    <div class="bg-[#020202] p-4 rounded border border-bordercolor font-mono text-xs space-y-2">
-                        <div class="text-accentred font-bold">// ELEVATOR SCHEMATIC DIAGRAM</div>
-                        <div class="text-gray-300">CALL_FLR ---> [ SR LATCH ] ---> PRIORITY QUEUE ---> MOTOR</div>
-                        <div class="text-gray-300">LIMIT_SW ---> [ CLEAR LATCH ]</div>
-                    </div>
-                `
+                outputs: [
+                    { id: 'out_winch', label: 'WINCH MOTOR', state: 0, x: 780, y: 280, layer: 4, from: 'e_nand' }
+                ],
+                wires: [
+                    { from: 'flr_1', to: 'e_or', layer: 2, points: [[60,140],[180,140],[180,180],[300,180]] },
+                    { from: 'flr_2', to: 'e_or', layer: 2, points: [[60,280],[180,280],[180,220],[300,220]] },
+                    { from: 'e_or', to: 'e_nand', layer: 3, points: [[380,200],[460,200],[460,260],[540,260]] },
+                    { from: 'limit_sw', to: 'e_nand', layer: 2, points: [[60,420],[460,420],[460,300],[540,300]] },
+                    { from: 'e_nand', to: 'out_winch', layer: 4, points: [[620,280],[700,280],[700,280],[780,280]] }
+                ]
             },
-            decoder: {
-                title: "Binary-to-Decimal LED Decoder",
-                tag: "DISPLAY LOGIC",
-                objective: "Design a 4-bit binary input decoder that translates 16 binary states into individual decimal output channels and 7-segment displays.",
-                components: {
-                    gates: "16x 4-Input AND Gates (Minterms), 7x OR Gates for segment drivers.",
-                    memory: "Stateless combinational logic network.",
-                    io: "4x Binary toggle switches (B0-B3), 10x Decimal indicator lamps.",
-                    power: "Standard 5V logic power distribution."
-                },
-                wiring: [
-                    "Layer 1 (Subfloor): Common ground and power distribution grid.",
-                    "Layer 2 (Data Pathways): Inverted and non-inverted binary input bus.",
-                    "Layer 3 (Control & Feedback): Minterm decoding grid.",
-                    "Layer 4 (Actuator Bridge): Segment driver lines to LEDs."
+            srlatch: {
+                title: "SR LATCH MEMORY CELL",
+                desc: "Set-Reset bistable multivibrator constructed using cross-coupled NOR primitive gates.",
+                inputs: [
+                    { id: 'sr_s', label: 'SET (S)', state: 1, x: 60, y: 180, layer: 2 },
+                    { id: 'sr_r', label: 'RESET (R)', state: 0, x: 60, y: 380, layer: 2 }
                 ],
-                debugging: [
-                    "Step 1: Verify inverter gate functionality; check NOT buffers.",
-                    "Step 2: Cycle binary 0 to 15 to ensure one decimal illuminates.",
-                    "Step 3: Check for ghosting or voltage bleed between wires."
+                gates: [
+                    { id: 'nor_s', type: 'NOR', label: 'NOR [Q-Bar]', x: 360, y: 180, layer: 3, inputs: ['sr_s', 'nor_r'], state: 0, tt: ['0|0 -> 1', '0|1 -> 0', '1|0 -> 0', '1|1 -> 0'] },
+                    { id: 'nor_r', type: 'NOR', label: 'NOR [Q]', x: 360, y: 380, layer: 3, inputs: ['sr_r', 'nor_s'], state: 1, tt: ['0|0 -> 1', '0|1 -> 0', '1|0 -> 0', '1|1 -> 0'] }
                 ],
-                diagramSnippet: `
-                    <div class="bg-[#020202] p-4 rounded border border-bordercolor font-mono text-xs space-y-2">
-                        <div class="text-accentred font-bold">// DECODER SCHEMATIC DIAGRAM</div>
-                        <div class="text-gray-300">BIN_IN [4-Bit] ---> [ 16x MINTERM AND GATES ] ---> LEDS</div>
-                    </div>
-                `
+                outputs: [
+                    { id: 'out_q', label: 'Q OUTPUT', state: 1, x: 720, y: 380, layer: 4, from: 'nor_r' }
+                ],
+                wires: [
+                    { from: 'sr_s', to: 'nor_s', layer: 2, points: [[60,180],[200,180],[200,160],[360,160]] },
+                    { from: 'sr_r', to: 'nor_r', layer: 2, points: [[60,380],[200,380],[200,400],[360,400]] },
+                    { from: 'nor_s', to: 'nor_r', layer: 3, points: [[440,180],[500,180],[500,300],[280,300],[280,360],[360,360]] },
+                    { from: 'nor_r', to: 'nor_s', layer: 3, points: [[440,380],[520,380],[520,240],[260,240],[260,200],[360,200]] },
+                    { from: 'nor_r', to: 'out_q', layer: 4, points: [[440,380],[580,380],[580,380],[720,380]] }
+                ]
+            },
+            dff: {
+                title: "D FLIP-FLOP SYNCHRONIZER",
+                desc: "Data edge-triggered flip-flop built entirely from synchronized NAND primitive arrays.",
+                inputs: [
+                    { id: 'd_data', label: 'DATA (D)', state: 1, x: 60, y: 200, layer: 2 },
+                    { id: 'd_clk', label: 'CLOCK', state: 1, x: 60, y: 360, layer: 2 }
+                ],
+                gates: [
+                    { id: 'd_nand1', type: 'NAND', label: 'NAND [Stage 1]', x: 300, y: 200, layer: 3, inputs: ['d_data', 'd_clk'], state: 0, tt: ['0|0 -> 1', '0|1 -> 1', '1|0 -> 1', '1|1 -> 0'] },
+                    { id: 'd_nand2', type: 'NAND', label: 'NAND [Stage 2]', x: 540, y: 280, layer: 3, inputs: ['d_nand1', 'd_clk'], state: 1, tt: ['0|0 -> 1', '0|1 -> 1', '1|0 -> 1', '1|1 -> 0'] }
+                ],
+                outputs: [
+                    { id: 'out_q', label: 'Q OUT', state: 1, x: 780, y: 280, layer: 4, from: 'd_nand2' }
+                ],
+                wires: [
+                    { from: 'd_data', to: 'd_nand1', layer: 2, points: [[60,200],[180,200],[180,180],[300,180]] },
+                    { from: 'd_clk', to: 'd_nand1', layer: 2, points: [[60,360],[180,360],[180,220],[300,220]] },
+                    { from: 'd_nand1', to: 'd_nand2', layer: 3, points: [[380,200],[460,200],[460,260],[540,260]] },
+                    { from: 'd_clk', to: 'd_nand2', layer: 2, points: [[60,360],[480,360],[480,300],[540,300]] },
+                    { from: 'd_nand2', to: 'out_q', layer: 4, points: [[620,280],[700,280],[700,280],[780,280]] }
+                ]
+            },
+            adder: {
+                title: "FULL ADDER ASSEMBLY",
+                desc: "Full adder circuit combining XOR and NAND primitives to compute Sum and Carry-Out bits.",
+                inputs: [
+                    { id: 'fa_a', label: 'IN A', state: 1, x: 60, y: 140, layer: 2 },
+                    { id: 'fa_b', label: 'IN B', state: 1, x: 60, y: 280, layer: 2 },
+                    { id: 'fa_cin', label: 'CARRY IN', state: 0, x: 60, y: 420, layer: 2 }
+                ],
+                gates: [
+                    { id: 'fa_xor1', type: 'XOR', label: 'XOR [A^B]', x: 300, y: 200, layer: 3, inputs: ['fa_a', 'fa_b'], state: 0, tt: ['0|0 -> 0', '0|1 -> 1', '1|0 -> 1', '1|1 -> 0'] },
+                    { id: 'fa_xor2', type: 'XOR', label: 'XOR [Sum]', x: 540, y: 280, layer: 3, inputs: ['fa_xor1', 'fa_cin'], state: 1, tt: ['0|0 -> 0', '0|1 -> 1', '1|0 -> 1', '1|1 -> 0'] },
+                    { id: 'fa_nand', type: 'NAND', label: 'NAND [Carry]', x: 540, y: 120, layer: 3, inputs: ['fa_a', 'fa_b'], state: 0, tt: ['0|0 -> 1', '0|1 -> 1', '1|0 -> 1', '1|1 -> 0'] }
+                ],
+                outputs: [
+                    { id: 'out_sum', label: 'SUM (Q)', state: 1, x: 780, y: 280, layer: 4, from: 'fa_xor2' },
+                    { id: 'out_cout', label: 'CARRY OUT', state: 0, x: 780, y: 120, layer: 4, from: 'fa_nand' }
+                ],
+                wires: [
+                    { from: 'fa_a', to: 'fa_xor1', layer: 2, points: [[60,140],[180,140],[180,180],[300,180]] },
+                    { from: 'fa_b', to: 'fa_xor1', layer: 2, points: [[60,280],[180,280],[180,220],[300,220]] },
+                    { from: 'fa_xor1', to: 'fa_xor2', layer: 3, points: [[380,200],[460,200],[460,260],[540,260]] },
+                    { from: 'fa_cin', to: 'fa_xor2', layer: 2, points: [[60,420],[460,420],[460,300],[540,300]] },
+                    { from: 'fa_a', to: 'fa_nand', layer: 2, points: [[60,140],[300,140],[300,100],[540,100]] },
+                    { from: 'fa_b', to: 'fa_nand', layer: 2, points: [[60,280],[300,280],[300,140],[540,140]] },
+                    { from: 'fa_xor2', to: 'out_sum', layer: 4, points: [[620,280],[700,280],[700,280],[780,280]] },
+                    { from: 'fa_nand', to: 'out_cout', layer: 4, points: [[620,120],[700,120],[700,120],[780,120]] }
+                ]
             }
         };
 
-        function switchTab(tabId) {
-            currentTab = tabId;
-            ['projects', 'vault', 'masterclass', 'diagram'].forEach(s => {
-                const el = document.getElementById(`section-${s}`);
-                if (s === tabId) el.classList.remove('hidden');
-                else el.classList.add('hidden');
+        let currentKey = 'alu';
+        let currentLayer = 'all';
+        let zoomScale = 1;
+        let panX = 0;
+        let panY = 0;
+        let isDragging = false;
+        let startX = 0;
+        let startY = 0;
+
+        // Render Circuit Diagram on SVG
+        function renderCircuit() {
+            const bp = blueprints[currentKey];
+            document.getElementById('status-blueprint-title').innerText = bp.title;
+            document.getElementById('status-blueprint-desc').innerText = bp.desc;
+
+            const wiresLayer = document.getElementById('wires-layer');
+            const nodesLayer = document.getElementById('nodes-layer');
+            wiresLayer.innerHTML = '';
+            nodesLayer.innerHTML = '';
+
+            // Render Wires with Orthogonal Routing Lines & Junction Nodes
+            bp.wires.forEach(w => {
+                if (currentLayer !== 'all' && w.layer !== parseInt(currentLayer)) return;
+                
+                let active = false;
+                // Check if wire is connected to active source
+                const srcInput = bp.inputs.find(i => i.id === w.from);
+                const srcGate = bp.gates.find(g => g.id === w.from);
+                if (srcInput && srcInput.state === 1) active = true;
+                if (srcGate && srcGate.state === 1) active = true;
+
+                const color = active ? '#ff0033' : '#333333';
+                const glow = active ? 'filter: url(#glow);' : '';
+
+                // Build SVG path string from orthogonal points
+                let pathStr = `M ${w.points[0][0]} ${w.points[0][1]}`;
+                for (let i = 1; i < w.points.length; i++) {
+                    pathStr += ` L ${w.points[i][0]} ${w.points[i][1]}`;
+                }
+
+                const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                path.setAttribute('d', pathStr);
+                path.setAttribute('fill', 'none');
+                path.setAttribute('stroke', color);
+                path.setAttribute('stroke-width', active ? '3' : '2');
+                path.setAttribute('style', glow);
+                wiresLayer.appendChild(path);
+
+                // Add distinct junction node circle at bends
+                w.points.forEach((pt, idx) => {
+                    if (idx > 0 && idx < w.points.length - 1) {
+                        const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                        circle.setAttribute('cx', pt[0]);
+                        circle.setAttribute('cy', pt[1]);
+                        circle.setAttribute('r', '3');
+                        circle.setAttribute('fill', active ? '#ff0033' : '#555555');
+                        wiresLayer.appendChild(circle);
+                    }
+                });
             });
 
-            document.querySelectorAll('.nav-btn').forEach(btn => {
-                btn.className = "nav-btn text-sm font-mono tracking-wider uppercase transition-all text-mutedgray hover:text-white pb-1 border-b-2 border-transparent";
+            // Render Inputs (Far Left)
+            bp.inputs.forEach(inp => {
+                if (currentLayer !== 'all' && inp.layer !== parseInt(currentLayer)) return;
+                const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+                g.setAttribute('transform', `translate(${inp.x - 30}, ${inp.y - 20})`);
+                g.setAttribute('cursor', 'pointer');
+                g.onclick = () => { inp.state = inp.state === 1 ? 0 : 1; evaluateCircuit(); renderCircuit(); inspectNode('input', inp); };
+
+                const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+                rect.setAttribute('width', '60');
+                rect.setAttribute('height', '40');
+                rect.setAttribute('rx', '6');
+                rect.setAttribute('fill', inp.state === 1 ? '#ff0033' : '#080808');
+                rect.setAttribute('stroke', inp.state === 1 ? '#ffffff' : '#333333');
+                rect.setAttribute('stroke-width', '2');
+                if (inp.state === 1) rect.setAttribute('class', 'glow-red-sm');
+
+                const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                text.setAttribute('x', '30');
+                text.setAttribute('y', '25');
+                text.setAttribute('fill', '#ffffff');
+                text.setAttribute('font-family', 'JetBrains Mono');
+                text.setAttribute('font-size', '12');
+                text.setAttribute('font-weight', 'bold');
+                text.setAttribute('text-anchor', 'middle');
+                text.textContent = `${inp.label}:${inp.state}`;
+
+                g.appendChild(rect);
+                g.appendChild(text);
+                nodesLayer.appendChild(g);
             });
 
-            const activeBtn = document.getElementById(`nav-${tabId}`);
-            if (activeBtn) {
-                activeBtn.className = "nav-btn text-sm font-mono tracking-wider uppercase transition-all text-accentred font-bold pb-1 border-b-2 border-accentred";
-            }
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
+            // Render Gates (Middle Columns - NAND, NOR, OR, XOR, NXOR)
+            bp.gates.forEach(gate => {
+                if (currentLayer !== 'all' && gate.layer !== parseInt(currentLayer)) return;
+                const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+                g.setAttribute('transform', `translate(${gate.x - 45}, ${gate.y - 25})`);
+                g.setAttribute('cursor', 'pointer');
+                g.onclick = () => inspectNode('gate', gate);
 
-        function toggleMobileMenu() {
-            document.getElementById('mobile-menu').classList.toggle('hidden');
-        }
+                const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+                rect.setAttribute('width', '90');
+                rect.setAttribute('height', '50');
+                rect.setAttribute('rx', '6');
+                rect.setAttribute('fill', gate.state === 1 ? '#150005' : '#080808');
+                rect.setAttribute('stroke', gate.state === 1 ? '#ff0033' : '#333333');
+                rect.setAttribute('stroke-width', gate.state === 1 ? '2' : '1');
+                if (gate.state === 1) rect.setAttribute('class', 'glow-red-sm');
 
-        function switchProject(key) {
-            currentProjectKey = key;
-            document.querySelectorAll('.proj-tab').forEach(btn => {
-                btn.className = "proj-tab px-5 py-2.5 rounded font-mono text-xs uppercase tracking-wider bg-cardbg text-mutedgray border border-bordercolor hover:border-gray-500 transition-all";
+                const title = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                title.setAttribute('x', '45');
+                title.setAttribute('y', '20');
+                title.setAttribute('fill', gate.state === 1 ? '#ff0033' : '#ffffff');
+                title.setAttribute('font-family', 'JetBrains Mono');
+                title.setAttribute('font-size', '11');
+                title.setAttribute('font-weight', 'bold');
+                title.setAttribute('text-anchor', 'middle');
+                title.textContent = gate.type;
+
+                const sub = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                sub.setAttribute('x', '45');
+                sub.setAttribute('y', '36');
+                sub.setAttribute('fill', '#888888');
+                sub.setAttribute('font-family', 'JetBrains Mono');
+                sub.setAttribute('font-size', '9');
+                sub.setAttribute('text-anchor', 'middle');
+                sub.textContent = `OUT: ${gate.state}`;
+
+                g.appendChild(rect);
+                g.appendChild(title);
+                g.appendChild(sub);
+                nodesLayer.appendChild(g);
             });
-            const activeProjBtn = document.getElementById(`btn-proj-${key}`);
-            if (activeProjBtn) {
-                activeProjBtn.className = "proj-tab px-5 py-2.5 rounded font-mono text-xs uppercase tracking-wider bg-accentred text-white font-bold transition-all";
-            }
 
-            const p = projectsData[key];
-            document.getElementById('project-content-container').innerHTML = `
-                <div class="lg:col-span-2 space-y-6">
-                    <div class="bg-cardbg border border-bordercolor rounded p-6 space-y-4">
-                        <div class="flex items-center justify-between">
-                            <span class="font-mono text-xs px-2.5 py-1 rounded bg-accentred/20 text-accentred border border-accentred/40 font-bold">${p.tag}</span>
-                            <button onclick="copyBlueprint()" class="text-xs font-mono text-mutedgray hover:text-white bg-bordercolor px-3 py-1.5 rounded transition-all flex items-center space-x-1.5">
-                                <i class="fa-solid fa-copy"></i> <span>COPY SPEC</span>
-                            </button>
-                        </div>
-                        <h2 class="text-2xl font-bold text-white">${p.title}</h2>
-                        <p class="text-sm text-gray-300 leading-relaxed"><strong class="text-white">Engineering Objective:</strong> ${p.objective}</p>
-                    </div>
+            // Render Outputs (Far Right)
+            bp.outputs.forEach(out => {
+                if (currentLayer !== 'all' && out.layer !== parseInt(currentLayer)) return;
+                const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+                g.setAttribute('transform', `translate(${out.x - 35}, ${out.y - 20})`);
+                g.setAttribute('cursor', 'pointer');
+                g.onclick = () => inspectNode('output', out);
 
-                    <div class="bg-cardbg border border-bordercolor rounded p-6 space-y-3">
-                        <h3 class="text-lg font-bold text-white flex items-center space-x-2 font-mono">
-                            <i class="fa-solid fa-network-wired text-accentred"></i>
-                            <span>Project Schematic Diagram</span>
-                        </h3>
-                        ${p.diagramSnippet}
-                        <button onclick="switchTab('diagram')" class="w-full mt-2 py-2.5 bg-bordercolor hover:bg-accentred hover:text-white text-gray-200 text-xs font-mono uppercase rounded transition-all">
-                            LAUNCH INTERACTIVE SIMULATOR
-                        </button>
-                    </div>
+                const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+                rect.setAttribute('width', '70');
+                rect.setAttribute('height', '40');
+                rect.setAttribute('rx', '20');
+                rect.setAttribute('fill', out.state === 1 ? '#ff0033' : '#080808');
+                rect.setAttribute('stroke', out.state === 1 ? '#ffffff' : '#333333');
+                rect.setAttribute('stroke-width', '2');
+                if (out.state === 1) rect.setAttribute('class', 'glow-red');
 
-                    <div class="bg-cardbg border border-bordercolor rounded p-6 space-y-4">
-                        <h3 class="text-lg font-bold text-white flex items-center space-x-2 font-mono">
-                            <i class="fa-solid fa-cubes text-accentred"></i>
-                            <span>Component Requirements</span>
-                        </h3>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs font-mono">
-                            <div class="bg-[#020202] p-3.5 rounded border border-bordercolor">
-                                <div class="text-accentred font-bold mb-1">GATES</div>
-                                <div class="text-gray-300">${p.components.gates}</div>
-                            </div>
-                            <div class="bg-[#020202] p-3.5 rounded border border-bordercolor">
-                                <div class="text-accentred font-bold mb-1">MEMORY</div>
-                                <div class="text-gray-300">${p.components.memory}</div>
-                            </div>
-                            <div class="bg-[#020202] p-3.5 rounded border border-bordercolor">
-                                <div class="text-accentred font-bold mb-1">I/O</div>
-                                <div class="text-gray-300">${p.components.io}</div>
-                            </div>
-                            <div class="bg-[#020202] p-3.5 rounded border border-bordercolor">
-                                <div class="text-accentred font-bold mb-1">POWER & CLOCK</div>
-                                <div class="text-gray-300">${p.components.power}</div>
-                            </div>
-                        </div>
-                    </div>
+                const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                text.setAttribute('x', '35');
+                text.setAttribute('y', '25');
+                text.setAttribute('fill', '#ffffff');
+                text.setAttribute('font-family', 'JetBrains Mono');
+                text.setAttribute('font-size', '11');
+                text.setAttribute('font-weight', 'bold');
+                text.setAttribute('text-anchor', 'middle');
+                text.textContent = out.state === 1 ? 'HIGH' : 'LOW';
 
-                    <div class="bg-cardbg border border-bordercolor rounded p-6 space-y-4">
-                        <h3 class="text-lg font-bold text-white flex items-center space-x-2 font-mono">
-                            <i class="fa-solid fa-project-diagram text-accentred"></i>
-                            <span>Multi-Layer Wiring Order</span>
-                        </h3>
-                        <div class="space-y-2">
-                            ${p.wiring.map((w, idx) => `
-                                <div class="flex items-start space-x-3 bg-[#020202] p-3 rounded border border-bordercolor text-xs">
-                                    <span class="font-mono font-bold text-accentred">0${idx+1}</span>
-                                    <span class="text-gray-300">${w}</span>
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-                </div>
-
-                <div class="space-y-6">
-                    <div class="bg-cardbg border border-bordercolor rounded p-6 space-y-4">
-                        <h3 class="text-lg font-bold text-white flex items-center space-x-2 font-mono">
-                            <i class="fa-solid fa-triangle-exclamation text-accentred"></i>
-                            <span>Debugging Steps</span>
-                        </h3>
-                        <div class="space-y-3">
-                            ${p.debugging.map((d, idx) => `
-                                <div class="bg-[#020202] p-3.5 rounded border border-bordercolor text-xs space-y-1">
-                                    <div class="font-mono text-accentred font-bold">CHECK 0${idx+1}</div>
-                                    <div class="text-gray-300">${d}</div>
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-
-                    <div class="bg-cardbg border border-accentred/60 rounded p-6 space-y-4 glow-red">
-                        <h3 class="text-base font-bold text-white font-mono">Test in Sandbox</h3>
-                        <p class="text-xs text-mutedgray">Simulate signal propagation right now.</p>
-                        <button onclick="switchTab('diagram')" class="w-full py-3 bg-accentred text-white font-mono text-xs uppercase font-bold rounded hover:bg-accentredhover transition-all">
-                            OPEN DIAGRAM SANDBOX
-                        </button>
-                    </div>
-                </div>
-            `;
-        }
-
-        function copyBlueprint() {
-            const p = projectsData[currentProjectKey];
-            const text = `PROJECT: ${p.title}\nOBJECTIVE: ${p.objective}`;
-            const ta = document.createElement('textarea');
-            ta.value = text;
-            document.body.appendChild(ta);
-            ta.select();
-            document.execCommand('copy');
-            document.body.removeChild(ta);
-            alertBox("Blueprint copied to clipboard.");
-        }
-
-        function setDiagramMode(mode) {
-            diagramMode = mode;
-            inputA = 0;
-            inputB = 0;
-            srStateQ = 0;
-            updateToggleUI();
-            updateDiagramSimulation();
-
-            ['and', 'or', 'xor', 'sr'].forEach(m => {
-                const btn = document.getElementById(`diag-mode-${m}`);
-                if (m === mode) btn.className = "p-3 rounded border border-accentred bg-accentred/20 text-white font-mono text-xs text-left transition-all font-bold";
-                else btn.className = "p-3 rounded border border-bordercolor hover:border-gray-500 bg-[#020202] text-gray-300 font-mono text-xs text-left transition-all";
+                g.appendChild(rect);
+                g.appendChild(text);
+                nodesLayer.appendChild(g);
             });
         }
 
-        function toggleInput(which) {
-            if (which === 'A') inputA = inputA === 0 ? 1 : 0;
-            else if (which === 'B') inputB = inputB === 0 ? 1 : 0;
-            updateToggleUI();
-            updateDiagramSimulation();
+        // Evaluate boolean logic for primitive gates (NAND, NOR, OR, XOR, NXOR)
+        function evaluateCircuit() {
+            const bp = blueprints[currentKey];
+            bp.gates.forEach(gate => {
+                let val1 = 0, val2 = 0;
+                const inp1 = gate.inputs[0];
+                const inp2 = gate.inputs[1];
+
+                const findVal = (id) => {
+                    const i = bp.inputs.find(x => x.id === id);
+                    if (i) return i.state;
+                    const g = bp.gates.find(x => x.id === id);
+                    if (g) return g.state;
+                    return 0;
+                };
+
+                val1 = findVal(inp1);
+                val2 = findVal(inp2);
+
+                if (gate.type === 'NAND') {
+                    gate.state = (val1 === 1 && val2 === 1) ? 0 : 1;
+                } else if (gate.type === 'NOR') {
+                    gate.state = (val1 === 0 && val2 === 0) ? 1 : 0;
+                } else if (gate.type === 'OR') {
+                    gate.state = (val1 === 1 || val2 === 1) ? 1 : 0;
+                } else if (gate.type === 'XOR') {
+                    gate.state = (val1 !== val2) ? 1 : 0;
+                } else if (gate.type === 'NXOR') {
+                    gate.state = (val1 === val2) ? 1 : 0;
+                }
+            });
+
+            bp.outputs.forEach(out => {
+                const srcGate = bp.gates.find(g => g.id === out.from);
+                if (srcGate) out.state = srcGate.state;
+            });
         }
 
-        function triggerClockPulse() {
-            if (diagramMode === 'sr') {
-                if (inputA === 1 && inputB === 0) srStateQ = 1;
-                else if (inputA === 0 && inputB === 1) srStateQ = 0;
-            }
-            updateDiagramSimulation();
-            const box = document.getElementById('vis-gate-box');
-            box.classList.add('scale-105', 'border-white');
-            setTimeout(() => box.classList.remove('scale-105', 'border-white'), 200);
+        // Switch Blueprints
+        function switchBlueprint(key) {
+            currentKey = key;
+            ['alu', 'lock', 'elevator', 'srlatch', 'dff', 'adder'].forEach(k => {
+                const btn = document.getElementById(`nav-${k}`);
+                if (k === key) {
+                    btn.className = "nav-btn font-mono text-xs uppercase tracking-wider px-3 py-1.5 rounded transition-all bg-cyberred text-white font-bold glow-red-sm";
+                } else {
+                    btn.className = "nav-btn font-mono text-xs uppercase tracking-wider px-3 py-1.5 rounded transition-all text-cybermuted hover:text-white bg-cybercard border border-cyberborder";
+                }
+            });
+            evaluateCircuit();
+            renderCircuit();
         }
 
-        function updateToggleUI() {
-            const thumbA = document.getElementById('toggle-thumb-a');
-            const btnA = document.getElementById('toggle-btn-a');
-            const valA = document.getElementById('val-in-a');
-            const visA = document.getElementById('vis-in-a');
-            if (inputA === 1) {
-                thumbA.style.transform = 'translateX(24px)';
-                btnA.className = "w-14 h-8 rounded-full bg-accentred relative transition-colors duration-200 focus:outline-none";
-                valA.innerText = "1 (HIGH)";
-                visA.className = "w-4 h-4 rounded-full bg-accentred border border-white glow-red";
-            } else {
-                thumbA.style.transform = 'translateX(0px)';
-                btnA.className = "w-14 h-8 rounded-full bg-gray-800 relative transition-colors duration-200 focus:outline-none";
-                valA.innerText = "0 (LOW)";
-                visA.className = "w-4 h-4 rounded-full bg-gray-800 border border-gray-600";
-            }
-
-            const thumbB = document.getElementById('toggle-thumb-b');
-            const btnB = document.getElementById('toggle-btn-b');
-            const valB = document.getElementById('val-in-b');
-            const visB = document.getElementById('vis-in-b');
-            if (inputB === 1) {
-                thumbB.style.transform = 'translateX(24px)';
-                btnB.className = "w-14 h-8 rounded-full bg-accentred relative transition-colors duration-200 focus:outline-none";
-                valB.innerText = "1 (HIGH)";
-                visB.className = "w-4 h-4 rounded-full bg-accentred border border-white glow-red";
-            } else {
-                thumbB.style.transform = 'translateX(0px)';
-                btnB.className = "w-14 h-8 rounded-full bg-gray-800 relative transition-colors duration-200 focus:outline-none";
-                valB.innerText = "0 (LOW)";
-                visB.className = "w-4 h-4 rounded-full bg-gray-800 border border-gray-600";
-            }
+        // Multi-Layer Selector
+        function setLayer(layer) {
+            currentLayer = layer;
+            ['all', 1, 2, 3, 4].forEach(l => {
+                const btn = document.getElementById(`layer-btn-${l}`);
+                if (btn) {
+                    if (l === layer) {
+                        btn.className = "px-3 py-1.5 rounded font-mono text-[11px] uppercase tracking-wider bg-cyberred text-white font-bold transition-all";
+                    } else {
+                        btn.className = "px-3 py-1.5 rounded font-mono text-[11px] uppercase tracking-wider bg-cyberblack text-cybermuted hover:text-white transition-all border border-cyberborder";
+                    }
+                }
+            });
+            renderCircuit();
         }
 
-        function updateDiagramSimulation() {
-            let outputVal = 0;
-            const titleDisplay = document.getElementById('diagram-title-display');
-            const gateBox = document.getElementById('vis-gate-box');
-            const desc = document.getElementById('diagram-desc');
-            const led = document.getElementById('vis-led-output');
-            const valQ = document.getElementById('val-out-q');
-
-            if (diagramMode === 'and') {
-                outputVal = (inputA === 1 && inputB === 1) ? 1 : 0;
-                titleDisplay.innerText = "// SCHEMATIC: AND GATE";
-                gateBox.innerText = "AND";
-                desc.innerText = "The AND gate outputs HIGH (1) only when both Input A and Input B are HIGH (1).";
-            } else if (diagramMode === 'or') {
-                outputVal = (inputA === 1 || inputB === 1) ? 1 : 0;
-                titleDisplay.innerText = "// SCHEMATIC: OR GATE";
-                gateBox.innerText = "OR";
-                desc.innerText = "The OR gate outputs HIGH (1) if either Input A or Input B is HIGH (1).";
-            } else if (diagramMode === 'xor') {
-                outputVal = (inputA !== inputB) ? 1 : 0;
-                titleDisplay.innerText = "// SCHEMATIC: XOR GATE";
-                gateBox.innerText = "XOR";
-                desc.innerText = "The XOR gate outputs HIGH (1) when inputs differ.";
-            } else if (diagramMode === 'sr') {
-                outputVal = srStateQ;
-                titleDisplay.innerText = "// SCHEMATIC: SR LATCH";
-                gateBox.innerText = "SR LATCH";
-                desc.innerText = "Input A = SET, Input B = RESET. Click PULSE to clock memory state.";
-            }
-
-            if (outputVal === 1) {
-                led.className = "w-6 h-6 rounded-full bg-accentred border-2 border-white shadow-[0_0_15px_#dc2626] transition-all duration-300";
-                valQ.innerText = "1 (HIGH)";
-                valQ.className = "text-accentred font-bold text-sm";
-            } else {
-                led.className = "w-6 h-6 rounded-full bg-gray-900 border-2 border-gray-700 transition-all duration-300";
-                valQ.innerText = "0 (LOW)";
-                valQ.className = "text-white font-bold text-sm";
+        // Inspector Sidebar Updates
+        function inspectNode(type, item) {
+            document.getElementById('inspector-status').innerText = type.toUpperCase();
+            document.getElementById('inspector-title').innerText = item.label || item.type;
+            
+            if (type === 'gate') {
+                document.getElementById('inspector-desc').innerText = `Primitive ${item.type} gate evaluating signals from inputs [${item.inputs.join(', ')}]. Current output state is ${item.state}.`;
+                document.getElementById('inspector-gate-type').innerText = item.type;
+                const ttContainer = document.getElementById('inspector-truthtable');
+                ttContainer.innerHTML = item.tt.map(row => `<div class="flex justify-between text-cybermuted bg-cybercard p-2 rounded"><span>${row.split('->')[0]}</span><span class="text-white font-bold">OUT: ${row.split('->')[1]}</span></div>`).join('');
+            } else if (type === 'input') {
+                document.getElementById('inspector-desc').innerText = `Primary signal input line. Click the node on canvas or toggle below to invert signal state. Current state: ${item.state}.`;
+                document.getElementById('inspector-gate-type').innerText = 'INPUT BUS';
+                document.getElementById('inspector-truthtable').innerHTML = `<div class="text-cybermuted p-2">Active Signal Level: ${item.state === 1 ? 'HIGH (5V)' : 'LOW (0V)'}</div>`;
+            } else if (type === 'output') {
+                document.getElementById('inspector-desc').innerText = `Terminal output node driven by gate [${item.from}]. Active signal state: ${item.state}.`;
+                document.getElementById('inspector-gate-type').innerText = 'ACTUATOR';
+                document.getElementById('inspector-truthtable').innerHTML = `<div class="text-cybermuted p-2">Terminal State: ${item.state === 1 ? 'TRIGGERED' : 'STANDBY'}</div>`;
             }
         }
 
-        function loadVaultInDiagram(type) {
-            switchTab('diagram');
-            if (type === 'sr') setDiagramMode('sr');
-            else setDiagramMode('and');
+        // Toggle all inputs
+        function toggleAllInputs() {
+            const bp = blueprints[currentKey];
+            bp.inputs.forEach(i => i.state = i.state === 1 ? 0 : 1);
+            evaluateCircuit();
+            renderCircuit();
         }
 
-        function alertBox(msg) {
-            const b = document.createElement('div');
-            b.className = "fixed bottom-5 right-5 bg-cardbg border border-accentred text-white px-5 py-3 rounded shadow-2xl z-50 font-mono text-xs flex items-center space-x-3";
-            b.innerHTML = `<i class="fa-solid fa-circle-check text-accentred text-base"></i><span>${msg}</span>`;
-            document.body.appendChild(b);
-            setTimeout(() => b.remove(), 3000);
+        // Pan & Zoom Canvas Controls
+        const container = document.getElementById('canvas-container');
+        const zoomGroup = document.getElementById('zoom-pan-group');
+
+        container.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            startX = e.clientX - panX;
+            startY = e.clientY - panY;
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            panX = e.clientX - startX;
+            panY = e.clientY - startY;
+            updateTransform();
+        });
+
+        window.addEventListener('mouseup', () => { isDragging = false; });
+
+        container.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            const delta = e.deltaY < 0 ? 0.1 : -0.1;
+            zoomCanvas(delta);
+        }, { passive: false });
+
+        function zoomCanvas(delta) {
+            zoomScale = Math.max(0.5, Math.min(2.5, zoomScale + delta));
+            updateTransform();
         }
 
+        function resetZoom() {
+            zoomScale = 1;
+            panX = 0;
+            panY = 0;
+            updateTransform();
+        }
+
+        function updateTransform() {
+            zoomGroup.setAttribute('transform', `translate(${panX}, ${panY}) scale(${zoomScale})`);
+        }
+
+        // Initial load
         window.onload = function() {
-            switchProject('alu');
-            updateToggleUI();
-            updateDiagramSimulation();
+            evaluateCircuit();
+            renderCircuit();
         };
     </script>
 </body>
