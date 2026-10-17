@@ -155,4 +155,423 @@
       border-radius: 10px;
       padding: 20px;
       display: flex;
-      flex-wrap
+      flex-wrap: wrap;
+      gap: 25px;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .sim-controls {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      min-width: 280px;
+    }
+
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .control-group label {
+      font-size: 12px;
+      font-weight: bold;
+      color: var(--accent-cyan);
+      text-transform: uppercase;
+    }
+
+    .select-input, .btn {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      color: #fff;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 13px;
+      outline: none;
+    }
+
+    .btn {
+      cursor: pointer;
+      font-weight: bold;
+      background: var(--accent-cyan);
+      color: #000;
+      border: none;
+      transition: background 0.2s;
+    }
+
+    .btn:hover {
+      background: #22d3ee;
+    }
+
+    .btn-clear {
+      background: #ef4444;
+      color: #fff;
+    }
+
+    .btn-clear:hover {
+      background: #f87171;
+    }
+
+    .matrix-display {
+      display: grid;
+      grid-template-columns: repeat(5, 52px);
+      grid-template-rows: repeat(5, 52px);
+      gap: 6px;
+      background: #030712;
+      padding: 12px;
+      border-radius: 8px;
+      border: 2px solid var(--border);
+    }
+
+    .pixel-cell {
+      width: 52px;
+      height: 52px;
+      background-color: #000000;
+      border: 1px solid #334155;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9px;
+      font-weight: bold;
+      color: rgba(255,255,255,0.4);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .pixel-cell:hover, .pixel-cell.active-target {
+      border-color: var(--accent-cyan);
+      box-shadow: 0 0 10px var(--accent-cyan);
+    }
+
+    @media (max-width: 768px) {
+      body { padding: 10px; }
+      header h1 { font-size: 20px; }
+      .svg-wrapper { overflow-x: scroll; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>BABFT 5x5 Fully-Exploded Color Memory Screen</h1>
+    <p>Zero Black-Boxes • Every Gate & SR Latch Explicitly Wired • Additive RGB Pixel Logic</p>
+  </header>
+
+  <div class="container">
+
+    <!-- Complete Gate-Level Diagram Panel -->
+    <div class="diagram-panel">
+      <h2>
+        <span>Full Gate-Level Blueprint (5x5 Additive Screen Matrix)</span>
+        <span style="font-size:12px; color:var(--accent-cyan);">EVERY SINGLE GATE EXPOSED</span>
+      </h2>
+      <p>This schematic displays the exact gate-level architecture for a single pixel cell (Pixel X,Y) inside a 5x5 matrix. Replicate this gate setup 25 times to form the full 25-pixel array.</p>
+
+      <div class="svg-wrapper">
+        <svg class="diagram-svg" viewBox="0 0 1150 520" xmlns="http://www.w3.org/2000/svg">
+          <!-- BUS LINES -->
+          <!-- X-Address Bus (Amber) -->
+          <path d="M 60 40 L 260 40 L 260 100 L 290 100" stroke="#f59e0b" stroke-width="3" fill="none"/>
+          <!-- Y-Address Bus (Cyan) -->
+          <path d="M 60 120 L 260 120 L 260 120 L 290 120" stroke="#06b6d4" stroke-width="3" fill="none"/>
+
+          <!-- Address Intersection AND Gate Output (Purple) -->
+          <path d="M 350 110 L 410 110" stroke="#9333ea" stroke-width="3" fill="none"/>
+          <path d="M 410 110 L 410 70 L 440 70" stroke="#9333ea" stroke-width="3" fill="none"/>
+          <path d="M 410 110 L 410 210 L 440 210" stroke="#9333ea" stroke-width="3" fill="none"/>
+          <path d="M 410 110 L 410 350 L 440 350" stroke="#9333ea" stroke-width="3" fill="none"/>
+
+          <!-- Color Control Switched Inputs (Magenta) -->
+          <path d="M 60 50 L 440 50" stroke="#d946ef" stroke-width="3" fill="none"/>
+          <path d="M 60 190 L 440 190" stroke="#d946ef" stroke-width="3" fill="none"/>
+          <path d="M 60 330 L 440 330" stroke="#d946ef" stroke-width="3" fill="none"/>
+
+          <!-- Color Passgate Outputs (Yellow) -->
+          <path d="M 500 60 L 560 60 L 560 50 L 600 50" stroke="#eab308" stroke-width="3" fill="none"/>
+          <path d="M 500 200 L 560 200 L 560 190 L 600 190" stroke="#eab308" stroke-width="3" fill="none"/>
+          <path d="M 500 340 L 560 340 L 560 330 L 600 330" stroke="#eab308" stroke-width="3" fill="none"/>
+
+          <!-- Global Clear Line (Red/White Alert) -->
+          <path d="M 60 470 L 580 470 L 580 130 L 600 130" stroke="#f87171" stroke-dasharray="6,4" stroke-width="3" fill="none"/>
+          <path d="M 580 270 L 600 270" stroke="#f87171" stroke-dasharray="6,4" stroke-width="3" fill="none"/>
+          <path d="M 580 410 L 600 410" stroke="#f87171" stroke-dasharray="6,4" stroke-width="3" fill="none"/>
+
+          <!-- Exploded SR Latch Feedback Wires -->
+          <!-- Red SR Latch Feedback (Light Purple / Lavender) -->
+          <path d="M 680 60 L 710 60 L 710 100 L 580 100 L 580 110 L 600 110" stroke="#c084fc" stroke-width="2.5" fill="none"/>
+          <path d="M 680 120 L 730 120 L 730 40 L 580 40 L 580 70 L 600 70" stroke="#c084fc" stroke-width="2.5" fill="none"/>
+
+          <!-- Green SR Latch Feedback -->
+          <path d="M 680 200 L 710 200 L 710 240 L 580 240 L 580 250 L 600 250" stroke="#c084fc" stroke-width="2.5" fill="none"/>
+          <path d="M 680 260 L 730 260 L 730 180 L 580 180 L 580 210 L 600 210" stroke="#c084fc" stroke-width="2.5" fill="none"/>
+
+          <!-- Blue SR Latch Feedback -->
+          <path d="M 680 340 L 710 340 L 710 380 L 580 380 L 580 390 L 600 390" stroke="#c084fc" stroke-width="2.5" fill="none"/>
+          <path d="M 680 400 L 730 400 L 730 320 L 580 320 L 580 350 L 600 350" stroke="#c084fc" stroke-width="2.5" fill="none"/>
+
+          <!-- Pure RGB Display Output Lines -->
+          <path d="M 680 60 L 880 60 L 880 210 L 930 210" stroke="#ef4444" stroke-width="4" fill="none"/>
+          <path d="M 680 200 L 850 200 L 850 230 L 930 230" stroke="#10b981" stroke-width="4" fill="none"/>
+          <path d="M 680 340 L 880 340 L 880 250 L 930 250" stroke="#3b82f6" stroke-width="4" fill="none"/>
+
+          <!-- GATE & SWITCH BLOCKS -->
+          <!-- Inputs Column 1 -->
+          <rect x="10" y="25" width="50" height="30" rx="4" fill="#f59e0b"/>
+          <text x="35" y="44" fill="#000" font-size="9" font-weight="bold" text-anchor="middle">X1 SEL</text>
+
+          <rect x="10" y="105" width="50" height="30" rx="4" fill="#06b6d4"/>
+          <text x="35" y="124" fill="#000" font-size="9" font-weight="bold" text-anchor="middle">Y1 SEL</text>
+
+          <rect x="10" y="35" width="50" height="30" rx="4" fill="#d946ef"/>
+          <text x="35" y="54" fill="#fff" font-size="8" font-weight="bold" text-anchor="middle">DATA-R</text>
+
+          <rect x="10" y="175" width="50" height="30" rx="4" fill="#d946ef"/>
+          <text x="35" y="194" fill="#fff" font-size="8" font-weight="bold" text-anchor="middle">DATA-G</text>
+
+          <rect x="10" y="315" width="50" height="30" rx="4" fill="#d946ef"/>
+          <text x="35" y="334" fill="#fff" font-size="8" font-weight="bold" text-anchor="middle">DATA-B</text>
+
+          <rect x="10" y="455" width="50" height="30" rx="4" fill="#f87171"/>
+          <text x="35" y="474" fill="#000" font-size="8" font-weight="bold" text-anchor="middle">CLEAR</text>
+
+          <!-- Address Intersection AND Gate -->
+          <rect x="290" y="95" width="60" height="30" rx="4" fill="#9333ea"/>
+          <text x="320" y="114" fill="#fff" font-size="9" font-weight="bold" text-anchor="middle">AND (X,Y)</text>
+
+          <!-- Color Passgates (AND Gates) -->
+          <rect x="440" y="45" width="60" height="30" rx="4" fill="#d946ef"/>
+          <text x="470" y="64" fill="#fff" font-size="8" font-weight="bold" text-anchor="middle">AND PASS-R</text>
+
+          <rect x="440" y="185" width="60" height="30" rx="4" fill="#d946ef"/>
+          <text x="470" y="204" fill="#fff" font-size="8" font-weight="bold" text-anchor="middle">AND PASS-G</text>
+
+          <rect x="440" y="325" width="60" height="30" rx="4" fill="#d946ef"/>
+          <text x="470" y="344" fill="#fff" font-size="8" font-weight="bold" text-anchor="middle">AND PASS-B</text>
+
+          <!-- Exploded Red Channel SR Latch (NOR 1 & NOR 2) -->
+          <g>
+            <rect x="600" y="45" width="80" height="30" rx="4" fill="#8b5cf6"/>
+            <text x="640" y="64" fill="#fff" font-size="8" font-weight="bold" text-anchor="middle">NOR 1 (R-SET)</text>
+
+            <rect x="600" y="105" width="80" height="30" rx="4" fill="#8b5cf6"/>
+            <text x="640" y="124" fill="#fff" font-size="8" font-weight="bold" text-anchor="middle">NOR 2 (R-RST)</text>
+          </g>
+
+          <!-- Exploded Green Channel SR Latch (NOR 1 & NOR 2) -->
+          <g>
+            <rect x="600" y="185" width="80" height="30" rx="4" fill="#8b5cf6"/>
+            <text x="640" y="204" fill="#fff" font-size="8" font-weight="bold" text-anchor="middle">NOR 1 (G-SET)</text>
+
+            <rect x="600" y="245" width="80" height="30" rx="4" fill="#8b5cf6"/>
+            <text x="640" y="264" fill="#fff" font-size="8" font-weight="bold" text-anchor="middle">NOR 2 (G-RST)</text>
+          </g>
+
+          <!-- Exploded Blue Channel SR Latch (NOR 1 & NOR 2) -->
+          <g>
+            <rect x="600" y="325" width="80" height="30" rx="4" fill="#8b5cf6"/>
+            <text x="640" y="344" fill="#fff" font-size="8" font-weight="bold" text-anchor="middle">NOR 1 (B-SET)</text>
+
+            <rect x="600" y="385" width="80" height="30" rx="4" fill="#8b5cf6"/>
+            <text x="640" y="404" fill="#fff" font-size="8" font-weight="bold" text-anchor="middle">NOR 2 (B-RST)</text>
+          </g>
+
+          <!-- Final Display Block (Cell Output) -->
+          <rect x="930" y="180" width="180" height="100" rx="8" fill="#0f172a" stroke="#ffffff" stroke-width="3"/>
+          <text x="1020" y="220" fill="#ffffff" font-size="12" font-weight="bold" text-anchor="middle">BABFT DISPLAY BLOCK</text>
+          <text x="1020" y="240" fill="#06b6d4" font-size="10" font-weight="bold" text-anchor="middle">[ADDITIVE RGB CELL (X,Y)]</text>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Wire Mapping Step Guides -->
+    <div class="info-grid">
+      <div class="info-card">
+        <h3>1. Address Matrix Selection Bus</h3>
+        <div class="wire-step">
+          <span class="wire-badge" style="background:#f59e0b;"></span>
+          <span><b>Column Bus (Amber):</b> Wire Switch X1 to AND Gate (In 1) across all Row 1 cells.</span>
+        </div>
+        <div class="wire-step">
+          <span class="wire-badge" style="background:#06b6d4;"></span>
+          <span><b>Row Bus (Cyan):</b> Wire Switch Y1 to AND Gate (In 2) across all Column 1 cells.</span>
+        </div>
+        <div class="wire-step">
+          <span class="wire-badge" style="background:#9333ea;"></span>
+          <span><b>Address Match Line (Deep Purple):</b> Wire AND Gate (X,Y) output to Color Passgates (In 2).</span>
+        </div>
+      </div>
+
+      <div class="info-card">
+        <h3>2. Color Passgates & Exploded Memory</h3>
+        <div class="wire-step">
+          <span class="wire-badge" style="background:#d946ef;"></span>
+          <span><b>Data Line (Magenta):</b> Wire DATA-R, G, B switches into respective AND Passgates.</span>
+        </div>
+        <div class="wire-step">
+          <span class="wire-badge" style="background:#eab308;"></span>
+          <span><b>Set Line (Yellow):</b> Wire AND Passgate output to NOR 1 (In 1) of the SR Latch.</span>
+        </div>
+        <div class="wire-step">
+          <span class="wire-badge" style="background:#c084fc;"></span>
+          <span><b>Feedback Loop (Lavender):</b> Wire NOR 1 output to NOR 2 (In 1), and NOR 2 output to NOR 1 (In 2).</span>
+        </div>
+      </div>
+
+      <div class="info-card">
+        <h3>3. Display Output & Global Clear</h3>
+        <div class="wire-step">
+          <span class="wire-badge" style="background:#ef4444;"></span>
+          <span><b>Pure Red Channel:</b> Wire Red NOR 1 output directly to Display Block.</span>
+        </div>
+        <div class="wire-step">
+          <span class="wire-badge" style="background:#10b981;"></span>
+          <span><b>Pure Green Channel:</b> Wire Green NOR 1 output directly to Display Block.</span>
+        </div>
+        <div class="wire-step">
+          <span class="wire-badge" style="background:#3b82f6;"></span>
+          <span><b>Pure Blue Channel:</b> Wire Blue NOR 1 output directly to Display Block.</span>
+        </div>
+        <div class="wire-step">
+          <span class="wire-badge" style="background:#f87171;"></span>
+          <span><b>Clear Line (Dashed Red):</b> Wire Global Clear Switch to NOR 2 (In 2) on all cells.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Live Interactive 5x5 Matrix Simulator Panel -->
+    <div class="sim-panel">
+      <div class="sim-controls">
+        <h3 style="color:#fff; font-size:16px;">5x5 Matrix Programmer Console</h3>
+        
+        <div class="control-group">
+          <label>Target X-Column</label>
+          <select id="selX" class="select-input">
+            <option value="1">X1 (Column 1)</option>
+            <option value="2">X2 (Column 2)</option>
+            <option value="3">X3 (Column 3)</option>
+            <option value="4">X4 (Column 4)</option>
+            <option value="5">X5 (Column 5)</option>
+          </select>
+        </div>
+
+        <div class="control-group">
+          <label>Target Y-Row</label>
+          <select id="selY" class="select-input">
+            <option value="1">Y1 (Row 1)</option>
+            <option value="2">Y2 (Row 2)</option>
+            <option value="3">Y3 (Row 3)</option>
+            <option value="4">Y4 (Row 4)</option>
+            <option value="5">Y5 (Row 5)</option>
+          </select>
+        </div>
+
+        <div class="control-group">
+          <label>RGB Data Colors</label>
+          <div style="display:flex; gap:10px; align-items:center;">
+            <label style="color:#ef4444;"><input type="checkbox" id="chkR"> RED</label>
+            <label style="color:#10b981;"><input type="checkbox" id="chkG"> GREEN</label>
+            <label style="color:#3b82f6;"><input type="checkbox" id="chkB"> BLUE</label>
+          </div>
+        </div>
+
+        <button class="btn" onclick="writeToLatch()">WRITE TO SR LATCH</button>
+        <button class="btn btn-clear" onclick="clearAllLatches()">RESET / CLEAR ALL</button>
+      </div>
+
+      <!-- 5x5 Screen Array -->
+      <div>
+        <h4 style="color:#fff; text-align:center; margin-bottom:8px; font-size:13px;">5x5 ADDITIVE DISPLAY MATRIX</h4>
+        <div class="matrix-display" id="screenGrid"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // State storage for 25 pixels (5x5 matrix)
+    // Each pixel holds 3 SR Latches: { r: boolean, g: boolean, b: boolean }
+    const matrixMemory = Array.from({ length: 5 }, () =>
+      Array.from({ length: 5 }, () => ({ r: false, g: false, b: false }))
+    );
+
+    function initScreen() {
+      const container = document.getElementById('screenGrid');
+      container.innerHTML = '';
+
+      for (let y = 1; y <= 5; y++) {
+        for (let x = 1; x <= 5; x++) {
+          const cell = document.createElement('div');
+          cell.className = 'pixel-cell';
+          cell.id = `cell-${x}-${y}`;
+          cell.innerText = `(${x},${y})`;
+          cell.onclick = () => selectCell(x, y);
+          container.appendChild(cell);
+        }
+      }
+      updateDisplay();
+    }
+
+    function selectCell(x, y) {
+      document.getElementById('selX').value = x;
+      document.getElementById('selY').value = y;
+      highlightTargetCell();
+    }
+
+    function highlightTargetCell() {
+      const x = parseInt(document.getElementById('selX').value);
+      const y = parseInt(document.getElementById('selY').value);
+
+      document.querySelectorAll('.pixel-cell').forEach(c => c.classList.remove('active-target'));
+      const target = document.getElementById(`cell-${x}-${y}`);
+      if (target) target.classList.add('active-target');
+    }
+
+    function writeToLatch() {
+      const x = parseInt(document.getElementById('selX').value) - 1;
+      const y = parseInt(document.getElementById('selY').value) - 1;
+
+      const r = document.getElementById('chkR').checked;
+      const g = document.getElementById('chkG').checked;
+      const b = document.getElementById('chkB').checked;
+
+      // Write directly to simulated SR latch state
+      matrixMemory[y][x] = { r, g, b };
+      updateDisplay();
+    }
+
+    function clearAllLatches() {
+      for (let y = 0; y < 5; y++) {
+        for (let x = 0; x < 5; x++) {
+          matrixMemory[y][x] = { r: false, g: false, b: false };
+        }
+      }
+      updateDisplay();
+    }
+
+    function updateDisplay() {
+      for (let y = 0; y < 5; y++) {
+        for (let x = 0; x < 5; x++) {
+          const cell = document.getElementById(`cell-${x + 1}-${y + 1}`);
+          const mem = matrixMemory[y][x];
+
+          const r = mem.r ? 255 : 0;
+          const g = mem.g ? 255 : 0;
+          const b = mem.b ? 255 : 0;
+
+          cell.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
+          cell.style.color = (mem.r || mem.g || mem.b) ? '#ffffff' : 'rgba(255,255,255,0.3)';
+        }
+      }
+      highlightTargetCell();
+    }
+
+    document.getElementById('selX').addEventListener('change', highlightTargetCell);
+    document.getElementById('selY').addEventListener('change', highlightTargetCell);
+
+    // Initial load
+    initScreen();
+  </script>
+</body>
+</html>
