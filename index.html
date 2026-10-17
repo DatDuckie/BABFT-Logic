@@ -1,501 +1,1460 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BABFT Logic Gate Blueprints</title>
-  <style>
-    :root {
-      --bg: #0b0f17;
-      --card-bg: #141c28;
-      --border: #233146;
-      --text: #c5d1e0;
-      --heading: #ffffff;
-      --accent-blue: #0088ff;
-      --accent-green: #00e676;
-      --accent-red: #ff3366;
-      --accent-orange: #ff9100;
-      --accent-purple: #b388ff;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace;
-    }
-
-    body {
-      background-color: var(--bg);
-      color: var(--text);
-      padding: 20px;
-      line-height: 1.5;
-    }
-
-    header {
-      text-align: center;
-      padding: 20px 10px 30px;
-      border-bottom: 2px solid var(--border);
-      margin-bottom: 30px;
-    }
-
-    header h1 {
-      color: var(--heading);
-      font-size: 28px;
-      letter-spacing: 1px;
-    }
-
-    header p {
-      color: var(--accent-blue);
-      font-size: 14px;
-      margin-top: 6px;
-      font-weight: 600;
-    }
-
-    /* Filter Tabs */
-    .filter-bar {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      justify-content: center;
-      margin-bottom: 30px;
-    }
-
-    .filter-btn {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      color: var(--text);
-      padding: 10px 18px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: bold;
-      font-size: 13px;
-      transition: all 0.2s;
-    }
-
-    .filter-btn:hover, .filter-btn.active {
-      background: var(--accent-blue);
-      border-color: var(--accent-blue);
-      color: #fff;
-    }
-
-    /* Blueprint List Grid */
-    .blueprints-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      gap: 25px;
-      max-width: 1400px;
-      margin: 0 auto;
-    }
-
-    .bp-card {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .bp-header {
-      padding: 15px;
-      background: #0d131f;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .bp-header h2 {
-      font-size: 16px;
-      color: var(--heading);
-    }
-
-    .tag {
-      font-size: 10px;
-      font-weight: bold;
-      padding: 3px 8px;
-      border-radius: 4px;
-      text-transform: uppercase;
-    }
-
-    .tag-basic { background: rgba(0, 230, 118, 0.15); color: var(--accent-green); border: 1px solid var(--accent-green); }
-    .tag-combo { background: rgba(0, 136, 255, 0.15); color: var(--accent-blue); border: 1px solid var(--accent-blue); }
-    .tag-memory { background: rgba(179, 136, 255, 0.15); color: var(--accent-purple); border: 1px solid var(--accent-purple); }
-    .tag-math { background: rgba(255, 145, 0, 0.15); color: var(--accent-orange); border: 1px solid var(--accent-orange); }
-
-    .bp-body {
-      padding: 15px;
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-    }
-
-    .bp-desc {
-      font-size: 13px;
-      color: var(--text);
-    }
-
-    /* Schematic Visualizer Box */
-    .schematic-box {
-      background: #080b10;
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 15px;
-    }
-
-    .schematic-box h4 {
-      font-size: 11px;
-      color: #5d7394;
-      text-transform: uppercase;
-      margin-bottom: 10px;
-      letter-spacing: 1px;
-    }
-
-    .diagram-svg {
-      width: 100%;
-      height: auto;
-      display: block;
-    }
-
-    /* Wire guide list */
-    .wire-list {
-      background: #090d14;
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 12px;
-    }
-
-    .wire-list h4 {
-      font-size: 11px;
-      color: #5d7394;
-      text-transform: uppercase;
-      margin-bottom: 8px;
-      letter-spacing: 1px;
-    }
-
-    .wire-item {
-      font-size: 12px;
-      padding: 4px 0;
-      border-bottom: 1px solid #141c2b;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .wire-item:last-child {
-      border-bottom: none;
-    }
-
-    .wire-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      display: inline-block;
-    }
-
-    .dot-in { background: var(--accent-blue); }
-    .dot-gate { background: var(--accent-purple); }
-    .dot-out { background: var(--accent-green); }
-
-    /* Responsive tweaks */
-    @media (max-width: 600px) {
-      body { padding: 10px; }
-      header h1 { font-size: 22px; }
-      .blueprints-grid { grid-template-columns: 1fr; }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BABFT Logic Blueprints — Roblox Build A Boat For Treasure</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        babft: {
+                            bg: '#0b0f17',
+                            card: '#141c28',
+                            border: '#233146',
+                            hover: '#1e293b',
+                            accent: '#3b82f6',
+                            purple: '#8b5cf6',
+                            green: '#10b981',
+                            amber: '#f59e0b',
+                            red: '#ef4444',
+                            cyan: '#06b6d4',
+                            magenta: '#ec4899',
+                            orange: '#f97316'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #0b0f17;
+            color: #e2e8f0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        .svg-container svg {
+            width: 100%;
+            height: auto;
+            max-height: 480px;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0b0f17;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #233146;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #3b82f6;
+        }
+        .wire-path {
+            stroke-dasharray: 8;
+            animation: dash 30s linear infinite;
+        }
+        @keyframes dash {
+            to {
+                stroke-dashoffset: -1000;
+            }
+        }
+    </style>
 </head>
-<body>
+<body class="min-h-screen flex flex-col justify-between">
 
-  <header>
-    <h1>BABFT LOGIC BLUEPRINTS</h1>
-    <p>Pure Logic Gate Diagrams & Wiring Schematics for Roblox Build-A-Boat For Treasure</p>
-  </header>
-
-  <div class="filter-bar">
-    <button class="filter-btn active" onclick="filterCategory('all')">All Blueprints</button>
-    <button class="filter-btn" onclick="filterCategory('basic')">Bare-Bone Gates</button>
-    <button class="filter-btn" onclick="filterCategory('combo')">Universal Combinations</button>
-    <button class="filter-btn" onclick="filterCategory('memory')">Memory & Switches</button>
-    <button class="filter-btn" onclick="filterCategory('math')">Binary & Math Systems</button>
-  </div>
-
-  <div class="blueprints-grid" id="blueprintGrid">
-    <!-- Blueprints rendered here -->
-  </div>
-
-  <script>
-    const blueprintData = [
-      {
-        id: 'xor-bare',
-        name: 'XOR Gate (from Bare-Bone NAND Gates)',
-        category: 'basic',
-        tag: 'basic',
-        desc: 'Outputs ON only when inputs differ (A ≠ B). Standard logic XOR constructed entirely using 4 universal NAND gates.',
-        wireGuide: [
-          { type: 'in', text: 'Input A ➔ NAND 1 (In 1) & NAND 2 (In 1)' },
-          { type: 'in', text: 'Input B ➔ NAND 1 (In 2) & NAND 3 (In 2)' },
-          { type: 'gate', text: 'NAND 1 Output ➔ NAND 2 (In 2) & NAND 3 (In 1)' },
-          { type: 'gate', text: 'NAND 2 Output ➔ NAND 4 (In 1)' },
-          { type: 'gate', text: 'NAND 3 Output ➔ NAND 4 (In 2)' },
-          { type: 'out', text: 'NAND 4 Output ➔ Target / Light / Door' }
-        ],
-        svg: `
-          <svg class="diagram-svg" viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
-            <!-- Wires -->
-            <path d="M 30 60 L 80 60 L 80 80 L 100 80" stroke="#0088ff" stroke-width="2" fill="none"/>
-            <path d="M 30 60 L 50 60 L 50 130 L 180 130" stroke="#0088ff" stroke-width="2" fill="none"/>
-            <path d="M 30 140 L 80 140 L 80 100 L 100 100" stroke="#0088ff" stroke-width="2" fill="none"/>
-            <path d="M 30 140 L 60 140 L 60 70 L 180 70" stroke="#0088ff" stroke-width="2" fill="none"/>
-            <path d="M 140 90 L 160 90 L 160 50 L 180 50" stroke="#b388ff" stroke-width="2" fill="none"/>
-            <path d="M 140 90 L 160 90 L 160 150 L 180 150" stroke="#b388ff" stroke-width="2" fill="none"/>
-            <path d="M 220 60 L 260 60 L 260 90 L 280 90" stroke="#b388ff" stroke-width="2" fill="none"/>
-            <path d="M 220 140 L 260 140 L 260 110 L 280 110" stroke="#b388ff" stroke-width="2" fill="none"/>
-            <path d="M 320 100 L 370 100" stroke="#00e676" stroke-width="2" fill="none"/>
-            
-            <!-- Nodes -->
-            <rect x="10" y="45" width="40" height="30" rx="4" fill="#0088ff" />
-            <text x="30" y="64" fill="#fff" font-size="10" font-weight="bold" text-anchor="middle">IN A</text>
-
-            <rect x="10" y="125" width="40" height="30" rx="4" fill="#0088ff" />
-            <text x="30" y="144" fill="#fff" font-size="10" font-weight="bold" text-anchor="middle">IN B</text>
-
-            <rect x="100" y="75" width="40" height="30" rx="4" fill="#b388ff" />
-            <text x="120" y="94" fill="#fff" font-size="9" font-weight="bold" text-anchor="middle">NAND1</text>
-
-            <rect x="180" y="45" width="40" height="30" rx="4" fill="#b388ff" />
-            <text x="200" y="64" fill="#fff" font-size="9" font-weight="bold" text-anchor="middle">NAND2</text>
-
-            <rect x="180" y="125" width="40" height="30" rx="4" fill="#b388ff" />
-            <text x="200" y="144" fill="#fff" font-size="9" font-weight="bold" text-anchor="middle">NAND3</text>
-
-            <rect x="280" y="85" width="40" height="30" rx="4" fill="#b388ff" />
-            <text x="300" y="104" fill="#fff" font-size="9" font-weight="bold" text-anchor="middle">NAND4</text>
-
-            <rect x="350" y="85" width="45" height="30" rx="4" fill="#00e676" />
-            <text x="372" y="104" fill="#000" font-size="10" font-weight="bold" text-anchor="middle">OUT</text>
-          </svg>
-        `
-      },
-      {
-        id: 'sr-latch',
-        name: 'SR Latch (Toggle Memory)',
-        category: 'memory',
-        tag: 'memory',
-        desc: 'Stores 1 bit of memory. A pulse on SET turns it ON indefinitely. A pulse on RESET turns it OFF.',
-        wireGuide: [
-          { type: 'in', text: 'SET Switch ➔ NOR Gate 1 (In 1)' },
-          { type: 'in', text: 'RESET Switch ➔ NOR Gate 2 (In 2)' },
-          { type: 'gate', text: 'NOR Gate 1 Output ➔ NOR Gate 2 (In 1) & Output Q' },
-          { type: 'gate', text: 'NOR Gate 2 Output ➔ NOR Gate 1 (In 2) [Cross Feedback]' }
-        ],
-        svg: `
-          <svg class="diagram-svg" viewBox="0 0 400 180" xmlns="http://www.w3.org/2000/svg">
-            <path d="M 50 45 L 140 45" stroke="#0088ff" stroke-width="2"/>
-            <path d="M 50 135 L 140 135" stroke="#0088ff" stroke-width="2"/>
-            <path d="M 200 45 L 260 45 L 260 115 L 120 115 L 120 125 L 140 125" stroke="#b388ff" stroke-width="2" fill="none"/>
-            <path d="M 200 135 L 280 135 L 280 65 L 120 65 L 120 55 L 140 55" stroke="#b388ff" stroke-width="2" fill="none"/>
-            <path d="M 200 45 L 340 45" stroke="#00e676" stroke-width="2"/>
-
-            <rect x="10" y="30" width="40" height="30" rx="4" fill="#0088ff" />
-            <text x="30" y="49" fill="#fff" font-size="9" font-weight="bold" text-anchor="middle">SET</text>
-
-            <rect x="10" y="120" width="40" height="30" rx="4" fill="#0088ff" />
-            <text x="30" y="139" fill="#fff" font-size="9" font-weight="bold" text-anchor="middle">RESET</text>
-
-            <rect x="140" y="30" width="60" height="30" rx="4" fill="#b388ff" />
-            <text x="170" y="49" fill="#fff" font-size="10" font-weight="bold" text-anchor="middle">NOR 1</text>
-
-            <rect x="140" y="120" width="60" height="30" rx="4" fill="#b388ff" />
-            <text x="170" y="139" fill="#fff" font-size="10" font-weight="bold" text-anchor="middle">NOR 2</text>
-
-            <rect x="340" y="30" width="50" height="30" rx="4" fill="#00e676" />
-            <text x="365" y="49" fill="#000" font-size="10" font-weight="bold" text-anchor="middle">OUT (Q)</text>
-          </svg>
-        `
-      },
-      {
-        id: 'half-adder',
-        name: 'Half Adder (1-Bit Binary Calculator)',
-        category: 'math',
-        tag: 'math',
-        desc: 'Calculates the sum of two 1-bit inputs, producing a SUM output and a CARRY output.',
-        wireGuide: [
-          { type: 'in', text: 'Input A ➔ XOR Gate (In 1) & AND Gate (In 1)' },
-          { type: 'in', text: 'Input B ➔ XOR Gate (In 2) & AND Gate (In 2)' },
-          { type: 'gate', text: 'XOR Gate Output ➔ SUM Output' },
-          { type: 'gate', text: 'AND Gate Output ➔ CARRY Output' }
-        ],
-        svg: `
-          <svg class="diagram-svg" viewBox="0 0 400 180" xmlns="http://www.w3.org/2000/svg">
-            <path d="M 50 50 L 100 50 L 100 40 L 160 40" stroke="#0088ff" stroke-width="2" fill="none"/>
-            <path d="M 50 50 L 80 50 L 80 120 L 160 120" stroke="#0088ff" stroke-width="2" fill="none"/>
-            <path d="M 50 130 L 100 130 L 100 140 L 160 140" stroke="#0088ff" stroke-width="2" fill="none"/>
-            <path d="M 50 130 L 80 130 L 80 60 L 160 60" stroke="#0088ff" stroke-width="2" fill="none"/>
-            <path d="M 220 50 L 330 50" stroke="#00e676" stroke-width="2"/>
-            <path d="M 220 130 L 330 130" stroke="#ff9100" stroke-width="2"/>
-
-            <rect x="10" y="35" width="40" height="30" rx="4" fill="#0088ff" />
-            <text x="30" y="54" fill="#fff" font-size="10" font-weight="bold" text-anchor="middle">IN A</text>
-
-            <rect x="10" y="115" width="40" height="30" rx="4" fill="#0088ff" />
-            <text x="30" y="134" fill="#fff" font-size="10" font-weight="bold" text-anchor="middle">IN B</text>
-
-            <rect x="160" y="35" width="60" height="30" rx="4" fill="#b388ff" />
-            <text x="190" y="54" fill="#fff" font-size="10" font-weight="bold" text-anchor="middle">XOR</text>
-
-            <rect x="160" y="115" width="60" height="30" rx="4" fill="#b388ff" />
-            <text x="190" y="134" fill="#fff" font-size="10" font-weight="bold" text-anchor="middle">AND</text>
-
-            <rect x="330" y="35" width="55" height="30" rx="4" fill="#00e676" />
-            <text x="357" y="54" fill="#000" font-size="10" font-weight="bold" text-anchor="middle">SUM</text>
-
-            <rect x="330" y="115" width="55" height="30" rx="4" fill="#ff9100" />
-            <text x="357" y="134" fill="#000" font-size="10" font-weight="bold" text-anchor="middle">CARRY</text>
-          </svg>
-        `
-      },
-      {
-        id: 'clock-pulse',
-        name: 'Pulse Clock Generator',
-        category: 'combo',
-        tag: 'combo',
-        desc: 'Creates a continuous ticking signal loop using a Delay Block and a NOT gate. Used for walking mechs and timers.',
-        wireGuide: [
-          { type: 'in', text: 'Toggle Switch ➔ AND Gate (In 1)' },
-          { type: 'gate', text: 'Delay Block Output ➔ NOT Gate (In 1)' },
-          { type: 'gate', text: 'NOT Gate Output ➔ AND Gate (In 2)' },
-          { type: 'gate', text: 'AND Gate Output ➔ Delay Block Input & Target Mechanical Blocks' }
-        ],
-        svg: `
-          <svg class="diagram-svg" viewBox="0 0 400 160" xmlns="http://www.w3.org/2000/svg">
-            <path d="M 50 80 L 120 80" stroke="#0088ff" stroke-width="2"/>
-            <path d="M 170 80 L 210 80" stroke="#b388ff" stroke-width="2"/>
-            <path d="M 260 80 L 290 80" stroke="#b388ff" stroke-width="2"/>
-            <path d="M 290 80 L 290 30 L 90 30 L 90 70 L 120 70" stroke="#b388ff" stroke-width="2" fill="none"/>
-            <path d="M 170 80 L 170 130 L 330 130" stroke="#00e676" stroke-width="2" fill="none"/>
-
-            <rect x="10" y="65" width="40" height="30" rx="4" fill="#0088ff" />
-            <text x="30" y="84" fill="#fff" font-size="9" font-weight="bold" text-anchor="middle">PWR</text>
-
-            <rect x="120" y="65" width="50" height="30" rx="4" fill="#b388ff" />
-            <text x="145" y="84" fill="#fff" font-size="10" font-weight="bold" text-anchor="middle">AND</text>
-
-            <rect x="210" y="65" width="50" height="30" rx="4" fill="#ff9100" />
-            <text x="235" y="84" fill="#fff" font-size="9" font-weight="bold" text-anchor="middle">DELAY</text>
-
-            <rect x="290" y="65" width="45" height="30" rx="4" fill="#b388ff" />
-            <text x="312" y="84" fill="#fff" font-size="10" font-weight="bold" text-anchor="middle">NOT</text>
-
-            <rect x="330" y="115" width="55" height="30" rx="4" fill="#00e676" />
-            <text x="357" y="134" fill="#000" font-size="9" font-weight="bold" text-anchor="middle">PULSE</text>
-          </svg>
-        `
-      },
-      {
-        id: '2to1-mux',
-        name: '2-to-1 Multiplexer (Data Selector)',
-        category: 'combo',
-        tag: 'combo',
-        desc: 'Selects between two data streams (Input 0 or Input 1) using a single SELECT switch.',
-        wireGuide: [
-          { type: 'in', text: 'SELECT Switch ➔ NOT Gate (In) & AND Gate 2 (In 1)' },
-          { type: 'gate', text: 'NOT Gate Output ➔ AND Gate 1 (In 1)' },
-          { type: 'in', text: 'Input Data 0 ➔ AND Gate 1 (In 2)' },
-          { type: 'in', text: 'Input Data 1 ➔ AND Gate 2 (In 2)' },
-          { type: 'gate', text: 'AND Gate 1 & 2 Outputs ➔ OR Gate Inputs' },
-          { type: 'out', text: 'OR Gate Output ➔ Output Line' }
-        ],
-        svg: `
-          <svg class="diagram-svg" viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
-            <path d="M 40 30 L 180 30" stroke="#0088ff" stroke-width="2"/>
-            <path d="M 40 170 L 180 170" stroke="#0088ff" stroke-width="2"/>
-            <path d="M 40 100 L 80 100" stroke="#ff9100" stroke-width="2"/>
-            <path d="M 80 100 L 120 100" stroke="#ff9100" stroke-width="2"/>
-            <path d="M 80 100 L 80 150 L 180 150" stroke="#ff9100" stroke-width="2" fill="none"/>
-            <path d="M 150 100 L 160 100 L 160 50 L 180 50" stroke="#b388ff" stroke-width="2" fill="none"/>
-            <path d="M 230 40 L 270 40 L 270 85 L 290 85" stroke="#b388ff" stroke-width="2" fill="none"/>
-            <path d="M 230 160 L 270 160 L 270 115 L 290 115" stroke="#b388ff" stroke-width="2" fill="none"/>
-            <path d="M 340 100 L 380 100" stroke="#00e676" stroke-width="2"/>
-
-            <rect x="5" y="15" width="35" height="25" rx="3" fill="#0088ff" />
-            <text x="22" y="31" fill="#fff" font-size="8" font-weight="bold" text-anchor="middle">IN 0</text>
-
-            <rect x="5" y="85" width="35" height="25" rx="3" fill="#ff9100" />
-            <text x="22" y="101" fill="#fff" font-size="8" font-weight="bold" text-anchor="middle">SEL</text>
-
-            <rect x="5" y="155" width="35" height="25" rx="3" fill="#0088ff" />
-            <text x="22" y="171" fill="#fff" font-size="8" font-weight="bold" text-anchor="middle">IN 1</text>
-
-            <rect x="110" y="88" width="40" height="25" rx="3" fill="#b388ff" />
-            <text x="130" y="104" fill="#fff" font-size="8" font-weight="bold" text-anchor="middle">NOT</text>
-
-            <rect x="180" y="25" width="50" height="30" rx="3" fill="#b388ff" />
-            <text x="205" y="44" fill="#fff" font-size="8" font-weight="bold" text-anchor="middle">AND 1</text>
-
-            <rect x="180" y="145" width="50" height="30" rx="3" fill="#b388ff" />
-            <text x="205" y="164" fill="#fff" font-size="8" font-weight="bold" text-anchor="middle">AND 2</text>
-
-            <rect x="290" y="85" width="50" height="30" rx="3" fill="#b388ff" />
-            <text x="315" y="104" fill="#fff" font-size="9" font-weight="bold" text-anchor="middle">OR</text>
-
-            <rect x="360" y="85" width="35" height="30" rx="3" fill="#00e676" />
-            <text x="377" y="104" fill="#000" font-size="8" font-weight="bold" text-anchor="middle">OUT</text>
-          </svg>
-        `
-      }
-    ];
-
-    function renderBlueprints(category = 'all') {
-      const grid = document.getElementById('blueprintGrid');
-      grid.innerHTML = '';
-
-      const filtered = category === 'all' 
-        ? blueprintData 
-        : blueprintData.filter(item => item.category === category);
-
-      filtered.forEach(bp => {
-        const card = document.createElement('div');
-        card.className = 'bp-card';
-        card.innerHTML = `
-          <div class="bp-header">
-            <h2>${bp.name}</h2>
-            <span class="tag tag-${bp.tag}">${bp.tag}</span>
-          </div>
-          <div class="bp-body">
-            <p class="bp-desc">${bp.desc}</p>
-            
-            <div class="schematic-box">
-              <h4>Circuit Diagram Blueprint</h4>
-              ${bp.svg}
-            </div>
-
-            <div class="wire-list">
-              <h4>Wiring Step-By-Step</h4>
-              ${bp.wireGuide.map(w => `
-                <div class="wire-item">
-                  <span class="wire-dot dot-${w.type}"></span>
-                  <span>${w.text}</span>
+    <!-- HEADER -->
+    <header class="sticky top-0 z-50 bg-[#0b0f17]/90 backdrop-blur-md border-b border-[#233146] px-4 lg:px-8 py-4">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div class="p-2.5 bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl shadow-lg shadow-blue-500/20">
+                    <i class="fa-solid me-0.5 fa-microchip text-2xl text-white"></i>
                 </div>
-              `).join('')}
+                <div>
+                    <h1 class="text-xl md:text-2xl font-extrabold text-white tracking-tight flex items-center gap-2">
+                        BABFT LOGIC BLUEPRINTS
+                        <span class="text-xs font-semibold px-2 py-0.5 bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded-full">ROBLOX</span>
+                    </h1>
+                    <p class="text-xs text-slate-400">Complete Gate-Level Circuit Wiring Guide for Build A Boat For Treasure</p>
+                </div>
             </div>
-          </div>
-        `;
-        grid.appendChild(card);
-      });
-    }
 
-    function filterCategory(cat) {
-      document.querySelectorAll('.filter-btn').forEach(btn => {
-        btn.classList.toggle('active', btn.getAttribute('onclick').includes(`'${cat}'`));
-      });
-      renderBlueprints(cat);
-    }
+            <!-- SEARCH BAR -->
+            <div class="relative w-full md:w-80">
+                <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                <input type="text" id="searchInput" oninput="filterBlueprints()" placeholder="Search components, gates, or blueprints..." 
+                    class="w-full pl-10 pr-4 py-2 bg-[#141c28] border border-[#233146] rounded-xl text-sm text-slate-200 placeholder-slate-400 focus:outline-none focus:border-blue-500 transition-colors">
+            </div>
+        </div>
 
-    // Initial render
-    renderBlueprints('all');
-  </script>
+        <!-- CATEGORY TABS -->
+        <div class="max-w-7xl mx-auto mt-4 flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none" id="categoryTabs">
+            <!-- Dynamic Category Buttons -->
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 lg:px-8 py-8">
+        
+        <!-- LEGEND BANNER -->
+        <div class="mb-8 p-4 bg-[#141c28] border border-[#233146] rounded-2xl flex flex-wrap items-center justify-between gap-4">
+            <div class="flex items-center gap-2 text-xs font-bold text-slate-300 uppercase tracking-wider">
+                <i class="fa-solid fa-palette text-blue-400"></i> Wire & Block Color Standard:
+            </div>
+            <div class="flex flex-wrap items-center gap-3 text-xs font-medium">
+                <span class="flex items-center gap-1.5 px-2.5 py-1 bg-[#ef4444]/10 text-[#ef4444] border border-[#ef4444]/30 rounded-lg"><span class="w-2.5 h-2.5 rounded-full bg-[#ef4444]"></span> Red (Inputs / A)</span>
+                <span class="flex items-center gap-1.5 px-2.5 py-1 bg-[#3b82f6]/10 text-[#3b82f6] border border-[#3b82f6]/30 rounded-lg"><span class="w-2.5 h-2.5 rounded-full bg-[#3b82f6]"></span> Blue (Inputs / B)</span>
+                <span class="flex items-center gap-1.5 px-2.5 py-1 bg-[#f97316]/10 text-[#f97316] border border-[#f97316]/30 rounded-lg"><span class="w-2.5 h-2.5 rounded-full bg-[#f97316]"></span> Orange (Select / Controls)</span>
+                <span class="flex items-center gap-1.5 px-2.5 py-1 bg-[#8b5cf6]/10 text-[#8b5cf6] border border-[#8b5cf6]/30 rounded-lg"><span class="w-2.5 h-2.5 rounded-full bg-[#8b5cf6]"></span> Deep Purple (Inverters / NOT)</span>
+                <span class="flex items-center gap-1.5 px-2.5 py-1 bg-[#10b981]/10 text-[#10b981] border border-[#10b981]/30 rounded-lg"><span class="w-2.5 h-2.5 rounded-full bg-[#10b981]"></span> Green (Outputs / Gates)</span>
+                <span class="flex items-center gap-1.5 px-2.5 py-1 bg-[#06b6d4]/10 text-[#06b6d4] border border-[#06b6d4]/30 rounded-lg"><span class="w-2.5 h-2.5 rounded-full bg-[#06b6d4]"></span> Cyan (XOR / Math)</span>
+                <span class="flex items-center gap-1.5 px-2.5 py-1 bg-[#f59e0b]/10 text-[#f59e0b] border border-[#f59e0b]/30 rounded-lg"><span class="w-2.5 h-2.5 rounded-full bg-[#f59e0b]"></span> Yellow (Delays / Clocks)</span>
+                <span class="flex items-center gap-1.5 px-2.5 py-1 bg-[#ec4899]/10 text-[#ec4899] border border-[#ec4899]/30 rounded-lg"><span class="w-2.5 h-2.5 rounded-full bg-[#ec4899]"></span> Magenta (Special Servos/Actuators)</span>
+            </div>
+        </div>
+
+        <!-- STATS & COUNT -->
+        <div class="flex items-center justify-between mb-6">
+            <h2 class="text-lg font-bold text-slate-200 flex items-center gap-2">
+                <i class="fa-solid fa-cubes text-blue-500"></i> Blueprint Library
+                <span id="blueprintCount" class="text-xs px-2 py-0.5 bg-[#233146] text-blue-400 font-mono rounded-full">25 Loaded</span>
+            </h2>
+            <div class="text-xs text-slate-400">
+                100% Fully Exploded Gate-Level Wiring Diagrams
+            </div>
+        </div>
+
+        <!-- BLUEPRINTS GRID -->
+        <div id="blueprintsGrid" class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Rendered dynamically -->
+        </div>
+
+        <!-- EMPTY STATE -->
+        <div id="emptyState" class="hidden py-16 text-center">
+            <i class="fa-solid fa-ghost text-5xl text-slate-600 mb-4"></i>
+            <h3 class="text-lg font-semibold text-slate-300">No matching blueprints found</h3>
+            <p class="text-sm text-slate-500 mt-1">Try adjusting your search or category filter.</p>
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="mt-16 border-t border-[#233146] bg-[#0b0f17] py-6 px-4 text-center text-xs text-slate-500">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+            <p>BABFT Logic Gate Reference Catalog — Tailored for Roblox Build A Boat For Treasure Circuit Builders</p>
+            <p class="font-mono">Built with Full Block & Wire Transparency</p>
+        </div>
+    </footer>
+
+    <!-- MODAL FOR FULLSCREEN SVG VIEW -->
+    <div id="diagramModal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-[#141c28] border border-[#233146] rounded-2xl max-w-5xl w-full max-h-[90vh] flex flex-col overflow-hidden shadow-2xl">
+            <div class="p-4 border-b border-[#233146] flex items-center justify-between">
+                <h3 id="modalTitle" class="text-lg font-bold text-white flex items-center gap-2">
+                    <!-- Title -->
+                </h3>
+                <button onclick="closeModal()" class="p-2 text-slate-400 hover:text-white rounded-lg hover:bg-[#233146]">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            <div id="modalBody" class="p-6 overflow-y-auto flex-grow flex flex-col items-center justify-center bg-[#0b0f17]/50">
+                <!-- SVG injected here -->
+            </div>
+            <div class="p-4 border-t border-[#233146] bg-[#141c28] flex justify-end">
+                <button onclick="closeModal()" class="px-4 py-2 bg-[#233146] hover:bg-slate-700 text-slate-200 text-sm font-semibold rounded-xl">
+                    Close Diagram
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- DATA & LOGIC SCRIPTS -->
+    <script>
+        // DATA STRUCTURE FOR ALL 25 FULLY EXPANDED GATE-LEVEL BLUEPRINTS
+        const blueprints = [
+            {
+                id: 'mux-2to1',
+                title: '1. 2-to-1 Multiplexer (Data Selector)',
+                category: 'Memory & Switches',
+                tags: ['mux', 'selector', 'switch', 'and', 'or', 'not'],
+                description: 'Selects one of two input signals (IN 0 or IN 1) based on a SELECT switch state. Uses explicit NOT inverter, dual AND gates, and a final OR gate.',
+                wireGuide: [
+                    { from: 'SELECT Switch', to: 'NOT Gate', color: '#F97316', label: 'Select Line (Inverted)' },
+                    { from: 'SELECT Switch', to: 'AND Gate 2', color: '#F97316', label: 'Select Line (Direct)' },
+                    { from: 'NOT Gate', to: 'AND Gate 1', color: '#8B5CF6', label: 'Inverted Select Signal' },
+                    { from: 'IN 0 Switch', to: 'AND Gate 1', color: '#EF4444', label: 'Data Input 0' },
+                    { from: 'IN 1 Switch', to: 'AND Gate 2', color: '#3B82F6', label: 'Data Input 1' },
+                    { from: 'AND Gate 1', to: 'OR Gate', color: '#10B981', label: 'Filtered Channel 0' },
+                    { from: 'AND Gate 2', to: 'OR Gate', color: '#10B981', label: 'Filtered Channel 1' },
+                    { from: 'OR Gate', to: 'Output Block', color: '#10B981', label: 'Selected Output Signal' }
+                ],
+                svg: `
+                <svg viewBox="0 0 750 360" class="w-full h-auto">
+                    <!-- Background Grid -->
+                    <pattern id="grid1" width="20" height="20" patternUnits="userSpaceOnUse">
+                        <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#1f2d40" stroke-width="0.5"/>
+                    </pattern>
+                    <rect width="750" height="360" fill="url(#grid1)" rx="10"/>
+
+                    <!-- Blocks -->
+                    <!-- IN 0 -->
+                    <rect x="40" y="40" width="110" height="50" rx="8" fill="#ef4444" fill-opacity="0.2" stroke="#ef4444" stroke-width="2"/>
+                    <text x="95" y="70" fill="#ef4444" font-family="JetBrains Mono" font-weight="bold" font-size="13" text-anchor="middle">IN 0 Switch</text>
+
+                    <!-- IN 1 -->
+                    <rect x="40" y="270" width="110" height="50" rx="8" fill="#3b82f6" fill-opacity="0.2" stroke="#3b82f6" stroke-width="2"/>
+                    <text x="95" y="300" fill="#3b82f6" font-family="JetBrains Mono" font-weight="bold" font-size="13" text-anchor="middle">IN 1 Switch</text>
+
+                    <!-- SELECT -->
+                    <rect x="40" y="155" width="110" height="50" rx="8" fill="#f97316" fill-opacity="0.2" stroke="#f97316" stroke-width="2"/>
+                    <text x="95" y="185" fill="#f97316" font-family="JetBrains Mono" font-weight="bold" font-size="13" text-anchor="middle">SELECT Switch</text>
+
+                    <!-- NOT GATE -->
+                    <rect x="210" y="155" width="90" height="50" rx="8" fill="#8b5cf6" fill-opacity="0.2" stroke="#8b5cf6" stroke-width="2"/>
+                    <text x="255" y="185" fill="#8b5cf6" font-family="JetBrains Mono" font-weight="bold" font-size="13" text-anchor="middle">NOT Gate</text>
+
+                    <!-- AND 1 -->
+                    <rect x="360" y="60" width="110" height="60" rx="8" fill="#10b981" fill-opacity="0.2" stroke="#10b981" stroke-width="2"/>
+                    <text x="415" y="95" fill="#10b981" font-family="JetBrains Mono" font-weight="bold" font-size="13" text-anchor="middle">AND Gate 1</text>
+
+                    <!-- AND 2 -->
+                    <rect x="360" y="240" width="110" height="60" rx="8" fill="#10b981" fill-opacity="0.2" stroke="#10b981" stroke-width="2"/>
+                    <text x="415" y="275" fill="#10b981" font-family="JetBrains Mono" font-weight="bold" font-size="13" text-anchor="middle">AND Gate 2</text>
+
+                    <!-- OR GATE -->
+                    <rect x="530" y="150" width="100" height="60" rx="8" fill="#10b981" fill-opacity="0.2" stroke="#10b981" stroke-width="2"/>
+                    <text x="580" y="185" fill="#10b981" font-family="JetBrains Mono" font-weight="bold" font-size="13" text-anchor="middle">OR Gate</text>
+
+                    <!-- OUTPUT -->
+                    <rect x="660" y="155" width="70" height="50" rx="8" fill="#10b981" fill-opacity="0.3" stroke="#10b981" stroke-width="2"/>
+                    <text x="695" y="185" fill="#10b981" font-family="JetBrains Mono" font-weight="bold" font-size="13" text-anchor="middle">OUT</text>
+
+                    <!-- Wires with Color Code Inheritance -->
+                    <!-- IN 0 -> AND 1 -->
+                    <path d="M 150 65 L 360 65" fill="none" stroke="#ef4444" stroke-width="2.5" marker-end="url(#arrow-red)"/>
+                    
+                    <!-- IN 1 -> AND 2 -->
+                    <path d="M 150 295 L 360 295" fill="none" stroke="#3b82f6" stroke-width="2.5"/>
+
+                    <!-- SELECT -> NOT -->
+                    <path d="M 150 180 L 210 180" fill="none" stroke="#f97316" stroke-width="2.5"/>
+
+                    <!-- SELECT -> AND 2 (Direct) -->
+                    <path d="M 175 180 L 175 255 L 360 255" fill="none" stroke="#f97316" stroke-width="2.5"/>
+
+                    <!-- NOT -> AND 1 -->
+                    <path d="M 300 180 L 330 180 L 330 95 L 360 95" fill="none" stroke="#8b5cf6" stroke-width="2.5"/>
+
+                    <!-- AND 1 -> OR -->
+                    <path d="M 470 90 L 500 90 L 500 165 L 530 165" fill="none" stroke="#10b981" stroke-width="2.5"/>
+
+                    <!-- AND 2 -> OR -->
+                    <path d="M 470 270 L 500 270 L 500 195 L 530 195" fill="none" stroke="#10b981" stroke-width="2.5"/>
+
+                    <!-- OR -> OUT -->
+                    <path d="M 630 180 L 660 180" fill="none" stroke="#10b981" stroke-width="3"/>
+                </svg>`
+            },
+            {
+                id: 'half-adder',
+                title: '2. 1-Bit Half Adder Calculator',
+                category: 'Math & Calculators',
+                tags: ['adder', 'math', 'xor', 'and', 'calculator'],
+                description: 'Computes binary addition of two 1-bit numbers. XOR gate produces the SUM digit while the AND gate produces the CARRY bit.',
+                wireGuide: [
+                    { from: 'IN A Switch', to: 'XOR Gate', color: '#EF4444', label: 'Input A signal to Sum' },
+                    { from: 'IN A Switch', to: 'AND Gate', color: '#EF4444', label: 'Input A signal to Carry' },
+                    { from: 'IN B Switch', to: 'XOR Gate', color: '#3B82F6', label: 'Input B signal to Sum' },
+                    { from: 'IN B Switch', to: 'AND Gate', color: '#3B82F6', label: 'Input B signal to Carry' },
+                    { from: 'XOR Gate', to: 'SUM Output', color: '#06B6D4', label: 'Sum Bit Output' },
+                    { from: 'AND Gate', to: 'CARRY Output', color: '#10B981', label: 'Carry Bit Output' }
+                ],
+                svg: `
+                <svg viewBox="0 0 700 300" class="w-full h-auto">
+                    <pattern id="grid2" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="#1f2d40" stroke-width="0.5"/></pattern>
+                    <rect width="700" height="300" fill="url(#grid2)" rx="10"/>
+
+                    <rect x="50" y="60" width="120" height="50" rx="8" fill="#ef4444" fill-opacity="0.2" stroke="#ef4444" stroke-width="2"/>
+                    <text x="110" y="90" fill="#ef4444" font-family="JetBrains Mono" font-weight="bold" font-size="13" text-anchor="middle">IN A Switch</text>
+
+                    <rect x="50" y="190" width="120" height="50" rx="8" fill="#3b82f6" fill-opacity="0.2" stroke="#3b82f6" stroke-width="2"/>
+                    <text x="110" y="220" fill="#3b82f6" font-family="JetBrains Mono" font-weight="bold" font-size="13" text-anchor="middle">IN B Switch</text>
+
+                    <rect x="300" y="50" width="130" height="60" rx="8" fill="#06b6d4" fill-opacity="0.2" stroke="#06b6d4" stroke-width="2"/>
+                    <text x="365" y="85" fill="#06b6d4" font-family="JetBrains Mono" font-weight="bold" font-size="13" text-anchor="middle">XOR Gate</text>
+
+                    <rect x="300" y="180" width="130" height="60" rx="8" fill="#10b981" fill-opacity="0.2" stroke="#10b981" stroke-width="2"/>
+                    <text x="365" y="215" fill="#10b981" font-family="JetBrains Mono" font-weight="bold" font-size="13" text-anchor="middle">AND Gate</text>
+
+                    <rect x="530" y="55" width="120" height="50" rx="8" fill="#06b6d4" fill-opacity="0.3" stroke="#06b6d4" stroke-width="2"/>
+                    <text x="590" y="85" fill="#06b6d4" font-family="JetBrains Mono" font-weight="bold" font-size="13" text-anchor="middle">SUM Output</text>
+
+                    <rect x="530" y="185" width="120" height="50" rx="8" fill="#10b981" fill-opacity="0.3" stroke="#10b981" stroke-width="2"/>
+                    <text x="590" y="215" fill="#10b981" font-family="JetBrains Mono" font-weight="bold" font-size="13" text-anchor="middle">CARRY Output</text>
+
+                    <!-- Wires -->
+                    <path d="M 170 75 L 300 75" stroke="#ef4444" stroke-width="2.5" fill="none"/>
+                    <path d="M 210 75 L 210 195 L 300 195" stroke="#ef4444" stroke-width="2.5" fill="none"/>
+
+                    <path d="M 170 215 L 300 225" stroke="#3b82f6" stroke-width="2.5" fill="none"/>
+                    <path d="M 240 215 L 240 95 L 300 95" stroke="#3b82f6" stroke-width="2.5" fill="none"/>
+
+                    <path d="M 430 80 L 530 80" stroke="#06b6d4" stroke-width="2.5" fill="none"/>
+                    <path d="M 430 210 L 530 210" stroke="#10b981" stroke-width="2.5" fill="none"/>
+                </svg>`
+            },
+            {
+                id: 'full-adder',
+                title: '3. Full 1-Bit Adder (with Carry In/Out)',
+                category: 'Math & Calculators',
+                tags: ['full adder', 'carry in', 'xor', 'and', 'or'],
+                description: 'Complete 1-bit full adder supporting chained addition. Connects two XOR gates, two AND gates, and an OR gate for complete multi-bit calculations.',
+                wireGuide: [
+                    { from: 'IN A / IN B', to: 'XOR Gate 1 & AND Gate 1', color: '#EF4444', label: 'Inputs A & B to First Half Adder' },
+                    { from: 'XOR Gate 1', to: 'XOR Gate 2', color: '#06B6D4', label: 'Intermediate Sum' },
+                    { from: 'CARRY IN Switch', to: 'XOR Gate 2 & AND Gate 2', color: '#F97316', label: 'Carry Input from previous bit' },
+                    { from: 'AND Gate 1 & 2', to: 'OR Gate', color: '#10B981', label: 'Partial Carry Signals' },
+                    { from: 'OR Gate', to: 'CARRY OUT', color: '#10B981', label: 'Final Carry Bit Output' },
+                    { from: 'XOR Gate 2', to: 'SUM OUT', color: '#06B6D4', label: 'Final Sum Bit Output' }
+                ],
+                svg: `
+                <svg viewBox="0 0 750 400" class="w-full h-auto">
+                    <pattern id="grid3" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="#1f2d40" stroke-width="0.5"/></pattern>
+                    <rect width="750" height="400" fill="url(#grid3)" rx="10"/>
+
+                    <rect x="30" y="30" width="100" height="45" rx="6" fill="#ef4444" fill-opacity="0.2" stroke="#ef4444" stroke-width="2"/>
+                    <text x="80" y="58" fill="#ef4444" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">IN A Switch</text>
+
+                    <rect x="30" y="95" width="100" height="45" rx="6" fill="#3b82f6" fill-opacity="0.2" stroke="#3b82f6" stroke-width="2"/>
+                    <text x="80" y="123" fill="#3b82f6" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">IN B Switch</text>
+
+                    <rect x="30" y="270" width="100" height="45" rx="6" fill="#f97316" fill-opacity="0.2" stroke="#f97316" stroke-width="2"/>
+                    <text x="80" y="298" fill="#f97316" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">CARRY IN</text>
+
+                    <!-- XOR 1 -->
+                    <rect x="200" y="40" width="100" height="50" rx="6" fill="#06b6d4" fill-opacity="0.2" stroke="#06b6d4" stroke-width="2"/>
+                    <text x="250" y="70" fill="#06b6d4" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">XOR Gate 1</text>
+
+                    <!-- AND 1 -->
+                    <rect x="200" y="140" width="100" height="50" rx="6" fill="#10b981" fill-opacity="0.2" stroke="#10b981" stroke-width="2"/>
+                    <text x="250" y="170" fill="#10b981" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">AND Gate 1</text>
+
+                    <!-- XOR 2 -->
+                    <rect x="390" y="60" width="100" height="50" rx="6" fill="#06b6d4" fill-opacity="0.2" stroke="#06b6d4" stroke-width="2"/>
+                    <text x="440" y="90" fill="#06b6d4" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">XOR Gate 2</text>
+
+                    <!-- AND 2 -->
+                    <rect x="390" y="220" width="100" height="50" rx="6" fill="#10b981" fill-opacity="0.2" stroke="#10b981" stroke-width="2"/>
+                    <text x="440" y="250" fill="#10b981" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">AND Gate 2</text>
+
+                    <!-- OR Gate -->
+                    <rect x="560" y="180" width="90" height="50" rx="6" fill="#10b981" fill-opacity="0.2" stroke="#10b981" stroke-width="2"/>
+                    <text x="605" y="210" fill="#10b981" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">OR Gate</text>
+
+                    <!-- Outputs -->
+                    <rect x="660" y="60" width="70" height="45" rx="6" fill="#06b6d4" fill-opacity="0.3" stroke="#06b6d4" stroke-width="2"/>
+                    <text x="695" y="88" fill="#06b6d4" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">SUM</text>
+
+                    <rect x="660" y="320" width="70" height="45" rx="6" fill="#10b981" fill-opacity="0.3" stroke="#10b981" stroke-width="2"/>
+                    <text x="695" y="348" fill="#10b981" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">C_OUT</text>
+
+                    <!-- Wires -->
+                    <path d="M 130 50 L 200 50" stroke="#ef4444" stroke-width="2" fill="none"/>
+                    <path d="M 150 50 L 150 155 L 200 155" stroke="#ef4444" stroke-width="2" fill="none"/>
+                    
+                    <path d="M 130 115 L 180 115 L 180 75 L 200 75" stroke="#3b82f6" stroke-width="2" fill="none"/>
+                    <path d="M 180 115 L 180 175 L 200 175" stroke="#3b82f6" stroke-width="2" fill="none"/>
+
+                    <path d="M 300 65 L 390 65" stroke="#06b6d4" stroke-width="2" fill="none"/>
+                    <path d="M 330 65 L 330 235 L 390 235" stroke="#06b6d4" stroke-width="2" fill="none"/>
+
+                    <path d="M 130 292 L 350 292 L 350 95 L 390 95" stroke="#f97316" stroke-width="2" fill="none"/>
+                    <path d="M 350 255 L 390 255" stroke="#f97316" stroke-width="2" fill="none"/>
+
+                    <path d="M 300 165 L 520 165 L 520 195 L 560 195" stroke="#10b981" stroke-width="2" fill="none"/>
+                    <path d="M 490 245 L 520 245 L 520 215 L 560 215" stroke="#10b981" stroke-width="2" fill="none"/>
+
+                    <path d="M 490 85 L 660 85" stroke="#06b6d4" stroke-width="2" fill="none"/>
+                    <path d="M 650 205 L 650 342 L 660 342" stroke="#10b981" stroke-width="2" fill="none"/>
+                </svg>`
+            },
+            {
+                id: 'sr-latch',
+                title: '4. SR Latch Memory Toggle',
+                category: 'Memory & Switches',
+                tags: ['latch', 'sr', 'memory', 'nor', 'bistable'],
+                description: 'Fundamental 1-bit memory cell created by cross-coupling two NOR gates. SET forces output HIGH, RESET forces output LOW.',
+                wireGuide: [
+                    { from: 'SET Switch', to: 'NOR Gate 1', color: '#EF4444', label: 'Set signal' },
+                    { from: 'RESET Switch', to: 'NOR Gate 2', color: '#3B82F6', label: 'Reset signal' },
+                    { from: 'NOR Gate 1', to: 'NOR Gate 2 Input', color: '#10B981', label: 'Cross-Feedback Q to NOR 2' },
+                    { from: 'NOR Gate 2', to: 'NOR Gate 1 Input', color: '#10B981', label: 'Cross-Feedback Q_Bar to NOR 1' },
+                    { from: 'NOR Gate 1', to: 'Q Output Block', color: '#10B981', label: 'Main State Output Q' },
+                    { from: 'NOR Gate 2', to: 'Q_BAR Output', color: '#8B5CF6', label: 'Inverted Output Q_BAR' }
+                ],
+                svg: `
+                <svg viewBox="0 0 700 320" class="w-full h-auto">
+                    <pattern id="grid4" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="#1f2d40" stroke-width="0.5"/></pattern>
+                    <rect width="700" height="320" fill="url(#grid4)" rx="10"/>
+
+                    <rect x="50" y="50" width="110" height="50" rx="8" fill="#ef4444" fill-opacity="0.2" stroke="#ef4444" stroke-width="2"/>
+                    <text x="105" y="80" fill="#ef4444" font-family="JetBrains Mono" font-weight="bold" font-size="13" text-anchor="middle">SET Switch</text>
+
+                    <rect x="50" y="210" width="110" height="50" rx="8" fill="#3b82f6" fill-opacity="0.2" stroke="#3b82f6" stroke-width="2"/>
+                    <text x="105" y="240" fill="#3b82f6" font-family="JetBrains Mono" font-weight="bold" font-size="13" text-anchor="middle">RESET Switch</text>
+
+                    <rect x="300" y="45" width="130" height="60" rx="8" fill="#10b981" fill-opacity="0.2" stroke="#10b981" stroke-width="2"/>
+                    <text x="365" y="80" fill="#10b981" font-family="JetBrains Mono" font-weight="bold" font-size="13" text-anchor="middle">NOR Gate 1</text>
+
+                    <rect x="300" y="205" width="130" height="60" rx="8" fill="#10b981" fill-opacity="0.2" stroke="#10b981" stroke-width="2"/>
+                    <text x="365" y="240" fill="#10b981" font-family="JetBrains Mono" font-weight="bold" font-size="13" text-anchor="middle">NOR Gate 2</text>
+
+                    <rect x="550" y="50" width="100" height="50" rx="8" fill="#10b981" fill-opacity="0.3" stroke="#10b981" stroke-width="2"/>
+                    <text x="600" y="80" fill="#10b981" font-family="JetBrains Mono" font-weight="bold" font-size="13" text-anchor="middle">Q (State)</text>
+
+                    <rect x="550" y="210" width="100" height="50" rx="8" fill="#8b5cf6" fill-opacity="0.3" stroke="#8b5cf6" stroke-width="2"/>
+                    <text x="600" y="240" fill="#8b5cf6" font-family="JetBrains Mono" font-weight="bold" font-size="13" text-anchor="middle">Q_BAR</text>
+
+                    <!-- Wires -->
+                    <path d="M 160 75 L 300 75" stroke="#ef4444" stroke-width="2.5" fill="none"/>
+                    <path d="M 160 235 L 300 235" stroke="#3b82f6" stroke-width="2.5" fill="none"/>
+
+                    <!-- Cross Feedback Wires -->
+                    <path d="M 430 75 L 480 75 L 250 215 L 300 215" stroke="#10b981" stroke-width="2.5" fill="none"/>
+                    <path d="M 430 235 L 480 235 L 250 95 L 300 95" stroke="#8b5cf6" stroke-width="2.5" fill="none"/>
+
+                    <path d="M 430 75 L 550 75" stroke="#10b981" stroke-width="2.5" fill="none"/>
+                    <path d="M 430 235 L 550 235" stroke="#8b5cf6" stroke-width="2.5" fill="none"/>
+                </svg>`
+            },
+            {
+                id: 't-flipflop',
+                title: '5. T Flip-Flop Single-Button Toggle',
+                category: 'Memory & Switches',
+                tags: ['toggle', 't flip flop', 'delay', 'xor', 'button'],
+                description: 'Toggles output state (ON/OFF) every time a single Push Button is pressed. Uses XOR feedback mixed with a short Delay block.',
+                wireGuide: [
+                    { from: 'Push Button', to: 'XOR Gate', color: '#EF4444', label: 'Trigger Input pulse' },
+                    { from: 'XOR Gate', to: 'Delay Block', color: '#06B6D4', label: 'New State signal' },
+                    { from: 'Delay Block', to: 'XOR Gate Input', color: '#F59E0B', label: 'Stored Feedback state' },
+                    { from: 'Delay Block', to: 'Output Block', color: '#F59E0B', label: 'Toggled Light / Door Output' }
+                ],
+                svg: `
+                <svg viewBox="0 0 700 280" class="w-full h-auto">
+                    <pattern id="grid5" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="#1f2d40" stroke-width="0.5"/></pattern>
+                    <rect width="700" height="280" fill="url(#grid5)" rx="10"/>
+
+                    <rect x="50" y="110" width="120" height="50" rx="8" fill="#ef4444" fill-opacity="0.2" stroke="#ef4444" stroke-width="2"/>
+                    <text x="110" y="140" fill="#ef4444" font-family="JetBrains Mono" font-weight="bold" font-size="13" text-anchor="middle">Push Button</text>
+
+                    <rect x="250" y="105" width="120" height="60" rx="8" fill="#06b6d4" fill-opacity="0.2" stroke="#06b6d4" stroke-width="2"/>
+                    <text x="310" y="140" fill="#06b6d4" font-family="JetBrains Mono" font-weight="bold" font-size="13" text-anchor="middle">XOR Gate</text>
+
+                    <rect x="450" y="105" width="110" height="60" rx="8" fill="#f59e0b" fill-opacity="0.2" stroke="#f59e0b" stroke-width="2"/>
+                    <text x="505" y="140" fill="#f59e0b" font-family="JetBrains Mono" font-weight="bold" font-size="13" text-anchor="middle">Delay Block</text>
+
+                    <rect x="610" y="110" width="60" height="50" rx="8" fill="#10b981" fill-opacity="0.3" stroke="#10b981" stroke-width="2"/>
+                    <text x="640" y="140" fill="#10b981" font-family="JetBrains Mono" font-weight="bold" font-size="13" text-anchor="middle">OUT</text>
+
+                    <!-- Wires -->
+                    <path d="M 170 135 L 250 135" stroke="#ef4444" stroke-width="2.5" fill="none"/>
+                    <path d="M 370 135 L 450 135" stroke="#06b6d4" stroke-width="2.5" fill="none"/>
+                    <path d="M 560 135 L 610 135" stroke="#f59e0b" stroke-width="2.5" fill="none"/>
+
+                    <!-- Feedback Loop -->
+                    <path d="M 580 135 L 580 220 L 210 220 L 210 150 L 250 150" stroke="#f59e0b" stroke-width="2.5" stroke-dasharray="6,3" fill="none"/>
+                </svg>`
+            },
+            {
+                id: 'd-latch',
+                title: '6. D Latch (Gated Data Latch)',
+                category: 'Memory & Switches',
+                tags: ['d latch', 'data', 'enable', 'nor', 'and'],
+                description: 'Stores a Data state (DATA Switch) ONLY when the ENABLE Switch is HIGH. Built from NOT gate, dual AND gates, and SR NOR Latch.',
+                wireGuide: [
+                    { from: 'DATA Switch', to: 'AND Gate 1', color: '#EF4444', label: 'Data signal (Direct)' },
+                    { from: 'DATA Switch', to: 'NOT Gate', color: '#EF4444', label: 'Data signal (To Invert)' },
+                    { from: 'ENABLE Switch', to: 'AND Gate 1 & 2', color: '#F97316', label: 'Clock/Enable Gate Control' },
+                    { from: 'NOT Gate', to: 'AND Gate 2', color: '#8B5CF6', label: 'Inverted Data Signal' },
+                    { from: 'AND Gates 1 & 2', to: 'SR Latch NOR Gates', color: '#10B981', label: 'Gated Set/Reset signals' },
+                    { from: 'SR Latch', to: 'Output Block Q', color: '#10B981', label: 'Latched Memory Output' }
+                ],
+                svg: `
+                <svg viewBox="0 0 750 360" class="w-full h-auto">
+                    <pattern id="grid6" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="#1f2d40" stroke-width="0.5"/></pattern>
+                    <rect width="750" height="360" fill="url(#grid6)" rx="10"/>
+
+                    <rect x="30" y="40" width="110" height="45" rx="6" fill="#ef4444" fill-opacity="0.2" stroke="#ef4444" stroke-width="2"/>
+                    <text x="85" y="68" fill="#ef4444" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">DATA Switch</text>
+
+                    <rect x="30" y="270" width="110" height="45" rx="6" fill="#f97316" fill-opacity="0.2" stroke="#f97316" stroke-width="2"/>
+                    <text x="85" y="298" fill="#f97316" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">ENABLE Switch</text>
+
+                    <rect x="180" y="140" width="90" height="45" rx="6" fill="#8b5cf6" fill-opacity="0.2" stroke="#8b5cf6" stroke-width="2"/>
+                    <text x="225" y="168" fill="#8b5cf6" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">NOT Gate</text>
+
+                    <rect x="320" y="40" width="100" height="50" rx="6" fill="#10b981" fill-opacity="0.2" stroke="#10b981" stroke-width="2"/>
+                    <text x="370" y="70" fill="#10b981" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">AND Gate 1</text>
+
+                    <rect x="320" y="220" width="100" height="50" rx="6" fill="#10b981" fill-opacity="0.2" stroke="#10b981" stroke-width="2"/>
+                    <text x="370" y="250" fill="#10b981" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">AND Gate 2</text>
+
+                    <!-- SR Latch Cross NORs -->
+                    <rect x="500" y="40" width="100" height="50" rx="6" fill="#10b981" fill-opacity="0.2" stroke="#10b981" stroke-width="2"/>
+                    <text x="550" y="70" fill="#10b981" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">NOR Gate 1</text>
+
+                    <rect x="500" y="220" width="100" height="50" rx="6" fill="#10b981" fill-opacity="0.2" stroke="#10b981" stroke-width="2"/>
+                    <text x="550" y="250" fill="#10b981" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">NOR Gate 2</text>
+
+                    <rect x="660" y="40" width="60" height="45" rx="6" fill="#10b981" fill-opacity="0.3" stroke="#10b981" stroke-width="2"/>
+                    <text x="690" y="68" fill="#10b981" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">Q OUT</text>
+
+                    <!-- Wires -->
+                    <path d="M 140 62 L 320 62" stroke="#ef4444" stroke-width="2" fill="none"/>
+                    <path d="M 150 62 L 150 162 L 180 162" stroke="#ef4444" stroke-width="2" fill="none"/>
+
+                    <path d="M 270 162 L 290 162 L 290 235 L 320 235" stroke="#8b5cf6" stroke-width="2" fill="none"/>
+
+                    <path d="M 140 292 L 300 292 L 300 77 L 320 77" stroke="#f97316" stroke-width="2" fill="none"/>
+                    <path d="M 300 255 L 320 255" stroke="#f97316" stroke-width="2" fill="none"/>
+
+                    <path d="M 420 65 L 500 65" stroke="#10b981" stroke-width="2" fill="none"/>
+                    <path d="M 420 245 L 500 245" stroke="#10b981" stroke-width="2" fill="none"/>
+
+                    <path d="M 600 65 L 630 65 L 470 230 L 500 230" stroke="#10b981" stroke-width="2" fill="none"/>
+                    <path d="M 600 245 L 630 245 L 470 80 L 500 80" stroke="#10b981" stroke-width="2" fill="none"/>
+
+                    <path d="M 600 62 L 660 62" stroke="#10b981" stroke-width="2.5" fill="none"/>
+                </svg>`
+            },
+            {
+                id: 'pulse-clock',
+                title: '7. Pulse Clock Loop Generator',
+                category: 'Clocks & Timers',
+                tags: ['clock', 'pulse', 'timer', 'delay', 'not', 'and'],
+                description: 'Generates repeating periodic ON/OFF clock pulses. Combines an enable Switch, AND gate, Delay block, and feedback NOT gate.',
+                wireGuide: [
+                    { from: 'Master Switch', to: 'AND Gate', color: '#EF4444', label: 'Clock Enable signal' },
+                    { from: 'AND Gate', to: 'Delay Block', color: '#10B981', label: 'Pulse Signal to Timer' },
+                    { from: 'Delay Block', to: 'NOT Gate', color: '#F59E0B', label: 'Delayed Pulse to Invert' },
+                    { from: 'NOT Gate', to: 'AND Gate Input', color: '#8B5CF6', label: 'Inverted Feedback Loop' },
+                    { from: 'Delay Block', to: 'Pulse Output', color: '#F59E0B', label: 'Repeating Pulse Output' }
+                ],
+                svg: `
+                <svg viewBox="0 0 700 280" class="w-full h-auto">
+                    <pattern id="grid7" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="#1f2d40" stroke-width="0.5"/></pattern>
+                    <rect width="700" height="280" fill="url(#grid7)" rx="10"/>
+
+                    <rect x="40" y="60" width="120" height="50" rx="8" fill="#ef4444" fill-opacity="0.2" stroke="#ef4444" stroke-width="2"/>
+                    <text x="100" y="90" fill="#ef4444" font-family="JetBrains Mono" font-weight="bold" font-size="13" text-anchor="middle">Master Switch</text>
+
+                    <rect x="230" y="60" width="110" height="60" rx="8" fill="#10b981" fill-opacity="0.2" stroke="#10b981" stroke-width="2"/>
+                    <text x="285" y="95" fill="#10b981" font-family="JetBrains Mono" font-weight="bold" font-size="13" text-anchor="middle">AND Gate</text>
+
+                    <rect x="410" y="60" width="120" height="60" rx="8" fill="#f59e0b" fill-opacity="0.2" stroke="#f59e0b" stroke-width="2"/>
+                    <text x="470" y="95" fill="#f59e0b" font-family="JetBrains Mono" font-weight="bold" font-size="13" text-anchor="middle">Delay Block</text>
+
+                    <rect x="320" y="180" width="110" height="50" rx="8" fill="#8b5cf6" fill-opacity="0.2" stroke="#8b5cf6" stroke-width="2"/>
+                    <text x="375" y="210" fill="#8b5cf6" font-family="JetBrains Mono" font-weight="bold" font-size="13" text-anchor="middle">NOT Gate</text>
+
+                    <rect x="590" y="65" width="80" height="50" rx="8" fill="#f59e0b" fill-opacity="0.3" stroke="#f59e0b" stroke-width="2"/>
+                    <text x="630" y="95" fill="#f59e0b" font-family="JetBrains Mono" font-weight="bold" font-size="13" text-anchor="middle">PULSE</text>
+
+                    <!-- Wires -->
+                    <path d="M 160 85 L 230 85" stroke="#ef4444" stroke-width="2.5" fill="none"/>
+                    <path d="M 340 90 L 410 90" stroke="#10b981" stroke-width="2.5" fill="none"/>
+                    <path d="M 530 90 L 590 90" stroke="#f59e0b" stroke-width="2.5" fill="none"/>
+
+                    <!-- Feedback Loop -->
+                    <path d="M 500 120 L 500 205 L 430 205" stroke="#f59e0b" stroke-width="2.5" fill="none"/>
+                    <path d="M 320 205 L 190 205 L 190 100 L 230 100" stroke="#8b5cf6" stroke-width="2.5" fill="none"/>
+                </svg>`
+            },
+            {
+                id: 'keycard-door',
+                title: '8. Dual-Master Keycard Security Door',
+                category: 'Systems & Mechs',
+                tags: ['security', 'door', 'and', 'or', 'keycard', 'override'],
+                description: 'Door opens if BOTH Key 1 and Key 2 are active, OR if the Security Override Switch is turned ON.',
+                wireGuide: [
+                    { from: 'Key 1 Switch', to: 'AND Gate', color: '#EF4444', label: 'First Keycard Signal' },
+                    { from: 'Key 2 Switch', to: 'AND Gate', color: '#3B82F6', label: 'Second Keycard Signal' },
+                    { from: 'AND Gate', to: 'OR Gate', color: '#10B981', label: 'Dual Key Verified signal' },
+                    { from: 'Override Switch', to: 'OR Gate', color: '#F97316', label: 'Manual Emergency Override' },
+                    { from: 'OR Gate', to: 'Door Servo', color: '#EC4899', label: 'Door Hinge Actuator Trigger' }
+                ],
+                svg: `
+                <svg viewBox="0 0 700 300" class="w-full h-auto">
+                    <pattern id="grid8" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="#1f2d40" stroke-width="0.5"/></pattern>
+                    <rect width="700" height="300" fill="url(#grid8)" rx="10"/>
+
+                    <rect x="40" y="40" width="110" height="45" rx="6" fill="#ef4444" fill-opacity="0.2" stroke="#ef4444" stroke-width="2"/>
+                    <text x="95" y="68" fill="#ef4444" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">Key 1 Switch</text>
+
+                    <rect x="40" y="110" width="110" height="45" rx="6" fill="#3b82f6" fill-opacity="0.2" stroke="#3b82f6" stroke-width="2"/>
+                    <text x="95" y="138" fill="#3b82f6" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">Key 2 Switch</text>
+
+                    <rect x="40" y="220" width="110" height="45" rx="6" fill="#f97316" fill-opacity="0.2" stroke="#f97316" stroke-width="2"/>
+                    <text x="95" y="248" fill="#f97316" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">Override Switch</text>
+
+                    <rect x="240" y="65" width="110" height="60" rx="6" fill="#10b981" fill-opacity="0.2" stroke="#10b981" stroke-width="2"/>
+                    <text x="295" y="100" fill="#10b981" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">AND Gate</text>
+
+                    <rect x="420" y="140" width="110" height="60" rx="6" fill="#10b981" fill-opacity="0.2" stroke="#10b981" stroke-width="2"/>
+                    <text x="475" y="175" fill="#10b981" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">OR Gate</text>
+
+                    <rect x="590" y="145" width="80" height="50" rx="6" fill="#ec4899" fill-opacity="0.3" stroke="#ec4899" stroke-width="2"/>
+                    <text x="630" y="175" fill="#ec4899" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">Door Servo</text>
+
+                    <!-- Wires -->
+                    <path d="M 150 62 L 240 75" stroke="#ef4444" stroke-width="2" fill="none"/>
+                    <path d="M 150 132 L 240 115" stroke="#3b82f6" stroke-width="2" fill="none"/>
+                    <path d="M 350 95 L 390 95 L 390 160 L 420 160" stroke="#10b981" stroke-width="2" fill="none"/>
+                    <path d="M 150 242 L 390 242 L 390 185 L 420 185" stroke="#f97316" stroke-width="2" fill="none"/>
+                    <path d="M 530 170 L 590 170" stroke="#10b981" stroke-width="2.5" fill="none"/>
+                </svg>`
+            },
+            {
+                id: 'trapdoor-ejector',
+                title: '9. Scaled Touch Sensor Trapdoor & Ejector',
+                category: 'Systems & Mechs',
+                tags: ['sensor', 'trapdoor', 'ejector', 'delay', 'thruster'],
+                description: 'When an intruder steps on the Sensor Block, the Trapdoor opens instantly and after a short delay, the Ejector Thruster fires.',
+                wireGuide: [
+                    { from: 'Sensor Block', to: 'Trapdoor Hinge', color: '#EF4444', label: 'Instant open signal' },
+                    { from: 'Sensor Block', to: 'Delay Block', color: '#EF4444', label: 'Signal to timer' },
+                    { from: 'Delay Block', to: 'Ejector Thruster', color: '#F59E0B', label: 'Delayed ejection pulse' }
+                ],
+                svg: `
+                <svg viewBox="0 0 680 260" class="w-full h-auto">
+                    <pattern id="grid9" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="#1f2d40" stroke-width="0.5"/></pattern>
+                    <rect width="680" height="260" fill="url(#grid9)" rx="10"/>
+
+                    <rect x="40" y="100" width="120" height="50" rx="8" fill="#ef4444" fill-opacity="0.2" stroke="#ef4444" stroke-width="2"/>
+                    <text x="100" y="130" fill="#ef4444" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">Sensor Block</text>
+
+                    <rect x="250" y="170" width="120" height="50" rx="8" fill="#f59e0b" fill-opacity="0.2" stroke="#f59e0b" stroke-width="2"/>
+                    <text x="310" y="200" fill="#f59e0b" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">Delay Block</text>
+
+                    <rect x="470" y="40" width="150" height="50" rx="8" fill="#ec4899" fill-opacity="0.3" stroke="#ec4899" stroke-width="2"/>
+                    <text x="545" y="70" fill="#ec4899" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">Trapdoor Hinge</text>
+
+                    <rect x="470" y="170" width="150" height="50" rx="8" fill="#ec4899" fill-opacity="0.3" stroke="#ec4899" stroke-width="2"/>
+                    <text x="545" y="200" fill="#ec4899" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">Ejector Thruster</text>
+
+                    <path d="M 160 125 L 210 125 L 210 65 L 470 65" stroke="#ef4444" stroke-width="2.5" fill="none"/>
+                    <path d="M 210 125 L 210 195 L 250 195" stroke="#ef4444" stroke-width="2.5" fill="none"/>
+                    <path d="M 370 195 L 470 195" stroke="#f59e0b" stroke-width="2.5" fill="none"/>
+                </svg>`
+            },
+            {
+                id: 'walker-clock',
+                title: '10. Alternating Mech Leg Walker Clock',
+                category: 'Systems & Mechs',
+                tags: ['mech', 'walker', 'legs', 'clock', 'servo', 'not'],
+                description: 'Alternates left and right leg movement for walking mechs. Uses dual delay blocks with a NOT gate inverter to ensure opposite leg phases.',
+                wireGuide: [
+                    { from: 'Start Switch', to: 'Delay 1', color: '#EF4444', label: 'Walker Enable Signal' },
+                    { from: 'Delay 1', to: 'Left Servo', color: '#F59E0B', label: 'Left Leg Step Signal' },
+                    { from: 'Delay 1', to: 'NOT Gate', color: '#F59E0B', label: 'Inversion Phase Signal' },
+                    { from: 'NOT Gate', to: 'Delay 2', color: '#8B5CF6', label: 'Inverted Signal to Right Leg Delay' },
+                    { from: 'Delay 2', to: 'Right Servo', color: '#F59E0B', label: 'Right Leg Step Signal' }
+                ],
+                svg: `
+                <svg viewBox="0 0 720 300" class="w-full h-auto">
+                    <pattern id="grid10" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="#1f2d40" stroke-width="0.5"/></pattern>
+                    <rect width="720" height="300" fill="url(#grid10)" rx="10"/>
+
+                    <rect x="40" y="110" width="110" height="50" rx="8" fill="#ef4444" fill-opacity="0.2" stroke="#ef4444" stroke-width="2"/>
+                    <text x="95" y="140" fill="#ef4444" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">Start Switch</text>
+
+                    <rect x="210" y="40" width="110" height="50" rx="8" fill="#f59e0b" fill-opacity="0.2" stroke="#f59e0b" stroke-width="2"/>
+                    <text x="265" y="70" fill="#f59e0b" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">Delay 1</text>
+
+                    <rect x="370" y="180" width="90" height="45" rx="8" fill="#8b5cf6" fill-opacity="0.2" stroke="#8b5cf6" stroke-width="2"/>
+                    <text x="415" y="208" fill="#8b5cf6" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">NOT Gate</text>
+
+                    <rect x="500" y="180" width="110" height="50" rx="8" fill="#f59e0b" fill-opacity="0.2" stroke="#f59e0b" stroke-width="2"/>
+                    <text x="555" y="210" fill="#f59e0b" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">Delay 2</text>
+
+                    <rect x="500" y="40" width="110" height="50" rx="8" fill="#ec4899" fill-opacity="0.3" stroke="#ec4899" stroke-width="2"/>
+                    <text x="555" y="70" fill="#ec4899" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">Left Servo</text>
+
+                    <rect x="630" y="180" width="80" height="50" rx="8" fill="#ec4899" fill-opacity="0.3" stroke="#ec4899" stroke-width="2"/>
+                    <text x="670" y="210" fill="#ec4899" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">Right Servo</text>
+
+                    <!-- Wires -->
+                    <path d="M 150 135 L 180 135 L 180 65 L 210 65" stroke="#ef4444" stroke-width="2" fill="none"/>
+                    <path d="M 320 65 L 500 65" stroke="#f59e0b" stroke-width="2" fill="none"/>
+                    <path d="M 340 65 L 340 202 L 370 202" stroke="#f59e0b" stroke-width="2" fill="none"/>
+                    <path d="M 460 202 L 500 202" stroke="#8b5cf6" stroke-width="2" fill="none"/>
+                    <path d="M 610 205 L 630 205" stroke="#f59e0b" stroke-width="2" fill="none"/>
+                </svg>`
+            },
+            {
+                id: 'equals-comparator',
+                title: '11. 2-Bit Equals Comparator',
+                category: 'Math & Calculators',
+                tags: ['comparator', 'equals', 'xnor', 'and', 'math'],
+                description: 'Checks if two 2-bit numbers (A1A0 and B1B0) are identical using XNOR gates for bitwise equivalence and an AND gate for overall match.',
+                wireGuide: [
+                    { from: 'Bit A0 & B0', to: 'XNOR Gate 1', color: '#EF4444', label: 'Lowest bit pair comparison' },
+                    { from: 'Bit A1 & B1', to: 'XNOR Gate 2', color: '#3B82F6', label: 'Highest bit pair comparison' },
+                    { from: 'XOR + NOT (XNOR Gates)', to: 'AND Gate', color: '#06B6D4', label: 'Individual Bit Match signals' },
+                    { from: 'AND Gate', to: 'Match Output', color: '#10B981', label: 'Total Equals Match Output' }
+                ],
+                svg: `
+                <svg viewBox="0 0 720 320" class="w-full h-auto">
+                    <pattern id="grid11" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="#1f2d40" stroke-width="0.5"/></pattern>
+                    <rect width="720" height="320" fill="url(#grid11)" rx="10"/>
+
+                    <!-- Inputs -->
+                    <rect x="30" y="30" width="80" height="40" rx="6" fill="#ef4444" fill-opacity="0.2" stroke="#ef4444" stroke-width="2"/>
+                    <text x="70" y="55" fill="#ef4444" font-family="JetBrains Mono" font-weight="bold" font-size="11" text-anchor="middle">Bit A0</text>
+
+                    <rect x="30" y="80" width="80" height="40" rx="6" fill="#ef4444" fill-opacity="0.2" stroke="#ef4444" stroke-width="2"/>
+                    <text x="70" y="105" fill="#ef4444" font-family="JetBrains Mono" font-weight="bold" font-size="11" text-anchor="middle">Bit B0</text>
+
+                    <rect x="30" y="180" width="80" height="40" rx="6" fill="#3b82f6" fill-opacity="0.2" stroke="#3b82f6" stroke-width="2"/>
+                    <text x="70" y="205" fill="#3b82f6" font-family="JetBrains Mono" font-weight="bold" font-size="11" text-anchor="middle">Bit A1</text>
+
+                    <rect x="30" y="230" width="80" height="40" rx="6" fill="#3b82f6" fill-opacity="0.2" stroke="#3b82f6" stroke-width="2"/>
+                    <text x="70" y="255" fill="#3b82f6" font-family="JetBrains Mono" font-weight="bold" font-size="11" text-anchor="middle">Bit B1</text>
+
+                    <!-- XNORs -->
+                    <rect x="220" y="45" width="110" height="50" rx="6" fill="#06b6d4" fill-opacity="0.2" stroke="#06b6d4" stroke-width="2"/>
+                    <text x="275" y="75" fill="#06b6d4" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">XNOR Gate 1</text>
+
+                    <rect x="220" y="195" width="110" height="50" rx="6" fill="#06b6d4" fill-opacity="0.2" stroke="#06b6d4" stroke-width="2"/>
+                    <text x="275" y="225" fill="#06b6d4" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">XNOR Gate 2</text>
+
+                    <!-- AND -->
+                    <rect x="450" y="120" width="110" height="60" rx="6" fill="#10b981" fill-opacity="0.2" stroke="#10b981" stroke-width="2"/>
+                    <text x="505" y="155" fill="#10b981" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">AND Gate</text>
+
+                    <rect x="620" y="125" width="70" height="50" rx="6" fill="#10b981" fill-opacity="0.3" stroke="#10b981" stroke-width="2"/>
+                    <text x="655" y="155" fill="#10b981" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">MATCH</text>
+
+                    <!-- Wires -->
+                    <path d="M 110 50 L 220 50" stroke="#ef4444" stroke-width="2" fill="none"/>
+                    <path d="M 110 100 L 170 100 L 170 80 L 220 80" stroke="#ef4444" stroke-width="2" fill="none"/>
+
+                    <path d="M 110 200 L 220 200" stroke="#3b82f6" stroke-width="2" fill="none"/>
+                    <path d="M 110 250 L 170 250 L 170 230 L 220 230" stroke="#3b82f6" stroke-width="2" fill="none"/>
+
+                    <path d="M 330 70 L 390 70 L 390 140 L 450 140" stroke="#06b6d4" stroke-width="2" fill="none"/>
+                    <path d="M 330 220 L 390 220 L 390 160 L 450 160" stroke="#06b6d4" stroke-width="2" fill="none"/>
+
+                    <path d="M 560 150 L 620 150" stroke="#10b981" stroke-width="2.5" fill="none"/>
+                </svg>`
+            },
+            {
+                id: 'pulse-edge-detector',
+                title: '12. Pulse Edge Detector (Rising Edge)',
+                category: 'Bare Gates',
+                tags: ['edge detector', 'pulse', 'delay', 'not', 'and'],
+                description: 'Converts a long continuous switch signal into a single ultra-short instant pulse. Uses an inverted delayed branch combined with an AND gate.',
+                wireGuide: [
+                    { from: 'Trigger Switch', to: 'AND Gate', color: '#EF4444', label: 'Direct Input Signal' },
+                    { from: 'Trigger Switch', to: 'NOT Gate', color: '#EF4444', label: 'Inverted Input Branch' },
+                    { from: 'NOT Gate', to: 'Delay Block', color: '#8B5CF6', label: 'Inverted Signal to Delay' },
+                    { from: 'Delay Block', to: 'AND Gate', color: '#F59E0B', label: 'Delayed Inverted Cutoff Signal' },
+                    { from: 'AND Gate', to: 'Pulse Output', color: '#10B981', label: 'Single Instantaneous Pulse' }
+                ],
+                svg: `
+                <svg viewBox="0 0 700 260" class="w-full h-auto">
+                    <pattern id="grid12" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="#1f2d40" stroke-width="0.5"/></pattern>
+                    <rect width="700" height="260" fill="url(#grid12)" rx="10"/>
+
+                    <rect x="40" y="80" width="120" height="50" rx="8" fill="#ef4444" fill-opacity="0.2" stroke="#ef4444" stroke-width="2"/>
+                    <text x="100" y="110" fill="#ef4444" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">Trigger Switch</text>
+
+                    <rect x="230" y="150" width="90" height="45" rx="8" fill="#8b5cf6" fill-opacity="0.2" stroke="#8b5cf6" stroke-width="2"/>
+                    <text x="275" y="178" fill="#8b5cf6" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">NOT Gate</text>
+
+                    <rect x="360" y="150" width="110" height="45" rx="8" fill="#f59e0b" fill-opacity="0.2" stroke="#f59e0b" stroke-width="2"/>
+                    <text x="415" y="178" fill="#f59e0b" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">Delay Block</text>
+
+                    <rect x="520" y="75" width="100" height="60" rx="8" fill="#10b981" fill-opacity="0.2" stroke="#10b981" stroke-width="2"/>
+                    <text x="570" y="110" fill="#10b981" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">AND Gate</text>
+
+                    <rect x="650" y="80" width="40" height="50" rx="6" fill="#10b981" fill-opacity="0.3" stroke="#10b981" stroke-width="2"/>
+                    <text x="670" y="110" fill="#10b981" font-family="JetBrains Mono" font-weight="bold" font-size="11" text-anchor="middle">OUT</text>
+
+                    <path d="M 160 105 L 520 90" stroke="#ef4444" stroke-width="2.5" fill="none"/>
+                    <path d="M 180 105 L 180 172 L 230 172" stroke="#ef4444" stroke-width="2.5" fill="none"/>
+                    <path d="M 320 172 L 360 172" stroke="#8b5cf6" stroke-width="2.5" fill="none"/>
+                    <path d="M 470 172 L 490 172 L 490 120 L 520 120" stroke="#f59e0b" stroke-width="2.5" fill="none"/>
+                    <path d="M 620 105 L 650 105" stroke="#10b981" stroke-width="2.5" fill="none"/>
+                </svg>`
+            },
+            {
+                id: 'safety-interlock',
+                title: '13. Passgate Safety Armed Interlock',
+                category: 'Bare Gates',
+                tags: ['safety', 'interlock', 'and', 'fire', 'armed'],
+                description: 'Prevents firing weapon systems or explosive traps unless the Safety Arm Switch is toggled ON.',
+                wireGuide: [
+                    { from: 'Fire Trigger', to: 'AND Gate', color: '#EF4444', label: 'Fire Trigger Signal' },
+                    { from: 'Safety Arm Switch', to: 'AND Gate', color: '#3B82F6', label: 'Safety Arm Switch Signal' },
+                    { from: 'AND Gate', to: 'Target Block', color: '#10B981', label: 'Armed Execution Pulse' }
+                ],
+                svg: `
+                <svg viewBox="0 0 650 220" class="w-full h-auto">
+                    <pattern id="grid13" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="#1f2d40" stroke-width="0.5"/></pattern>
+                    <rect width="650" height="220" fill="url(#grid13)" rx="10"/>
+
+                    <rect x="40" y="40" width="120" height="45" rx="6" fill="#ef4444" fill-opacity="0.2" stroke="#ef4444" stroke-width="2"/>
+                    <text x="100" y="68" fill="#ef4444" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">Fire Trigger</text>
+
+                    <rect x="40" y="130" width="120" height="45" rx="6" fill="#3b82f6" fill-opacity="0.2" stroke="#3b82f6" stroke-width="2"/>
+                    <text x="100" y="158" fill="#3b82f6" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">Safety Switch</text>
+
+                    <rect x="300" y="80" width="110" height="60" rx="8" fill="#10b981" fill-opacity="0.2" stroke="#10b981" stroke-width="2"/>
+                    <text x="355" y="115" fill="#10b981" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">AND Gate</text>
+
+                    <rect x="490" y="85" width="110" height="50" rx="8" fill="#ec4899" fill-opacity="0.3" stroke="#ec4899" stroke-width="2"/>
+                    <text x="545" y="115" fill="#ec4899" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">Target Block</text>
+
+                    <path d="M 160 62 L 230 62 L 230 95 L 300 95" stroke="#ef4444" stroke-width="2.5" fill="none"/>
+                    <path d="M 160 152 L 230 152 L 230 125 L 300 125" stroke="#3b82f6" stroke-width="2.5" fill="none"/>
+                    <path d="M 410 110 L 490 110" stroke="#10b981" stroke-width="2.5" fill="none"/>
+                </svg>`
+            },
+            {
+                id: 'emergency-ejector',
+                title: '14. Auto Emergency Ejector System',
+                category: 'Systems & Mechs',
+                tags: ['ejector', 'emergency', 'sensor', 'or', 'parachute'],
+                description: 'Ejects pilot and deploys parachute if either Hull Damage Sensor detects failure OR manual Eject Button is pressed.',
+                wireGuide: [
+                    { from: 'Hull Sensor Block', to: 'OR Gate', color: '#EF4444', label: 'Damage Sensor Signal' },
+                    { from: 'Manual Eject Button', to: 'OR Gate', color: '#3B82F6', label: 'Manual Eject Signal' },
+                    { from: 'OR Gate', to: 'Parachute Magnet', color: '#10B981', label: 'Ejector / Parachute Detach Trigger' }
+                ],
+                svg: `
+                <svg viewBox="0 0 650 220" class="w-full h-auto">
+                    <pattern id="grid14" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="#1f2d40" stroke-width="0.5"/></pattern>
+                    <rect width="650" height="220" fill="url(#grid14)" rx="10"/>
+
+                    <rect x="40" y="40" width="130" height="45" rx="6" fill="#ef4444" fill-opacity="0.2" stroke="#ef4444" stroke-width="2"/>
+                    <text x="105" y="68" fill="#ef4444" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">Hull Sensor Block</text>
+
+                    <rect x="40" y="130" width="130" height="45" rx="6" fill="#3b82f6" fill-opacity="0.2" stroke="#3b82f6" stroke-width="2"/>
+                    <text x="105" y="158" fill="#3b82f6" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">Manual Eject Button</text>
+
+                    <rect x="300" y="80" width="110" height="60" rx="8" fill="#10b981" fill-opacity="0.2" stroke="#10b981" stroke-width="2"/>
+                    <text x="355" y="115" fill="#10b981" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">OR Gate</text>
+
+                    <rect x="490" y="85" width="120" height="50" rx="8" fill="#ec4899" fill-opacity="0.3" stroke="#ec4899" stroke-width="2"/>
+                    <text x="550" y="115" fill="#ec4899" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">Parachute Magnet</text>
+
+                    <path d="M 170 62 L 230 62 L 230 95 L 300 95" stroke="#ef4444" stroke-width="2.5" fill="none"/>
+                    <path d="M 170 152 L 230 152 L 230 125 L 300 125" stroke="#3b82f6" stroke-width="2.5" fill="none"/>
+                    <path d="M 410 110 L 490 110" stroke="#10b981" stroke-width="2.5" fill="none"/>
+                </svg>`
+            },
+            {
+                id: 'inverted-safety',
+                title: '15. Inverted Safety Interlock',
+                category: 'Bare Gates',
+                tags: ['safety', 'inverted', 'not', 'and', 'throttle'],
+                description: 'Fires Engine Thrusters ONLY when Throttle Switch is ON AND Landing Gear Sensor is NOT touching ground.',
+                wireGuide: [
+                    { from: 'Throttle Switch', to: 'AND Gate', color: '#EF4444', label: 'Throttle Active Signal' },
+                    { from: 'Gear Sensor', to: 'NOT Gate', color: '#3B82F6', label: 'Ground Contact Sensor' },
+                    { from: 'NOT Gate', to: 'AND Gate', color: '#8B5CF6', label: 'Airborne Inverted Signal' },
+                    { from: 'AND Gate', to: 'Engine Thrusters', color: '#10B981', label: 'Thruster Ignition Trigger' }
+                ],
+                svg: `
+                <svg viewBox="0 0 680 240" class="w-full h-auto">
+                    <pattern id="grid15" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="#1f2d40" stroke-width="0.5"/></pattern>
+                    <rect width="680" height="240" fill="url(#grid15)" rx="10"/>
+
+                    <rect x="40" y="40" width="120" height="45" rx="6" fill="#ef4444" fill-opacity="0.2" stroke="#ef4444" stroke-width="2"/>
+                    <text x="100" y="68" fill="#ef4444" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">Throttle Switch</text>
+
+                    <rect x="40" y="140" width="120" height="45" rx="6" fill="#3b82f6" fill-opacity="0.2" stroke="#3b82f6" stroke-width="2"/>
+                    <text x="100" y="168" fill="#3b82f6" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">Gear Sensor</text>
+
+                    <rect x="230" y="140" width="90" height="45" rx="6" fill="#8b5cf6" fill-opacity="0.2" stroke="#8b5cf6" stroke-width="2"/>
+                    <text x="275" y="168" fill="#8b5cf6" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">NOT Gate</text>
+
+                    <rect x="390" y="85" width="110" height="60" rx="8" fill="#10b981" fill-opacity="0.2" stroke="#10b981" stroke-width="2"/>
+                    <text x="445" y="120" fill="#10b981" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">AND Gate</text>
+
+                    <rect x="550" y="90" width="100" height="50" rx="8" fill="#ec4899" fill-opacity="0.3" stroke="#ec4899" stroke-width="2"/>
+                    <text x="600" y="120" fill="#ec4899" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">Thrusters</text>
+
+                    <path d="M 160 62 L 320 62 L 320 100 L 390 100" stroke="#ef4444" stroke-width="2.5" fill="none"/>
+                    <path d="M 160 162 L 230 162" stroke="#3b82f6" stroke-width="2.5" fill="none"/>
+                    <path d="M 320 162 L 350 162 L 350 130 L 390 130" stroke="#8b5cf6" stroke-width="2.5" fill="none"/>
+                    <path d="M 500 115 L 550 115" stroke="#10b981" stroke-width="2.5" fill="none"/>
+                </svg>`
+            },
+            {
+                id: 'cannon-sequence',
+                title: '16. Auto-Reload Cannon Sequence',
+                category: 'Systems & Mechs',
+                tags: ['cannon', 'reload', 'sequence', 'piston', 'delay'],
+                description: 'Fires cannon, opens reload hatch after Delay 1, and activates loader piston after Delay 2.',
+                wireGuide: [
+                    { from: 'Fire Switch', to: 'Cannon', color: '#EF4444', label: 'Instant Cannon Fire' },
+                    { from: 'Fire Switch', to: 'Delay 1', color: '#EF4444', label: 'Hatch Delay Timer' },
+                    { from: 'Delay 1', to: 'Hatch Servo', color: '#F59E0B', label: 'Open Hatch Signal' },
+                    { from: 'Delay 1', to: 'Delay 2', color: '#F59E0B', label: 'Loader Delay Timer' },
+                    { from: 'Delay 2', to: 'Loader Piston', color: '#F59E0B', label: 'Push Ammo Piston Signal' }
+                ],
+                svg: `
+                <svg viewBox="0 0 720 280" class="w-full h-auto">
+                    <pattern id="grid16" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="#1f2d40" stroke-width="0.5"/></pattern>
+                    <rect width="720" height="280" fill="url(#grid16)" rx="10"/>
+
+                    <rect x="30" y="110" width="110" height="45" rx="6" fill="#ef4444" fill-opacity="0.2" stroke="#ef4444" stroke-width="2"/>
+                    <text x="85" y="138" fill="#ef4444" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">Fire Switch</text>
+
+                    <rect x="200" y="30" width="100" height="45" rx="6" fill="#ec4899" fill-opacity="0.3" stroke="#ec4899" stroke-width="2"/>
+                    <text x="250" y="58" fill="#ec4899" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">Cannon</text>
+
+                    <rect x="200" y="180" width="100" height="45" rx="6" fill="#f59e0b" fill-opacity="0.2" stroke="#f59e0b" stroke-width="2"/>
+                    <text x="250" y="208" fill="#f59e0b" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">Delay 1</text>
+
+                    <rect x="370" y="110" width="110" height="45" rx="6" fill="#ec4899" fill-opacity="0.3" stroke="#ec4899" stroke-width="2"/>
+                    <text x="425" y="138" fill="#ec4899" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">Hatch Servo</text>
+
+                    <rect x="370" y="180" width="110" height="45" rx="6" fill="#f59e0b" fill-opacity="0.2" stroke="#f59e0b" stroke-width="2"/>
+                    <text x="425" y="208" fill="#f59e0b" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">Delay 2</text>
+
+                    <rect x="560" y="180" width="120" height="45" rx="6" fill="#ec4899" fill-opacity="0.3" stroke="#ec4899" stroke-width="2"/>
+                    <text x="620" y="208" fill="#ec4899" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">Loader Piston</text>
+
+                    <path d="M 140 132 L 170 132 L 170 52 L 200 52" stroke="#ef4444" stroke-width="2" fill="none"/>
+                    <path d="M 170 132 L 170 202 L 200 202" stroke="#ef4444" stroke-width="2" fill="none"/>
+                    <path d="M 300 202 L 330 202 L 330 132 L 370 132" stroke="#f59e0b" stroke-width="2" fill="none"/>
+                    <path d="M 330 202 L 370 202" stroke="#f59e0b" stroke-width="2" fill="none"/>
+                    <path d="M 480 202 L 560 202" stroke="#f59e0b" stroke-width="2" fill="none"/>
+                </svg>`
+            },
+            {
+                id: '3way-switch',
+                title: '17. 3-Way Room Switch Circuit',
+                category: 'Memory & Switches',
+                tags: ['3-way', 'multi switch', 'or', 'lighting'],
+                description: 'Allows toggling a light fixture or door from 3 separate room switch locations using chained OR gates.',
+                wireGuide: [
+                    { from: 'Switch 1 & 2', to: 'OR Gate 1', color: '#EF4444', label: 'First two switch locations' },
+                    { from: 'OR Gate 1', to: 'OR Gate 2', color: '#10B981', label: 'Combined first stage state' },
+                    { from: 'Switch 3', to: 'OR Gate 2', color: '#3B82F6', label: 'Third switch location' },
+                    { from: 'OR Gate 2', to: 'Light / Door', color: '#10B981', label: 'Final Light Output' }
+                ],
+                svg: `
+                <svg viewBox="0 0 680 260" class="w-full h-auto">
+                    <pattern id="grid17" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="#1f2d40" stroke-width="0.5"/></pattern>
+                    <rect width="680" height="260" fill="url(#grid17)" rx="10"/>
+
+                    <rect x="40" y="30" width="100" height="40" rx="6" fill="#ef4444" fill-opacity="0.2" stroke="#ef4444" stroke-width="2"/>
+                    <text x="90" y="55" fill="#ef4444" font-family="JetBrains Mono" font-weight="bold" font-size="11" text-anchor="middle">Switch 1</text>
+
+                    <rect x="40" y="85" width="100" height="40" rx="6" fill="#ef4444" fill-opacity="0.2" stroke="#ef4444" stroke-width="2"/>
+                    <text x="90" y="110" fill="#ef4444" font-family="JetBrains Mono" font-weight="bold" font-size="11" text-anchor="middle">Switch 2</text>
+
+                    <rect x="40" y="180" width="100" height="40" rx="6" fill="#3b82f6" fill-opacity="0.2" stroke="#3b82f6" stroke-width="2"/>
+                    <text x="90" y="205" fill="#3b82f6" font-family="JetBrains Mono" font-weight="bold" font-size="11" text-anchor="middle">Switch 3</text>
+
+                    <rect x="230" y="45" width="100" height="50" rx="6" fill="#10b981" fill-opacity="0.2" stroke="#10b981" stroke-width="2"/>
+                    <text x="280" y="75" fill="#10b981" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">OR Gate 1</text>
+
+                    <rect x="410" y="110" width="100" height="50" rx="6" fill="#10b981" fill-opacity="0.2" stroke="#10b981" stroke-width="2"/>
+                    <text x="460" y="140" fill="#10b981" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">OR Gate 2</text>
+
+                    <rect x="570" y="110" width="80" height="50" rx="6" fill="#10b981" fill-opacity="0.3" stroke="#10b981" stroke-width="2"/>
+                    <text x="610" y="140" fill="#10b981" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">Light / Door</text>
+
+                    <path d="M 140 50 L 230 50" stroke="#ef4444" stroke-width="2" fill="none"/>
+                    <path d="M 140 105 L 180 105 L 180 80 L 230 80" stroke="#ef4444" stroke-width="2" fill="none"/>
+                    <path d="M 330 70 L 370 70 L 370 125 L 410 125" stroke="#10b981" stroke-width="2" fill="none"/>
+                    <path d="M 140 200 L 370 200 L 370 145 L 410 145" stroke="#3b82f6" stroke-width="2" fill="none"/>
+                    <path d="M 510 135 L 570 135" stroke="#10b981" stroke-width="2.5" fill="none"/>
+                </svg>`
+            },
+            {
+                id: 'strobe-beacon',
+                title: '18. Timed Strobe Warning Beacon',
+                category: 'Clocks & Timers',
+                tags: ['strobe', 'warning', 'beacon', 'flash', 'clock'],
+                description: 'Creates a rapid flashing warning beacon when Power Switch is toggled ON.',
+                wireGuide: [
+                    { from: 'Power Switch', to: 'AND Gate', color: '#EF4444', label: 'Beacon Power Input' },
+                    { from: 'AND Gate', to: 'Delay Block', color: '#10B981', label: 'Pulse to Delay' },
+                    { from: 'Delay Block', to: 'NOT Gate', color: '#F59E0B', label: 'Feedback Inversion Signal' },
+                    { from: 'NOT Gate', to: 'AND Gate Input', color: '#8B5CF6', label: 'Oscillation Loop' },
+                    { from: 'Delay Block', to: 'Flashing Light Blocks', color: '#F59E0B', label: 'Flashing Strobe Output' }
+                ],
+                svg: `
+                <svg viewBox="0 0 680 260" class="w-full h-auto">
+                    <pattern id="grid18" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="#1f2d40" stroke-width="0.5"/></pattern>
+                    <rect width="680" height="260" fill="url(#grid18)" rx="10"/>
+
+                    <rect x="40" y="50" width="110" height="45" rx="6" fill="#ef4444" fill-opacity="0.2" stroke="#ef4444" stroke-width="2"/>
+                    <text x="95" y="78" fill="#ef4444" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">Power Switch</text>
+
+                    <rect x="220" y="50" width="100" height="50" rx="6" fill="#10b981" fill-opacity="0.2" stroke="#10b981" stroke-width="2"/>
+                    <text x="270" y="80" fill="#10b981" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">AND Gate</text>
+
+                    <rect x="380" y="50" width="110" height="50" rx="6" fill="#f59e0b" fill-opacity="0.2" stroke="#f59e0b" stroke-width="2"/>
+                    <text x="435" y="80" fill="#f59e0b" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">Delay Block</text>
+
+                    <rect x="300" y="160" width="90" height="45" rx="6" fill="#8b5cf6" fill-opacity="0.2" stroke="#8b5cf6" stroke-width="2"/>
+                    <text x="345" y="188" fill="#8b5cf6" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">NOT Gate</text>
+
+                    <rect x="550" y="50" width="100" height="50" rx="6" fill="#f59e0b" fill-opacity="0.3" stroke="#f59e0b" stroke-width="2"/>
+                    <text x="600" y="80" fill="#f59e0b" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">Flash Display</text>
+
+                    <path d="M 150 72 L 220 72" stroke="#ef4444" stroke-width="2" fill="none"/>
+                    <path d="M 320 75 L 380 75" stroke="#10b981" stroke-width="2" fill="none"/>
+                    <path d="M 490 75 L 550 75" stroke="#f59e0b" stroke-width="2" fill="none"/>
+                    <path d="M 450 100 L 450 182 L 390 182" stroke="#f59e0b" stroke-width="2" fill="none"/>
+                    <path d="M 300 182 L 180 182 L 180 88 L 220 88" stroke="#8b5cf6" stroke-width="2" fill="none"/>
+                </svg>`
+            },
+            {
+                id: 'nand-gate',
+                title: '19. NAND Gate (Universal Gate)',
+                category: 'Bare Gates',
+                tags: ['nand', 'universal', 'gate', 'and', 'not'],
+                description: 'Outputs LOW only when both IN A and IN B are HIGH. Exploded into an AND Gate fed directly into a NOT Gate.',
+                wireGuide: [
+                    { from: 'IN A Switch', to: 'AND Gate', color: '#EF4444', label: 'Input A signal' },
+                    { from: 'IN B Switch', to: 'AND Gate', color: '#3B82F6', label: 'Input B signal' },
+                    { from: 'AND Gate', to: 'NOT Gate', color: '#10B981', label: 'AND Combination signal' },
+                    { from: 'NOT Gate', to: 'Output Block', color: '#8B5CF6', label: 'Inverted NAND Output' }
+                ],
+                svg: `
+                <svg viewBox="0 0 650 220" class="w-full h-auto">
+                    <pattern id="grid19" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="#1f2d40" stroke-width="0.5"/></pattern>
+                    <rect width="650" height="220" fill="url(#grid19)" rx="10"/>
+
+                    <rect x="40" y="40" width="100" height="40" rx="6" fill="#ef4444" fill-opacity="0.2" stroke="#ef4444" stroke-width="2"/>
+                    <text x="90" y="65" fill="#ef4444" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">IN A Switch</text>
+
+                    <rect x="40" y="130" width="100" height="40" rx="6" fill="#3b82f6" fill-opacity="0.2" stroke="#3b82f6" stroke-width="2"/>
+                    <text x="90" y="155" fill="#3b82f6" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">IN B Switch</text>
+
+                    <rect x="220" y="75" width="110" height="60" rx="8" fill="#10b981" fill-opacity="0.2" stroke="#10b981" stroke-width="2"/>
+                    <text x="275" y="110" fill="#10b981" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">AND Gate</text>
+
+                    <rect x="400" y="80" width="90" height="50" rx="8" fill="#8b5cf6" fill-opacity="0.2" stroke="#8b5cf6" stroke-width="2"/>
+                    <text x="445" y="110" fill="#8b5cf6" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">NOT Gate</text>
+
+                    <rect x="550" y="80" width="60" height="50" rx="8" fill="#8b5cf6" fill-opacity="0.3" stroke="#8b5cf6" stroke-width="2"/>
+                    <text x="580" y="110" fill="#8b5cf6" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">OUT</text>
+
+                    <path d="M 140 60 L 180 60 L 180 90 L 220 90" stroke="#ef4444" stroke-width="2.5" fill="none"/>
+                    <path d="M 140 150 L 180 150 L 180 120 L 220 120" stroke="#3b82f6" stroke-width="2.5" fill="none"/>
+                    <path d="M 330 105 L 400 105" stroke="#10b981" stroke-width="2.5" fill="none"/>
+                    <path d="M 490 105 L 550 105" stroke="#8b5cf6" stroke-width="2.5" fill="none"/>
+                </svg>`
+            },
+            {
+                id: 'nor-gate',
+                title: '20. NOR Gate (Universal Gate)',
+                category: 'Bare Gates',
+                tags: ['nor', 'universal', 'gate', 'or', 'not'],
+                description: 'Outputs HIGH only when BOTH IN A and IN B are LOW. Exploded into an OR Gate fed into a NOT Gate.',
+                wireGuide: [
+                    { from: 'IN A Switch', to: 'OR Gate', color: '#EF4444', label: 'Input A signal' },
+                    { from: 'IN B Switch', to: 'OR Gate', color: '#3B82F6', label: 'Input B signal' },
+                    { from: 'OR Gate', to: 'NOT Gate', color: '#10B981', label: 'OR Combination signal' },
+                    { from: 'NOT Gate', to: 'Output Block', color: '#8B5CF6', label: 'Inverted NOR Output' }
+                ],
+                svg: `
+                <svg viewBox="0 0 650 220" class="w-full h-auto">
+                    <pattern id="grid20" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="#1f2d40" stroke-width="0.5"/></pattern>
+                    <rect width="650" height="220" fill="url(#grid20)" rx="10"/>
+
+                    <rect x="40" y="40" width="100" height="40" rx="6" fill="#ef4444" fill-opacity="0.2" stroke="#ef4444" stroke-width="2"/>
+                    <text x="90" y="65" fill="#ef4444" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">IN A Switch</text>
+
+                    <rect x="40" y="130" width="100" height="40" rx="6" fill="#3b82f6" fill-opacity="0.2" stroke="#3b82f6" stroke-width="2"/>
+                    <text x="90" y="155" fill="#3b82f6" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">IN B Switch</text>
+
+                    <rect x="220" y="75" width="110" height="60" rx="8" fill="#10b981" fill-opacity="0.2" stroke="#10b981" stroke-width="2"/>
+                    <text x="275" y="110" fill="#10b981" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">OR Gate</text>
+
+                    <rect x="400" y="80" width="90" height="50" rx="8" fill="#8b5cf6" fill-opacity="0.2" stroke="#8b5cf6" stroke-width="2"/>
+                    <text x="445" y="110" fill="#8b5cf6" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">NOT Gate</text>
+
+                    <rect x="550" y="80" width="60" height="50" rx="8" fill="#8b5cf6" fill-opacity="0.3" stroke="#8b5cf6" stroke-width="2"/>
+                    <text x="580" y="110" fill="#8b5cf6" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">OUT</text>
+
+                    <path d="M 140 60 L 180 60 L 180 90 L 220 90" stroke="#ef4444" stroke-width="2.5" fill="none"/>
+                    <path d="M 140 150 L 180 150 L 180 120 L 220 120" stroke="#3b82f6" stroke-width="2.5" fill="none"/>
+                    <path d="M 330 105 L 400 105" stroke="#10b981" stroke-width="2.5" fill="none"/>
+                    <path d="M 490 105 L 550 105" stroke="#8b5cf6" stroke-width="2.5" fill="none"/>
+                </svg>`
+            },
+            {
+                id: 'xnor-gate',
+                title: '21. XNOR Gate (Equivalence)',
+                category: 'Bare Gates',
+                tags: ['xnor', 'equivalence', 'gate', 'xor', 'not'],
+                description: 'Outputs HIGH if both inputs are identical (both 0 or both 1). Exploded into XOR Gate followed by a NOT Gate.',
+                wireGuide: [
+                    { from: 'IN A Switch', to: 'XOR Gate', color: '#EF4444', label: 'Input A signal' },
+                    { from: 'IN B Switch', to: 'XOR Gate', color: '#3B82F6', label: 'Input B signal' },
+                    { from: 'XOR Gate', to: 'NOT Gate', color: '#06B6D4', label: 'Exclusive OR Output' },
+                    { from: 'NOT Gate', to: 'Output Block', color: '#8B5CF6', label: 'Inverted Equivalence Output' }
+                ],
+                svg: `
+                <svg viewBox="0 0 650 220" class="w-full h-auto">
+                    <pattern id="grid21" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="#1f2d40" stroke-width="0.5"/></pattern>
+                    <rect width="650" height="220" fill="url(#grid21)" rx="10"/>
+
+                    <rect x="40" y="40" width="100" height="40" rx="6" fill="#ef4444" fill-opacity="0.2" stroke="#ef4444" stroke-width="2"/>
+                    <text x="90" y="65" fill="#ef4444" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">IN A Switch</text>
+
+                    <rect x="40" y="130" width="100" height="40" rx="6" fill="#3b82f6" fill-opacity="0.2" stroke="#3b82f6" stroke-width="2"/>
+                    <text x="90" y="155" fill="#3b82f6" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">IN B Switch</text>
+
+                    <rect x="220" y="75" width="110" height="60" rx="8" fill="#06b6d4" fill-opacity="0.2" stroke="#06b6d4" stroke-width="2"/>
+                    <text x="275" y="110" fill="#06b6d4" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">XOR Gate</text>
+
+                    <rect x="400" y="80" width="90" height="50" rx="8" fill="#8b5cf6" fill-opacity="0.2" stroke="#8b5cf6" stroke-width="2"/>
+                    <text x="445" y="110" fill="#8b5cf6" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">NOT Gate</text>
+
+                    <rect x="550" y="80" width="60" height="50" rx="8" fill="#8b5cf6" fill-opacity="0.3" stroke="#8b5cf6" stroke-width="2"/>
+                    <text x="580" y="110" fill="#8b5cf6" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">OUT</text>
+
+                    <path d="M 140 60 L 180 60 L 180 90 L 220 90" stroke="#ef4444" stroke-width="2.5" fill="none"/>
+                    <path d="M 140 150 L 180 150 L 180 120 L 220 120" stroke="#3b82f6" stroke-width="2.5" fill="none"/>
+                    <path d="M 330 105 L 400 105" stroke="#06b6d4" stroke-width="2.5" fill="none"/>
+                    <path d="M 490 105 L 550 105" stroke="#8b5cf6" stroke-width="2.5" fill="none"/>
+                </svg>`
+            },
+            {
+                id: 'rocket-igniter',
+                title: '22. Sequential Rocket Stage Igniter',
+                category: 'Systems & Mechs',
+                tags: ['rocket', 'stage', 'igniter', 'delay', 'thruster'],
+                description: 'Fires rocket engines sequentially stage by stage using chained Delay blocks.',
+                wireGuide: [
+                    { from: 'Launch Switch', to: 'Stage 1 Thruster', color: '#EF4444', label: 'Instant Stage 1 Ignition' },
+                    { from: 'Launch Switch', to: 'Delay 1', color: '#EF4444', label: 'Stage 2 Countdown' },
+                    { from: 'Delay 1', to: 'Stage 2 Thruster', color: '#F59E0B', label: 'Stage 2 Ignition' },
+                    { from: 'Delay 1', to: 'Delay 2', color: '#F59E0B', label: 'Stage 3 Countdown' },
+                    { from: 'Delay 2', to: 'Stage 3 Thruster', color: '#F59E0B', label: 'Stage 3 Ignition' }
+                ],
+                svg: `
+                <svg viewBox="0 0 720 260" class="w-full h-auto">
+                    <pattern id="grid22" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="#1f2d40" stroke-width="0.5"/></pattern>
+                    <rect width="720" height="260" fill="url(#grid22)" rx="10"/>
+
+                    <rect x="30" y="100" width="110" height="45" rx="6" fill="#ef4444" fill-opacity="0.2" stroke="#ef4444" stroke-width="2"/>
+                    <text x="85" y="128" fill="#ef4444" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">Launch Switch</text>
+
+                    <rect x="210" y="30" width="110" height="45" rx="6" fill="#ec4899" fill-opacity="0.3" stroke="#ec4899" stroke-width="2"/>
+                    <text x="265" y="58" fill="#ec4899" font-family="JetBrains Mono" font-weight="bold" font-size="11" text-anchor="middle">Stage 1 Thruster</text>
+
+                    <rect x="210" y="170" width="110" height="45" rx="6" fill="#f59e0b" fill-opacity="0.2" stroke="#f59e0b" stroke-width="2"/>
+                    <text x="265" y="198" fill="#f59e0b" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">Delay 1</text>
+
+                    <rect x="380" y="100" width="110" height="45" rx="6" fill="#ec4899" fill-opacity="0.3" stroke="#ec4899" stroke-width="2"/>
+                    <text x="435" y="128" fill="#ec4899" font-family="JetBrains Mono" font-weight="bold" font-size="11" text-anchor="middle">Stage 2 Thruster</text>
+
+                    <rect x="380" y="170" width="110" height="45" rx="6" fill="#f59e0b" fill-opacity="0.2" stroke="#f59e0b" stroke-width="2"/>
+                    <text x="435" y="198" fill="#f59e0b" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">Delay 2</text>
+
+                    <rect x="560" y="170" width="120" height="45" rx="6" fill="#ec4899" fill-opacity="0.3" stroke="#ec4899" stroke-width="2"/>
+                    <text x="620" y="198" fill="#ec4899" font-family="JetBrains Mono" font-weight="bold" font-size="11" text-anchor="middle">Stage 3 Thruster</text>
+
+                    <path d="M 140 122 L 170 122 L 170 52 L 210 52" stroke="#ef4444" stroke-width="2" fill="none"/>
+                    <path d="M 170 122 L 170 192 L 210 192" stroke="#ef4444" stroke-width="2" fill="none"/>
+                    <path d="M 320 192 L 350 192 L 350 122 L 380 122" stroke="#f59e0b" stroke-width="2" fill="none"/>
+                    <path d="M 350 192 L 380 192" stroke="#f59e0b" stroke-width="2" fill="none"/>
+                    <path d="M 490 192 L 560 192" stroke="#f59e0b" stroke-width="2" fill="none"/>
+                </svg>`
+            },
+            {
+                id: 'proximity-flasher',
+                title: '23. Proximity Sensor Warning Flasher',
+                category: 'Systems & Mechs',
+                tags: ['proximity', 'sensor', 'flasher', 'delay', 'not'],
+                description: 'Triggers a fast flashing alert screen when an entity enters Sensor Block proximity.',
+                wireGuide: [
+                    { from: 'Sensor Block', to: 'AND Gate', color: '#EF4444', label: 'Proximity Detect Signal' },
+                    { from: 'AND Gate', to: 'Delay Block', color: '#10B981', label: 'Clock Loop Pulse' },
+                    { from: 'Delay Block', to: 'NOT Gate', color: '#F59E0B', label: 'Inversion Signal' },
+                    { from: 'NOT Gate', to: 'AND Gate Input', color: '#8B5CF6', label: 'Feedback Oscillation' },
+                    { from: 'Delay Block', to: 'Flashing Display', color: '#F59E0B', label: 'Warning Screen Output' }
+                ],
+                svg: `
+                <svg viewBox="0 0 680 260" class="w-full h-auto">
+                    <pattern id="grid23" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="#1f2d40" stroke-width="0.5"/></pattern>
+                    <rect width="680" height="260" fill="url(#grid23)" rx="10"/>
+
+                    <rect x="40" y="50" width="110" height="45" rx="6" fill="#ef4444" fill-opacity="0.2" stroke="#ef4444" stroke-width="2"/>
+                    <text x="95" y="78" fill="#ef4444" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">Sensor Block</text>
+
+                    <rect x="220" y="50" width="100" height="50" rx="6" fill="#10b981" fill-opacity="0.2" stroke="#10b981" stroke-width="2"/>
+                    <text x="270" y="80" fill="#10b981" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">AND Gate</text>
+
+                    <rect x="380" y="50" width="110" height="50" rx="6" fill="#f59e0b" fill-opacity="0.2" stroke="#f59e0b" stroke-width="2"/>
+                    <text x="435" y="80" fill="#f59e0b" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">Delay Block</text>
+
+                    <rect x="300" y="160" width="90" height="45" rx="6" fill="#8b5cf6" fill-opacity="0.2" stroke="#8b5cf6" stroke-width="2"/>
+                    <text x="345" y="188" fill="#8b5cf6" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">NOT Gate</text>
+
+                    <rect x="550" y="50" width="100" height="50" rx="6" fill="#ec4899" fill-opacity="0.3" stroke="#ec4899" stroke-width="2"/>
+                    <text x="600" y="80" fill="#ec4899" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">Flash Display</text>
+
+                    <path d="M 150 72 L 220 72" stroke="#ef4444" stroke-width="2" fill="none"/>
+                    <path d="M 320 75 L 380 75" stroke="#10b981" stroke-width="2" fill="none"/>
+                    <path d="M 490 75 L 550 75" stroke="#f59e0b" stroke-width="2" fill="none"/>
+                    <path d="M 450 100 L 450 182 L 390 182" stroke="#f59e0b" stroke-width="2" fill="none"/>
+                    <path d="M 300 182 L 180 182 L 180 88 L 220 88" stroke="#8b5cf6" stroke-width="2" fill="none"/>
+                </svg>`
+            },
+            {
+                id: 'priority-encoder',
+                title: '24. 2-Input Priority Encoder',
+                category: 'Math & Calculators',
+                tags: ['encoder', 'priority', 'not', 'and', 'math'],
+                description: 'Encodes two input signals into binary output. Input 1 overrides Input 0 if both are activated simultaneously using explicit NOT and AND gates.',
+                wireGuide: [
+                    { from: 'Priority IN 1', to: 'Output Bit 1', color: '#3B82F6', label: 'Highest Priority Direct Output' },
+                    { from: 'Priority IN 1', to: 'NOT Gate', color: '#3B82F6', label: 'Priority Inversion Signal' },
+                    { from: 'NOT Gate', to: 'AND Gate', color: '#8B5CF6', label: 'Inverted Priority Signal' },
+                    { from: 'Priority IN 0', to: 'AND Gate', color: '#EF4444', label: 'Lower Priority Signal' },
+                    { from: 'AND Gate', to: 'Output Bit 0', color: '#10B981', label: 'Filtered Bit 0 Output' }
+                ],
+                svg: `
+                <svg viewBox="0 0 720 280" class="w-full h-auto">
+                    <pattern id="grid24" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="#1f2d40" stroke-width="0.5"/></pattern>
+                    <rect width="720" height="280" fill="url(#grid24)" rx="10"/>
+
+                    <rect x="40" y="40" width="120" height="45" rx="6" fill="#ef4444" fill-opacity="0.2" stroke="#ef4444" stroke-width="2"/>
+                    <text x="100" y="68" fill="#ef4444" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">Priority IN 0</text>
+
+                    <rect x="40" y="180" width="120" height="45" rx="6" fill="#3b82f6" fill-opacity="0.2" stroke="#3b82f6" stroke-width="2"/>
+                    <text x="100" y="208" fill="#3b82f6" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">Priority IN 1</text>
+
+                    <rect x="230" y="110" width="90" height="45" rx="6" fill="#8b5cf6" fill-opacity="0.2" stroke="#8b5cf6" stroke-width="2"/>
+                    <text x="275" y="138" fill="#8b5cf6" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">NOT Gate</text>
+
+                    <rect x="380" y="40" width="110" height="50" rx="6" fill="#10b981" fill-opacity="0.2" stroke="#10b981" stroke-width="2"/>
+                    <text x="435" y="70" fill="#10b981" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">AND Gate</text>
+
+                    <rect x="580" y="40" width="90" height="45" rx="6" fill="#10b981" fill-opacity="0.3" stroke="#10b981" stroke-width="2"/>
+                    <text x="625" y="68" fill="#10b981" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">Out Bit 0</text>
+
+                    <rect x="580" y="180" width="90" height="45" rx="6" fill="#3b82f6" fill-opacity="0.3" stroke="#3b82f6" stroke-width="2"/>
+                    <text x="625" y="208" fill="#3b82f6" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">Out Bit 1</text>
+
+                    <path d="M 160 62 L 380 62" stroke="#ef4444" stroke-width="2.5" fill="none"/>
+                    <path d="M 160 202 L 580 202" stroke="#3b82f6" stroke-width="2.5" fill="none"/>
+                    <path d="M 200 202 L 200 132 L 230 132" stroke="#3b82f6" stroke-width="2.5" fill="none"/>
+                    <path d="M 320 132 L 350 132 L 350 75 L 380 75" stroke="#8b5cf6" stroke-width="2.5" fill="none"/>
+                    <path d="M 490 65 L 580 65" stroke="#10b981" stroke-width="2.5" fill="none"/>
+                </svg>`
+            },
+            {
+                id: 'segment-selector',
+                title: '25. Display Digit Segment Selector',
+                category: 'Math & Calculators',
+                tags: ['display', 'segment', 'selector', 'or', '7-segment'],
+                description: 'Routes mode selection switches to light up groups of display blocks for numerical seven-segment readouts using dual OR gates.',
+                wireGuide: [
+                    { from: 'Mode Switch 1', to: 'OR Gate 1 & 2', color: '#EF4444', label: 'Mode 1 Active Signal' },
+                    { from: 'Mode Switch 2', to: 'OR Gate 1 & 2', color: '#3B82F6', label: 'Mode 2 Active Signal' },
+                    { from: 'OR Gate 1', to: 'Display Group A', color: '#10B981', label: 'Segment Group A Light Signal' },
+                    { from: 'OR Gate 2', to: 'Display Group B', color: '#10B981', label: 'Segment Group B Light Signal' }
+                ],
+                svg: `
+                <svg viewBox="0 0 720 280" class="w-full h-auto">
+                    <pattern id="grid25" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="#1f2d40" stroke-width="0.5"/></pattern>
+                    <rect width="720" height="280" fill="url(#grid25)" rx="10"/>
+
+                    <rect x="40" y="40" width="120" height="45" rx="6" fill="#ef4444" fill-opacity="0.2" stroke="#ef4444" stroke-width="2"/>
+                    <text x="100" y="68" fill="#ef4444" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">Mode Switch 1</text>
+
+                    <rect x="40" y="180" width="120" height="45" rx="6" fill="#3b82f6" fill-opacity="0.2" stroke="#3b82f6" stroke-width="2"/>
+                    <text x="100" y="208" fill="#3b82f6" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">Mode Switch 2</text>
+
+                    <rect x="300" y="40" width="100" height="50" rx="6" fill="#10b981" fill-opacity="0.2" stroke="#10b981" stroke-width="2"/>
+                    <text x="350" y="70" fill="#10b981" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">OR Gate 1</text>
+
+                    <rect x="300" y="180" width="100" height="50" rx="6" fill="#10b981" fill-opacity="0.2" stroke="#10b981" stroke-width="2"/>
+                    <text x="350" y="210" fill="#10b981" font-family="JetBrains Mono" font-weight="bold" font-size="12" text-anchor="middle">OR Gate 2</text>
+
+                    <rect x="530" y="40" width="140" height="50" rx="6" fill="#ec4899" fill-opacity="0.3" stroke="#ec4899" stroke-width="2"/>
+                    <text x="600" y="70" fill="#ec4899" font-family="JetBrains Mono" font-weight="bold" font-size="11" text-anchor="middle">Display Group A</text>
+
+                    <rect x="530" y="180" width="140" height="50" rx="6" fill="#ec4899" fill-opacity="0.3" stroke="#ec4899" stroke-width="2"/>
+                    <text x="600" y="210" fill="#ec4899" font-family="JetBrains Mono" font-weight="bold" font-size="11" text-anchor="middle">Display Group B</text>
+
+                    <path d="M 160 62 L 300 55" stroke="#ef4444" stroke-width="2" fill="none"/>
+                    <path d="M 180 62 L 180 195 L 300 195" stroke="#ef4444" stroke-width="2" fill="none"/>
+
+                    <path d="M 160 202 L 300 215" stroke="#3b82f6" stroke-width="2" fill="none"/>
+                    <path d="M 220 202 L 220 75 L 300 75" stroke="#3b82f6" stroke-width="2" fill="none"/>
+
+                    <path d="M 400 65 L 530 65" stroke="#10b981" stroke-width="2.5" fill="none"/>
+                    <path d="M 400 205 L 530 205" stroke="#10b981" stroke-width="2.5" fill="none"/>
+                </svg>`
+            }
+        ];
+
+        const categories = ['All', 'Bare Gates', 'Memory & Switches', 'Clocks & Timers', 'Math & Calculators', 'Systems & Mechs'];
+        let activeCategory = 'All';
+
+        // INITIALIZE APP
+        document.addEventListener('DOMContentLoaded', () => {
+            renderCategories();
+            renderBlueprints(blueprints);
+        });
+
+        // RENDER CATEGORY BUTTONS
+        function renderCategories() {
+            const container = document.getElementById('categoryTabs');
+            container.innerHTML = categories.map(cat => `
+                <button onclick="selectCategory('${cat}')" 
+                    class="px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all ${
+                        activeCategory === cat 
+                        ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/30' 
+                        : 'bg-[#141c28] text-slate-400 border border-[#233146] hover:text-slate-200 hover:bg-[#1e293b]'
+                    }">
+                    ${cat}
+                </button>
+            `).join('');
+        }
+
+        // SELECT CATEGORY
+        function selectCategory(category) {
+            activeCategory = category;
+            renderCategories();
+            filterBlueprints();
+        }
+
+        // FILTER BLUEPRINTS BASED ON SEARCH & CATEGORY
+        function filterBlueprints() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = blueprints.filter(bp => {
+                const matchesCat = activeCategory === 'All' || bp.category === activeCategory;
+                const matchesQuery = bp.title.toLowerCase().includes(query) ||
+                                     bp.description.toLowerCase().includes(query) ||
+                                     bp.tags.some(t => t.toLowerCase().includes(query));
+                return matchesCat && matchesQuery;
+            });
+
+            renderBlueprints(filtered);
+        }
+
+        // RENDER BLUEPRINT CARDS
+        function renderBlueprints(items) {
+            const grid = document.getElementById('blueprintsGrid');
+            const empty = document.getElementById('emptyState');
+            const count = document.getElementById('blueprintCount');
+
+            count.innerText = `${items.length} Loaded`;
+
+            if (items.length === 0) {
+                grid.innerHTML = '';
+                empty.classList.remove('hidden');
+                return;
+            }
+
+            empty.classList.add('hidden');
+
+            grid.innerHTML = items.map(item => `
+                <div class="bg-[#141c28] border border-[#233146] rounded-2xl overflow-hidden flex flex-col justify-between hover:border-blue-500/50 transition-all shadow-xl">
+                    
+                    <!-- CARD HEADER -->
+                    <div class="p-5 border-b border-[#233146] flex items-start justify-between gap-4 bg-[#141c28]">
+                        <div>
+                            <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-blue-500/10 text-blue-400 border border-blue-500/20">
+                                ${item.category}
+                            </span>
+                            <h3 class="text-base font-bold text-white mt-2 flex items-center gap-2">
+                                ${item.title}
+                            </h3>
+                            <p class="text-xs text-slate-400 mt-1 leading-relaxed">
+                                ${item.description}
+                            </p>
+                        </div>
+                        <button onclick="openModal('${item.id}')" class="p-2 text-slate-400 hover:text-white bg-[#0b0f17] hover:bg-blue-600 border border-[#233146] rounded-xl text-xs flex items-center gap-1.5 transition-colors shrink-0">
+                            <i class="fa-solid fa-expand"></i> Dynamic View
+                        </button>
+                    </div>
+
+                    <!-- SVG GRAPHIC CONTAINER -->
+                    <div class="p-4 bg-[#0b0f17]/60 flex items-center justify-center border-b border-[#233146] svg-container cursor-pointer" onclick="openModal('${item.id}')">
+                        ${item.svg}
+                    </div>
+
+                    <!-- STEP BY STEP WIRE GUIDE WITH MATCHING HEX BADGES -->
+                    <div class="p-5 bg-[#141c28]/90">
+                        <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider mb-3 flex items-center gap-2">
+                            <i class="fa-solid fa-diagram-project text-blue-400"></i> Gate-Level Wiring Connections:
+                        </h4>
+                        <div class="space-y-2">
+                            ${item.wireGuide.map(wire => `
+                                <div class="flex items-center justify-between text-xs p-2 bg-[#0b0f17] border border-[#233146] rounded-xl">
+                                    <div class="flex items-center gap-2 min-w-0">
+                                        <span class="px-2 py-0.5 rounded text-[11px] font-mono font-bold shrink-0" style="background-color: ${wire.color}20; color: ${wire.color}; border: 1px solid ${wire.color}40">
+                                            ${wire.from}
+                                        </span>
+                                        <i class="fa-solid fa-arrow-right text-[10px] text-slate-500 shrink-0"></i>
+                                        <span class="px-2 py-0.5 rounded text-[11px] font-mono font-bold shrink-0" style="background-color: ${wire.color}20; color: ${wire.color}; border: 1px solid ${wire.color}40">
+                                            ${wire.to}
+                                        </span>
+                                    </div>
+                                    <span class="text-[11px] text-slate-400 text-right truncate ml-2">${wire.label}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                </div>
+            `).join('');
+        }
+
+        // MODAL HANDLERS
+        function openModal(id) {
+            const item = blueprints.find(b => b.id === id);
+            if (!item) return;
+
+            document.getElementById('modalTitle').innerText = item.title;
+            document.getElementById('modalBody').innerHTML = `
+                <div class="w-full flex flex-col items-center">
+                    <div class="w-full bg-[#0b0f17] p-6 rounded-2xl border border-[#233146] mb-4">
+                        ${item.svg}
+                    </div>
+                    <p class="text-sm text-slate-300 text-center max-w-2xl">${item.description}</p>
+                </div>
+            `;
+            document.getElementById('diagramModal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('diagramModal').classList.add('hidden');
+        }
+    </script>
 </body>
 </html>
